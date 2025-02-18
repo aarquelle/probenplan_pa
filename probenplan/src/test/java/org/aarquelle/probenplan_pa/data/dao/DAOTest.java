@@ -32,10 +32,11 @@ class DAOTest {
     @Test
     void createActor() throws Exception {
         try (Transaction t = new Transaction()) {
-            DAO dao = t.getDAO();
-            dao.createActor(a1);
+            ReadDAO readDao = t.getReadDAO();
+            CreateDAO createDAO = t.getCreateDAO();
+            createDAO.createActor(a1);
             t.commit();
-            List<ActorDTO> results = dao.getActors();
+            List<ActorDTO> results = readDao.getActors();
             assertEquals(1, results.size());
             assertEquals("actor1", results.getFirst().getName());
             assertEquals(1, results.getFirst().getId());
@@ -46,24 +47,25 @@ class DAOTest {
     @Test
     void createDuplicateActor() throws Exception {
         try (Transaction t = new Transaction()) {
-            DAO dao = t.getDAO();
-            dao.createActor(a1);
+            CreateDAO createDAO = t.getCreateDAO();
+            createDAO.createActor(a1);
             t.commit();
-            assertThrows(DuplicateException.class, () -> dao.createActor(a1));
+            assertThrows(DuplicateException.class, () -> createDAO.createActor(a1));
         }
     }
 
     @Test
     void createRole() throws Exception {
         try (Transaction t = new Transaction()) {
-            DAO dao = t.getDAO();
-            dao.createActor(a1);
+            ReadDAO readDao = t.getReadDAO();
+            CreateDAO createDAO = t.getCreateDAO();
+            createDAO.createActor(a1);
             RoleDTO role = new RoleDTO();
             role.setName("role1");
             role.setActor(a1);
-            dao.createRole(role);
+            createDAO.createRole(role);
             t.commit();
-            List<RoleDTO> results = dao.getRoles();
+            List<RoleDTO> results = readDao.getRoles();
             assertEquals(1, results.size());
             assertEquals("role1", results.getFirst().getName());
             assertEquals(1, results.getFirst().getId());
@@ -75,31 +77,33 @@ class DAOTest {
     @Test
     void createRoleWithoutActor() throws Exception{
         try (Transaction t = new Transaction()) {
-            DAO dao = t.getDAO();
+            ReadDAO readDao = t.getReadDAO();
+            CreateDAO createDAO = t.getCreateDAO();
             RoleDTO role = new RoleDTO();
             role.setName("role1");
-            dao.createRole(role);
+            createDAO.createRole(role);
             t.commit();
-            List<RoleDTO> results = dao.getRoles();
+            List<RoleDTO> results = readDao.getRoles();
             assertEquals(1, results.size());
             assertEquals("role1", results.getFirst().getName());
             assertEquals(1, results.getFirst().getId());
             assertNull(results.getFirst().getActor());
-            assertThrows(DuplicateException.class, () -> dao.createRole(role));
+            assertThrows(DuplicateException.class, () -> createDAO.createRole(role));
         }
     }
 
     @Test
     void createScene() throws Exception {
         try (Transaction t = new Transaction()) {
-            DAO dao = t.getDAO();
+            ReadDAO readDao = t.getReadDAO();
+            CreateDAO createDAO = t.getCreateDAO();
             SceneDTO scene = new SceneDTO();
             scene.setName("scene1");
             scene.setLength(10.5);
             scene.setPosition(1.0);
-            dao.createScene(scene);
+            createDAO.createScene(scene);
             t.commit();
-            List<SceneDTO> results = dao.getScenes();
+            List<SceneDTO> results = readDao.getScenes();
             assertEquals(1, results.size());
             assertEquals("scene1", results.getFirst().getName());
             assertEquals(10.5, results.getFirst().getLength());
@@ -111,38 +115,39 @@ class DAOTest {
     @Test
     void createDuplicateScene() throws Exception {
         try (Transaction t = new Transaction()) {
-            DAO dao = t.getDAO();
+            CreateDAO createDAO = t.getCreateDAO();
             SceneDTO scene = new SceneDTO();
             scene.setName("scene1");
             scene.setLength(10.5);
             scene.setPosition(1.0);
-            dao.createScene(scene);
+            createDAO.createScene(scene);
             t.commit();
-            assertThrows(DuplicateException.class, () -> dao.createScene(scene));
+            assertThrows(DuplicateException.class, () -> createDAO.createScene(scene));
         }
     }
 
     @Test
     void createSceneWithNullValues() {
         try (Transaction t = new Transaction()) {
-            DAO dao = t.getDAO();
+            CreateDAO createDAO = t.getCreateDAO();
             SceneDTO scene = new SceneDTO();
             scene.setName(null);
             scene.setLength(0);
             scene.setPosition(0);
-            assertThrows(RequiredValueMissingException.class, () -> dao.createScene(scene));
+            assertThrows(RequiredValueMissingException.class, () -> createDAO.createScene(scene));
         }
     }
 
     @Test
     void createRehearsal() throws Exception {
         try (Transaction t = new Transaction()) {
-            DAO dao = t.getDAO();
+            ReadDAO readDao = t.getReadDAO();
+            CreateDAO createDAO = t.getCreateDAO();
             RehearsalDTO rehearsal = new RehearsalDTO();
             rehearsal.setDate(java.sql.Date.valueOf("2023-12-01"));
-            dao.createRehearsal(rehearsal);
+            createDAO.createRehearsal(rehearsal);
             t.commit();
-            List<RehearsalDTO> results = dao.getRehearsals();
+            List<RehearsalDTO> results = readDao.getRehearsals();
             assertEquals(1, results.size());
             assertEquals(java.sql.Date.valueOf("2023-12-01"), results.getFirst().getDate());
             assertEquals(1, results.getFirst().getId());
@@ -152,21 +157,21 @@ class DAOTest {
     @Test
     void createDuplicateRehearsal() throws Exception {
         try (Transaction t = new Transaction()) {
-            DAO dao = t.getDAO();
+            CreateDAO createDAO = t.getCreateDAO();
             RehearsalDTO rehearsal = new RehearsalDTO();
             rehearsal.setDate(java.sql.Date.valueOf("2023-12-01"));
-            dao.createRehearsal(rehearsal);
+            createDAO.createRehearsal(rehearsal);
             t.commit();
-            assertThrows(DuplicateException.class, () -> dao.createRehearsal(rehearsal));
+            assertThrows(DuplicateException.class, () -> createDAO.createRehearsal(rehearsal));
         }
     }
 
     @Test
     void createRehearsalWithNullDate() {
         try (Transaction t = new Transaction()) {
-            DAO dao = t.getDAO();
+            CreateDAO createDAO = t.getCreateDAO();
             RehearsalDTO rehearsal = new RehearsalDTO();
-            assertThrows(RequiredValueMissingException.class, () -> dao.createRehearsal(rehearsal));
+            assertThrows(RequiredValueMissingException.class, () -> createDAO.createRehearsal(rehearsal));
         }
     }
 

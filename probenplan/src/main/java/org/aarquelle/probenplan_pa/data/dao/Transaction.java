@@ -55,8 +55,12 @@ public class Transaction implements AutoCloseable {
         return new DBManager(connection);
     }
 
-    public DAO getDAO() {
-        return new DAO(connection);
+    public ReadDAO getReadDAO() {
+        return new ReadDAO(connection);
+    }
+
+    public CreateDAO getCreateDAO() {
+        return new CreateDAO(connection);
     }
 
     public void commit() {
