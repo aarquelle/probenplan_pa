@@ -20,7 +20,7 @@ public class DBManager extends AbstractDAO {
                 """
                         create table if not exists actors (
                             actor_id INTEGER primary key,
-                            actor_name varchar(30) not null
+                            actor_name varchar(30) not null unique
                         )
                         """
         );
@@ -28,7 +28,7 @@ public class DBManager extends AbstractDAO {
                 """
                         create table if not exists roles (
                             role_id INTEGER primary key,
-                            role_name varchar(30) not null,
+                            role_name varchar(30) not null unique ,
                             actor_id INTEGER references actors(actor_id)
                         )
                         """
@@ -37,9 +37,9 @@ public class DBManager extends AbstractDAO {
                 """
                         create table if not exists scenes (
                             scene_id INTEGER primary key,
-                            scene_name varchar(30) not null,
+                            scene_name varchar(30) not null unique ,
                             length INTEGER not null,
-                            position INTEGER not null
+                            position INTEGER not null unique
                         )
                         """
         );
@@ -53,16 +53,16 @@ public class DBManager extends AbstractDAO {
         executeUpdate(
                 """
                         create table if not exists has_time (
-                            day date references rehearsals,
-                            actor_id INTEGER references actors
+                            day date references rehearsals not null,
+                            actor_id INTEGER references actors not null
                         )
                         """
         );
         executeUpdate(
                 """
                         create table if not exists plays_in (
-                            actor_id INTEGER references actors,
-                            scene_id INTEGER references scenes
+                            actor_id INTEGER references actors not null,
+                            scene_id INTEGER references scenes not null
                         )
                         """
         );
