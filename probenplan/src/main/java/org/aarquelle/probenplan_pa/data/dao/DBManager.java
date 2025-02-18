@@ -38,15 +38,16 @@ public class DBManager extends AbstractDAO {
                         create table if not exists scenes (
                             scene_id INTEGER primary key,
                             scene_name varchar(30) not null unique ,
-                            length INTEGER not null,
-                            position INTEGER not null unique
+                            length DOUBLE not null,
+                            position DOUBLE not null unique
                         )
                         """
         );
         executeUpdate(
                 """
                         create table if not exists rehearsals (
-                            day date primary key
+                            id INTEGER primary key,
+                            day date unique not null
                         )
                         """
         );
