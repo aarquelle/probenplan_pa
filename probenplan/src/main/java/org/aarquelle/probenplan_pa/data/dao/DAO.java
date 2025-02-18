@@ -58,7 +58,11 @@ public class DAO extends AbstractDAO{
         String sql = "insert into roles (role_name, actor_id) values (?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, role.getName());
+            if (role.getActor() != null) {
             stmt.setInt(2, role.getActor().getId());
+            } else {
+                stmt.setNull(2, java.sql.Types.INTEGER);
+            }
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
@@ -70,8 +74,8 @@ public class DAO extends AbstractDAO{
     }
 
     public List<RoleDTO> getRoles() {
-        String sql = "select (role_id, role_name, actor_id, actor_name) from roles, actors " +
-                "where roles.actor_id = actors.actor_id";
+        String sql = "select role_id, role_name, actor_id, actor_name from roles " +
+                "left natural join actors";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             List<RoleDTO> results = new ArrayList<>();
@@ -79,10 +83,13 @@ public class DAO extends AbstractDAO{
                 RoleDTO role = new RoleDTO();
                 role.setName(rs.getString("role_name"));
                 role.setId(rs.getInt("role_id"));
-                ActorDTO actor = new ActorDTO();
-                actor.setId(rs.getInt("actor_id"));
-                actor.setName(rs.getString("actor_name"));
-                role.setActor(actor);
+                int actorId = rs.getInt("actor_id");
+                if (!rs.wasNull()) {
+                    ActorDTO actor = new ActorDTO();
+                    actor.setId(actorId);
+                    actor.setName(rs.getString("actor_name"));
+                    role.setActor(actor);
+                }
                 results.add(role);
             }
             return results;
