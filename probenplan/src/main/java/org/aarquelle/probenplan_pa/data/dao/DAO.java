@@ -54,7 +54,7 @@ public class DAO extends AbstractDAO{
         }
     }
 
-    public void createRole(RoleDTO role) {
+    public void createRole(RoleDTO role) throws DuplicateException{
         String sql = "insert into roles (role_name, actor_id) values (?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, role.getName());
@@ -68,8 +68,13 @@ public class DAO extends AbstractDAO{
             if (rs.next()) {
                 role.setId(rs.getInt(1));
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            if (e.getMessage().contains("UNIQUE constraint failed")) {
+                throw new DuplicateException("Role names have to be unique!", e);
+            } else {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -93,7 +98,7 @@ public class DAO extends AbstractDAO{
                 results.add(role);
             }
             return results;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }

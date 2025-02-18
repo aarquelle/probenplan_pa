@@ -70,7 +70,7 @@ class DAOTest {
     }
 
     @Test
-    void createRoleWithoutActor() {
+    void createRoleWithoutActor() throws Exception{
         try (Transaction t = new Transaction()) {
             DAO dao = t.getDAO();
             RoleDTO role = new RoleDTO();
@@ -82,6 +82,7 @@ class DAOTest {
             assertEquals("role1", results.getFirst().getName());
             assertEquals(1, results.getFirst().getId());
             assertNull(results.getFirst().getActor());
+            assertThrows(DuplicateException.class, () -> dao.createRole(role));
         }
     }
 
