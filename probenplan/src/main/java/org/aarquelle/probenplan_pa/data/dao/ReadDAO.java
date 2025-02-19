@@ -98,4 +98,70 @@ public class ReadDAO extends AbstractDAO {
             throw new RuntimeException(e);
         }
     }
+
+    public List<RoleDTO> getRolesForScene(SceneDTO sceneDTO) {
+        return getRolesForScene(sceneDTO, false, false);
+    }
+
+    public List<RoleDTO> getRolesForScene(SceneDTO sceneDTO, boolean minor) {
+        return getRolesForScene(sceneDTO, true, minor);
+    }
+
+    private List<RoleDTO> getRolesForScene(SceneDTO sceneDTO, boolean sizeMatters, boolean minor) {
+        String sql = "select roles.role_id, role_name from roles, plays_in where " +
+                "scene_id = ?";
+        if (sizeMatters) {
+            sql += " and minor = ?";
+        }
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, sceneDTO.getId());
+            if (sizeMatters) {
+                stmt.setBoolean(2, minor);
+            }
+            ResultSet rs = stmt.executeQuery();
+            List<RoleDTO> results = new ArrayList<>();
+            while (rs.next()) {
+                RoleDTO role = new RoleDTO();
+                role.setId(rs.getInt("role_id"));
+                role.setName(rs.getString("role_name"));
+                results.add(role);
+            }
+            return results;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<ActorDTO> getActorsForRehearsal(RehearsalDTO rehearsalDTO) {
+        return getActorsForRehearsal(rehearsalDTO, false, false);
+    }
+
+    public List<ActorDTO> getActorsForRehearsal(RehearsalDTO rehearsalDTO, boolean maybe) {
+        return getActorsForRehearsal(rehearsalDTO, true, maybe);
+    }
+
+    private List<ActorDTO> getActorsForRehearsal(RehearsalDTO rehearsalDTO, boolean maybeMatters,  boolean maybe) {
+        String sql = "select actors.actor_id, actor_name, maybe from actors, has_time where " +
+                "day = ?";
+        if (maybeMatters) {
+            sql += " and maybe = ?";
+        }
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setDate(1, rehearsalDTO.getDate());
+            if (maybeMatters) {
+                stmt.setBoolean(2, maybe);
+            }
+            ResultSet rs = stmt.executeQuery();
+            List<ActorDTO> results = new ArrayList<>();
+            while (rs.next()) {
+                ActorDTO actor = new ActorDTO();
+                actor.setId(rs.getInt("actor_id"));
+                actor.setName(rs.getString("actor_name"));
+                results.add(actor);
+            }
+            return results;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -13,9 +13,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DAOTest {
+class CreateDAOTest {
 
     private ActorDTO a1;
+    private SceneDTO s1;
+    private RoleDTO r1;
+    private RehearsalDTO p1;
 
     @BeforeEach
     void setUp() {
@@ -27,6 +30,18 @@ class DAOTest {
         }
         a1 = new ActorDTO();
         a1.setName("actor1");
+
+        s1 = new SceneDTO();
+        s1.setName("scene1");
+        s1.setLength(10.5);
+        s1.setPosition(1.0);
+
+        r1 = new RoleDTO();
+        r1.setName("role1");
+        r1.setActor(a1);
+
+        p1 = new RehearsalDTO();
+        p1.setDate(java.sql.Date.valueOf("2023-12-01"));
     }
 
     @Test
@@ -172,6 +187,57 @@ class DAOTest {
             CreateDAO createDAO = t.getCreateDAO();
             RehearsalDTO rehearsal = new RehearsalDTO();
             assertThrows(RequiredValueMissingException.class, () -> createDAO.createRehearsal(rehearsal));
+        }
+    }
+
+    @Test
+    void createPlaysIn() throws Exception {
+        try (Transaction t = new Transaction()) {
+            CreateDAO createDAO = t.getCreateDAO();
+            createDAO.createScene(s1);
+            createDAO.createRole(r1);
+            createDAO.createPlaysIn(s1, r1, true);
+            assertThrows(DuplicateException.class, () -> createDAO.createPlaysIn(s1, r1, false));
+
+            ReadDAO readDao = t.getReadDAO();
+            List<RoleDTO> results = readDao.getRolesForScene(s1);
+            assertEquals(1, results.size());
+            assertEquals("role1", results.getFirst().getName());
+            assertEquals(1, results.getFirst().getId());
+
+            List<RoleDTO> results2 = readDao.getRolesForScene(s1, true);
+            assertEquals(1, results2.size());
+            assertEquals("role1", results2.getFirst().getName());
+            assertEquals(1, results2.getFirst().getId());
+
+            List<RoleDTO> results3 = readDao.getRolesForScene(s1, false);
+            assertEquals(0, results3.size());
+        }
+    }
+
+    @Test
+    void createHasTime() throws Exception {
+        try (Transaction t = new Transaction()) {
+            CreateDAO createDAO = t.getCreateDAO();
+            createDAO.createActor(a1);
+            createDAO.createRehearsal(p1);
+            createDAO.createHasTime(a1, p1, true);
+            assertThrows(DuplicateException.class, () -> createDAO.createHasTime(a1, p1, false));
+            t.commit();
+
+            ReadDAO readDao = t.getReadDAO();
+            List<ActorDTO> results = readDao.getActorsForRehearsal(p1);
+            assertEquals(1, results.size());
+            assertEquals("actor1", results.getFirst().getName());
+            assertEquals(1, results.getFirst().getId());
+
+            List<ActorDTO> results2 = readDao.getActorsForRehearsal(p1, true);
+            assertEquals(1, results2.size());
+            assertEquals("actor1", results2.getFirst().getName());
+            assertEquals(1, results2.getFirst().getId());
+
+            List<ActorDTO> results3 = readDao.getActorsForRehearsal(p1, false);
+            assertEquals(0, results3.size());
         }
     }
 

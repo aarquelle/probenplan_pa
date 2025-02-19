@@ -55,15 +55,19 @@ public class DBManager extends AbstractDAO {
                 """
                         create table if not exists has_time (
                             day date references rehearsals not null,
-                            actor_id INTEGER references actors not null
+                            actor_id INTEGER references actors not null,
+                            maybe BOOLEAN not null,
+                            CONSTRAINT unq unique (day, actor_id)
                         )
                         """
         );
         executeUpdate(
                 """
                         create table if not exists plays_in (
-                            actor_id INTEGER references actors not null,
-                            scene_id INTEGER references scenes not null
+                            role_id INTEGER references roles not null,
+                            scene_id INTEGER references scenes not null,
+                            minor BOOLEAN not null,
+                            CONSTRAINT unq unique (role_id, scene_id)
                         )
                         """
         );

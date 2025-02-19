@@ -96,4 +96,36 @@ public class CreateDAO extends AbstractDAO{
             }
         }
     }
+
+    public void createPlaysIn(SceneDTO scene, RoleDTO role, boolean minor) throws DuplicateException {
+        String sql = "insert into plays_in (scene_id, role_id, minor) values (?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, scene.getId());
+            stmt.setInt(2, role.getId());
+            stmt.setBoolean(3, minor);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getMessage().contains("UNIQUE constraint failed")) {
+                throw new DuplicateException("A role can only play in a scene once!", e);
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void createHasTime(ActorDTO actor, RehearsalDTO rehearsal, boolean maybe) throws DuplicateException {
+        String sql = "insert into has_time (actor_id, day, maybe) values (?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, actor.getId());
+            stmt.setDate(2, rehearsal.getDate());
+            stmt.setBoolean(3, maybe);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getMessage().contains("UNIQUE constraint failed")) {
+                throw new DuplicateException("An actor can only have one entry per rehearsal!", e);
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }
