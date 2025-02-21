@@ -109,7 +109,7 @@ public class ReadDAO extends AbstractDAO {
 
     private List<RoleDTO> getRolesForScene(SceneDTO sceneDTO, boolean sizeMatters, boolean minor) {
         String sql = "select roles.role_id, role_name from roles, plays_in where " +
-                "scene_id = ?";
+                "scene_id = ? and roles.role_id = plays_in.role_id";
         if (sizeMatters) {
             sql += " and minor = ?";
         }
@@ -132,17 +132,17 @@ public class ReadDAO extends AbstractDAO {
         }
     }
 
-    public List<ActorDTO> getActorsForRehearsal(RehearsalDTO rehearsalDTO) {
-        return getActorsForRehearsal(rehearsalDTO, false, false);
+    public List<ActorDTO> getMissingActorsForRehearsal(RehearsalDTO rehearsalDTO) {
+        return getMissingActorsForRehearsal(rehearsalDTO, false, false);
     }
 
-    public List<ActorDTO> getActorsForRehearsal(RehearsalDTO rehearsalDTO, boolean maybe) {
-        return getActorsForRehearsal(rehearsalDTO, true, maybe);
+    public List<ActorDTO> getMissingActorsForRehearsal(RehearsalDTO rehearsalDTO, boolean maybe) {
+        return getMissingActorsForRehearsal(rehearsalDTO, true, maybe);
     }
 
-    private List<ActorDTO> getActorsForRehearsal(RehearsalDTO rehearsalDTO, boolean maybeMatters,  boolean maybe) {
-        String sql = "select actors.actor_id, actor_name, maybe from actors, has_time where " +
-                "day = ?";
+    private List<ActorDTO> getMissingActorsForRehearsal(RehearsalDTO rehearsalDTO, boolean maybeMatters, boolean maybe) {
+        String sql = "select actors.actor_id, actor_name, maybe from actors, has_no_time where " +
+                "day = ? and actors.actor_id = has_no_time.actor_id";
         if (maybeMatters) {
             sql += " and maybe = ?";
         }

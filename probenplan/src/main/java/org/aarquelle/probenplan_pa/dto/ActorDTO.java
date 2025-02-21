@@ -20,4 +20,11 @@ public class ActorDTO {
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != this.getClass()) {
+            return false;
+        } else return getName().equals(((ActorDTO) o).getName());
+    }
 }

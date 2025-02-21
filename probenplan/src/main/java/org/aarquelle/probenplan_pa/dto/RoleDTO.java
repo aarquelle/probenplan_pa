@@ -28,4 +28,11 @@ public class RoleDTO {
     public void setActor(ActorDTO actor) {
         this.actor = actor;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != this.getClass()) {
+            return false;
+        } else return getName().equals(((RoleDTO) o).getName());
+    }
 }

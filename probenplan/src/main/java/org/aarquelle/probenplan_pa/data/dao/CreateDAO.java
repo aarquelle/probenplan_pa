@@ -114,7 +114,7 @@ public class CreateDAO extends AbstractDAO{
     }
 
     public void createHasTime(ActorDTO actor, RehearsalDTO rehearsal, boolean maybe) throws DuplicateException {
-        String sql = "insert into has_time (actor_id, day, maybe) values (?, ?, ?)";
+        String sql = "insert into has_no_time (actor_id, day, maybe) values (?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, actor.getId());
             stmt.setDate(2, rehearsal.getDate());

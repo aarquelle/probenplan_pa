@@ -226,17 +226,17 @@ class CreateDAOTest {
             t.commit();
 
             ReadDAO readDao = t.getReadDAO();
-            List<ActorDTO> results = readDao.getActorsForRehearsal(p1);
+            List<ActorDTO> results = readDao.getMissingActorsForRehearsal(p1);
             assertEquals(1, results.size());
             assertEquals("actor1", results.getFirst().getName());
             assertEquals(1, results.getFirst().getId());
 
-            List<ActorDTO> results2 = readDao.getActorsForRehearsal(p1, true);
+            List<ActorDTO> results2 = readDao.getMissingActorsForRehearsal(p1, true);
             assertEquals(1, results2.size());
             assertEquals("actor1", results2.getFirst().getName());
             assertEquals(1, results2.getFirst().getId());
 
-            List<ActorDTO> results3 = readDao.getActorsForRehearsal(p1, false);
+            List<ActorDTO> results3 = readDao.getMissingActorsForRehearsal(p1, false);
             assertEquals(0, results3.size());
         }
     }

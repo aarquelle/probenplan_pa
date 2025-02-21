@@ -53,7 +53,7 @@ public class DBManager extends AbstractDAO {
         );
         executeUpdate(
                 """
-                        create table if not exists has_time (
+                        create table if not exists has_no_time (
                             day date references rehearsals not null,
                             actor_id INTEGER references actors not null,
                             maybe BOOLEAN not null,
@@ -75,7 +75,7 @@ public class DBManager extends AbstractDAO {
 
     public void clearDB() {
         executeUpdate("drop table if exists plays_in;");
-        executeUpdate("drop table if exists has_time;");
+        executeUpdate("drop table if exists has_no_time;");
         executeUpdate("drop table if exists rehearsals;");
         executeUpdate("drop table if exists scenes;");
         executeUpdate("drop table if exists roles;");
