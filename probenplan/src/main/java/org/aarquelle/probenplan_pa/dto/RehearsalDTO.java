@@ -35,4 +35,9 @@ public class RehearsalDTO {
             return getDate().equals(((RehearsalDTO) o).getDate());
         }
     }
+
+    @Override
+    public int hashCode() {
+        return getDate().hashCode();
+    }
 }

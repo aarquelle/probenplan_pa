@@ -3,10 +3,7 @@ package org.aarquelle.probenplan_pa.business.suggest;
 import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.business.create.Creator;
 import org.aarquelle.probenplan_pa.data.dao.Transaction;
-import org.aarquelle.probenplan_pa.dto.ActorDTO;
-import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
-import org.aarquelle.probenplan_pa.dto.RoleDTO;
-import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.dto.*;
 import org.aarquelle.probenplan_pa.util.Pair;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -46,6 +43,7 @@ class PossibilitiesTest {
 
     @BeforeAll
     static void setUp() throws BusinessException {
+        Transaction.onStartup();
         try (Transaction t = new Transaction()) {
             t.getDBManager().clearDB();
             t.getDBManager().initDB();
@@ -126,11 +124,11 @@ class PossibilitiesTest {
         Creator.takesPart(scene4, new Pair<>(hero, false));
         Creator.takesPart(scene5, new Pair<>(hero, false), new Pair<>(villain, false), new Pair<>(messenger, true));
 
-        Creator.hasTime(rehearsal1, new Pair<>(bob, false), new Pair<>(charlie, false));
-        Creator.hasTime(rehearsal2, new Pair<>(alice, false));
-        Creator.hasTime(rehearsal3, new Pair<>(alice, false), new Pair<>(bob, false));
-        Creator.hasTime(rehearsal4, new Pair<>(alice, false), new Pair<>(charlie, false));
-        Creator.hasTime(rehearsal5, new Pair<>(alice, true), new Pair<>(bob, false), new Pair<>(charlie, false));
+        Creator.hasNoTime(rehearsal1, new Pair<>(alice, false));
+        Creator.hasNoTime(rehearsal2, new Pair<>(bob, false), new Pair<>(charlie, false));
+        Creator.hasNoTime(rehearsal3, new Pair<>(charlie, false));
+        Creator.hasNoTime(rehearsal4, new Pair<>(bob, false));
+        Creator.hasNoTime(rehearsal5, new Pair<>(alice, true));
     }
 
     @Test
@@ -151,54 +149,71 @@ class PossibilitiesTest {
 
     }
 
-    @Disabled
     @Test
-    public void testPossibilities() throws BusinessException {
-        /*List<SceneDTO> results1 = Possibilities.possibleScenes(rehearsal1, true);
-        assertEquals(1, results1.size());
-        assertEquals(scene2, results1.getFirst());
-        assertArrayEquals(results1.toArray(), Possibilities.possibleScenes(rehearsal1, false).toArray());
+    public void testMissingActors() {
+        RehearsalSceneTable results = Possibilities.missingActors();
+        assertEquals(1, results.get(rehearsal1, scene1));
+        assertEquals(0, results.get(rehearsal1, scene2));
+        assertEquals(1, results.get(rehearsal1, scene3));
+        assertEquals(1, results.get(rehearsal1, scene4));
+        assertEquals(1, results.get(rehearsal1, scene5));
 
-        List<SceneDTO> results2 = Possibilities.possibleScenes(rehearsal2, true);
-        assertEquals(1, results2.size());
-        assertEquals(scene4, results2.getFirst());
+        assertEquals(1, results.get(rehearsal2, scene1));
+        assertEquals(2, results.get(rehearsal2, scene2));
+        assertEquals(1, results.get(rehearsal2, scene3));
+        assertEquals(0, results.get(rehearsal2, scene4));
+        assertEquals(2, results.get(rehearsal2, scene5));
 
-        List<SceneDTO> results2Semi = Possibilities.possibleScenes(rehearsal2, false);
-        assertEquals(2, results2Semi.size());
-        assertTrue(results2Semi.contains(scene1));
-        assertTrue(results2Semi.contains(scene4));
+        assertEquals(1, results.get(rehearsal3, scene1));
+        assertEquals(1, results.get(rehearsal3, scene2));
+        assertEquals(0, results.get(rehearsal3, scene3));
+        assertEquals(0, results.get(rehearsal3, scene4));
+        assertEquals(1, results.get(rehearsal3, scene5));
 
-        List<SceneDTO> results3 = Possibilities.possibleScenes(rehearsal3, true);
-        assertEquals(2, results3.size());
-        assertTrue(results3.contains(scene3));
-        assertTrue(results3.contains(scene4));
+        assertEquals(0, results.get(rehearsal4, scene1));
+        assertEquals(1, results.get(rehearsal4, scene2));
+        assertEquals(1, results.get(rehearsal4, scene3));
+        assertEquals(0, results.get(rehearsal4, scene4));
+        assertEquals(1, results.get(rehearsal4, scene5));
 
-        List<SceneDTO> results3Semi = Possibilities.possibleScenes(rehearsal3, false);
-        assertEquals(4, results3Semi.size());
-        assertTrue(results3Semi.contains(scene3));
-        assertTrue(results3Semi.contains(scene4));
-        assertTrue(results3Semi.contains(scene1));
-        assertTrue(results3Semi.contains(scene5));
-
-        List<SceneDTO> results4 = Possibilities.possibleScenes(rehearsal4, true);
-        assertEquals(2, results4.size());
-        assertTrue(results4.contains(scene1));
-        assertTrue(results4.contains(scene4));
-
-        assertArrayEquals(results4.toArray(), Possibilities.possibleScenes(rehearsal4, false).toArray());
-
-        List<SceneDTO> results5 = Possibilities.possibleScenes(rehearsal5, true);
-        assertEquals(1, results5.size());
-        assertEquals(scene2, results5.getFirst());
-
-        List<SceneDTO> results5Semi = Possibilities.possibleScenes(rehearsal5, false);
-        assertEquals(5, results5Semi.size());
-        assertTrue(results5Semi.contains(scene1));
-        assertTrue(results5Semi.contains(scene2));
-        assertTrue(results5Semi.contains(scene3));
-        assertTrue(results5Semi.contains(scene4));
-        assertTrue(results5Semi.contains(scene5));*/
-
+        assertEquals(0, results.get(rehearsal5, scene1));
+        assertEquals(0, results.get(rehearsal5, scene2));
+        assertEquals(0, results.get(rehearsal5, scene3));
+        assertEquals(0, results.get(rehearsal5, scene4));
+        assertEquals(0, results.get(rehearsal5, scene5));
     }
 
+    @Test
+    public void testUncertainActors() {
+        RehearsalSceneTable results = Possibilities.uncertainActors();
+        assertEquals(0, results.get(rehearsal1, scene1));
+        assertEquals(0, results.get(rehearsal1, scene2));
+        assertEquals(0, results.get(rehearsal1, scene3));
+        assertEquals(0, results.get(rehearsal1, scene4));
+        assertEquals(0, results.get(rehearsal1, scene5));
+
+        assertEquals(0, results.get(rehearsal2, scene1));
+        assertEquals(0, results.get(rehearsal2, scene2));
+        assertEquals(0, results.get(rehearsal2, scene3));
+        assertEquals(0, results.get(rehearsal2, scene4));
+        assertEquals(0, results.get(rehearsal2, scene5));
+
+        assertEquals(0, results.get(rehearsal3, scene1));
+        assertEquals(0, results.get(rehearsal3, scene2));
+        assertEquals(0, results.get(rehearsal3, scene3));
+        assertEquals(0, results.get(rehearsal3, scene4));
+        assertEquals(0, results.get(rehearsal3, scene5));
+
+        assertEquals(0, results.get(rehearsal4, scene1));
+        assertEquals(0, results.get(rehearsal4, scene2));
+        assertEquals(0, results.get(rehearsal4, scene3));
+        assertEquals(0, results.get(rehearsal4, scene4));
+        assertEquals(0, results.get(rehearsal4, scene5));
+
+        assertEquals(1, results.get(rehearsal5, scene1));
+        assertEquals(0, results.get(rehearsal5, scene2));
+        assertEquals(1, results.get(rehearsal5, scene3));
+        assertEquals(1, results.get(rehearsal5, scene4));
+        assertEquals(1, results.get(rehearsal5, scene5));
+    }
 }

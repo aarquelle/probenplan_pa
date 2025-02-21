@@ -69,11 +69,18 @@ public class Creator {
         }
     }
 
+    /**
+     * Creates a new HasNoTime entry for the given actor and rehearsal.
+     * @param rehearsal The rehearsal, for which the actor has no time.
+     * @param actor A pair of actor and maybe. The maybe flag is {@code true}, the actor might have time, if it is
+     *              {@code false}, the actor has definitely no time.
+     * @throws BusinessException
+     */
     @SafeVarargs
-    public static void hasTime(RehearsalDTO rehearsal, Pair<ActorDTO, Boolean>... actor) throws BusinessException {
+    public static void hasNoTime(RehearsalDTO rehearsal, Pair<ActorDTO, Boolean>... actor) throws BusinessException {
         try (Transaction t = new Transaction()) {
             for (Pair<ActorDTO, Boolean> a : actor) {
-                t.getCreateDAO().createHasTime(a.getFirst(), rehearsal, a.getSecond());
+                t.getCreateDAO().createHasNoTime(a.getFirst(), rehearsal, a.getSecond());
             }
             t.commit();
         } catch (DuplicateException e) {

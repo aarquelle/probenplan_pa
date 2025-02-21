@@ -29,7 +29,8 @@ public class DBManager extends AbstractDAO {
                         create table if not exists roles (
                             role_id INTEGER primary key,
                             role_name varchar(30) not null unique ,
-                            actor_id INTEGER references actors(actor_id)
+                            actor_id INTEGER,
+                            foreign key (actor_id) references actors(actor_id) on delete set null
                         )
                         """
         );
@@ -46,7 +47,7 @@ public class DBManager extends AbstractDAO {
         executeUpdate(
                 """
                         create table if not exists rehearsals (
-                            id INTEGER primary key,
+                            rehearsal_id INTEGER primary key,
                             day date unique not null
                         )
                         """
@@ -54,10 +55,10 @@ public class DBManager extends AbstractDAO {
         executeUpdate(
                 """
                         create table if not exists has_no_time (
-                            day date references rehearsals not null,
+                            rehearsal_id INTEGER references rehearsals not null,
                             actor_id INTEGER references actors not null,
                             maybe BOOLEAN not null,
-                            CONSTRAINT unq unique (day, actor_id)
+                            CONSTRAINT unq unique (rehearsal_id, actor_id)
                         )
                         """
         );

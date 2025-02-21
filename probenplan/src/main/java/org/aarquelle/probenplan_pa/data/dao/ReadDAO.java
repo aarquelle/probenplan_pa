@@ -89,7 +89,7 @@ public class ReadDAO extends AbstractDAO {
             List<RehearsalDTO> results = new ArrayList<>();
             while (rs.next()) {
                 RehearsalDTO rehearsal = new RehearsalDTO();
-                rehearsal.setId(rs.getInt("id"));
+                rehearsal.setId(rs.getInt("rehearsal_id"));
                 rehearsal.setDate(rs.getDate("day"));
                 results.add(rehearsal);
             }
@@ -142,12 +142,12 @@ public class ReadDAO extends AbstractDAO {
 
     private List<ActorDTO> getMissingActorsForRehearsal(RehearsalDTO rehearsalDTO, boolean maybeMatters, boolean maybe) {
         String sql = "select actors.actor_id, actor_name, maybe from actors, has_no_time where " +
-                "day = ? and actors.actor_id = has_no_time.actor_id";
+                "rehearsal_id = ? and actors.actor_id = has_no_time.actor_id";
         if (maybeMatters) {
             sql += " and maybe = ?";
         }
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setDate(1, rehearsalDTO.getDate());
+            stmt.setInt(1, rehearsalDTO.getId());
             if (maybeMatters) {
                 stmt.setBoolean(2, maybe);
             }
@@ -160,6 +160,46 @@ public class ReadDAO extends AbstractDAO {
                 results.add(actor);
             }
             return results;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Returns the number of actors that are missing for the given scene in the given rehearsal.
+     * @param rehearsal The rehearsal, identified by the id.
+     * @param scene The scene, identified by the id.
+     * @param maybe If {@code true}, only actors that might have time are counted, if {@code false}, only actors that
+     *              definitely have no time are counted.
+     * @return The number of actors that are missing for the given scene in the given rehearsal.
+     */
+    public int getNumberOfMissingActorsForScene(RehearsalDTO rehearsal, SceneDTO scene, boolean maybe) {
+        /*String sql = "select count(*) from plays_in, roles where scene_id = ? and plays_in.role_id = roles.role_id " +
+                "and roles.actor_id not in (select actor_id from has_no_time where rehearsal_id = ?)";*/
+        String sql = "select count(*) from roles, plays_in, has_no_time where has_no_time.rehearsal_id = ? and " +
+                "has_no_time.actor_id = roles.actor_id and roles.role_id = plays_in.role_id and plays_in.scene_id = ?" +
+                " and has_no_time.maybe = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, rehearsal.getId());
+            stmt.setInt(2, scene.getId());
+            stmt.setBoolean(3, maybe);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getNumberOfUncertainActorsForScene(RehearsalDTO rehearsalDTO, SceneDTO sceneDTO) {
+        String sql = "select count(*) from has_no_time where rehearsal_id = ? and maybe = 1 and actor_id in " +
+                "(select actor_id from roles where role_id in (select role_id from plays_in where scene_id = ?))";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, rehearsalDTO.getId());
+            stmt.setInt(2, sceneDTO.getId());
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs.getInt(1);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

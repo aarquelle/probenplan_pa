@@ -6,6 +6,7 @@ import org.aarquelle.probenplan_pa.dto.ActorDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.RoleDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,8 +21,13 @@ class CreateDAOTest {
     private RoleDTO r1;
     private RehearsalDTO p1;
 
+    @BeforeAll
+    static void setUp() {
+        Transaction.onStartup();
+    }
+
     @BeforeEach
-    void setUp() {
+    void reset() {
         try (Transaction t = new Transaction()) {
             DBManager dbManager = t.getDBManager();
             dbManager.clearDB();
@@ -195,6 +201,7 @@ class CreateDAOTest {
         try (Transaction t = new Transaction()) {
             CreateDAO createDAO = t.getCreateDAO();
             createDAO.createScene(s1);
+            createDAO.createActor(a1);
             createDAO.createRole(r1);
             createDAO.createPlaysIn(s1, r1, true);
             assertThrows(DuplicateException.class, () -> createDAO.createPlaysIn(s1, r1, false));
@@ -216,13 +223,13 @@ class CreateDAOTest {
     }
 
     @Test
-    void createHasTime() throws Exception {
+    void createHasNoTime() throws Exception {
         try (Transaction t = new Transaction()) {
             CreateDAO createDAO = t.getCreateDAO();
             createDAO.createActor(a1);
             createDAO.createRehearsal(p1);
-            createDAO.createHasTime(a1, p1, true);
-            assertThrows(DuplicateException.class, () -> createDAO.createHasTime(a1, p1, false));
+            createDAO.createHasNoTime(a1, p1, true);
+            assertThrows(DuplicateException.class, () -> createDAO.createHasNoTime(a1, p1, false));
             t.commit();
 
             ReadDAO readDao = t.getReadDAO();
