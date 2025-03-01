@@ -171,32 +171,23 @@ public class ReadDAO extends AbstractDAO {
      * @param scene The scene, identified by the id.
      * @param maybe If {@code true}, only actors that might have time are counted, if {@code false}, only actors that
      *              definitely have no time are counted.
+     * @param major If {@code true}, only actors that have a major role in this scene are counted,
+     *              if {@code false}, all actors are counted.
      * @return The number of actors that are missing for the given scene in the given rehearsal.
      */
-    public int getNumberOfMissingActorsForScene(RehearsalDTO rehearsal, SceneDTO scene, boolean maybe) {
+    public int getNumberOfMissingActorsForScene(RehearsalDTO rehearsal, SceneDTO scene, boolean maybe, boolean major) {
         /*String sql = "select count(*) from plays_in, roles where scene_id = ? and plays_in.role_id = roles.role_id " +
                 "and roles.actor_id not in (select actor_id from has_no_time where rehearsal_id = ?)";*/
         String sql = "select count(*) from roles, plays_in, has_no_time where has_no_time.rehearsal_id = ? and " +
                 "has_no_time.actor_id = roles.actor_id and roles.role_id = plays_in.role_id and plays_in.scene_id = ?" +
                 " and has_no_time.maybe = ?";
+        if (major) {
+            sql += " and plays_in.minor = 0";
+        }
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, rehearsal.getId());
             stmt.setInt(2, scene.getId());
             stmt.setBoolean(3, maybe);
-            ResultSet rs = stmt.executeQuery();
-            rs.next();
-            return rs.getInt(1);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public int getNumberOfUncertainActorsForScene(RehearsalDTO rehearsalDTO, SceneDTO sceneDTO) {
-        String sql = "select count(*) from has_no_time where rehearsal_id = ? and maybe = 1 and actor_id in " +
-                "(select actor_id from roles where role_id in (select role_id from plays_in where scene_id = ?))";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, rehearsalDTO.getId());
-            stmt.setInt(2, sceneDTO.getId());
             ResultSet rs = stmt.executeQuery();
             rs.next();
             return rs.getInt(1);

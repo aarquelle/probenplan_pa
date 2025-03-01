@@ -28,10 +28,17 @@ public class Possibilities {
     }
 
 
-    public static int getNumberOfMissingActorsForScene(RehearsalDTO rehearsal, SceneDTO scene, boolean maybe) {
+    public static int getNumberOfMissingActorsForScene(RehearsalDTO rehearsal, SceneDTO scene, boolean maybe, boolean major) {
         try (Transaction t = new Transaction()) {
             ReadDAO dao = t.getReadDAO();
-            return dao.getNumberOfMissingActorsForScene(rehearsal, scene, maybe);
+            return dao.getNumberOfMissingActorsForScene(rehearsal, scene, maybe, major);
+        }
+    }
+
+    public static int getNumberOfMinorMissingActorsForScene(RehearsalDTO rehearsal, SceneDTO scene) {
+        try (Transaction t = new Transaction()) {
+            ReadDAO dao = t.getReadDAO();
+            return dao.getNumberOfMissingActorsForScene(rehearsal, scene, false, true);
         }
     }
 
@@ -41,7 +48,7 @@ public class Possibilities {
      */
     public static RehearsalSceneTable missingActors() {
         return mapFunctionToSceneTable((rehearsal, scene)
-                -> getNumberOfMissingActorsForScene(rehearsal, scene, false));
+                -> getNumberOfMissingActorsForScene(rehearsal, scene, false, false));
     }
 
     /**
@@ -49,7 +56,17 @@ public class Possibilities {
      */
     public static RehearsalSceneTable uncertainActors() {
         return mapFunctionToSceneTable((rehearsal, scene)
-                -> getNumberOfMissingActorsForScene(rehearsal, scene, true));
+                -> getNumberOfMissingActorsForScene(rehearsal, scene, true, false));
+    }
+
+    public static RehearsalSceneTable majorMissingActors() {
+        return mapFunctionToSceneTable(
+                (rehearsal, scene) -> getNumberOfMissingActorsForScene(rehearsal, scene, false, true));
+    }
+
+    public static RehearsalSceneTable majorUncertainActors() {
+        return mapFunctionToSceneTable(
+                (rehearsal, scene) -> getNumberOfMissingActorsForScene(rehearsal, scene, true, true));
     }
 
     private static RehearsalSceneTable mapFunctionToSceneTable(
@@ -67,21 +84,5 @@ public class Possibilities {
             return table;
         }
     }
-
-    /*public RehearsalSceneTable tableNumberOfRoles() {
-        try (Transaction t = new Transaction()) {
-            ReadDAO dao = t.getReadDAO();
-            RehearsalSceneTable table = new RehearsalSceneTable();
-            List<RehearsalDTO> rehearsals = dao.getRehearsals();
-            List<SceneDTO> scenes = dao.getScenes();
-            for (RehearsalDTO rehearsal : rehearsals) {
-                for (SceneDTO scene : scenes) {
-                    table.set(reh)
-                }
-            }
-            return table;
-        }
-    }
-    */
 
 }

@@ -6,7 +6,6 @@ import org.aarquelle.probenplan_pa.data.dao.Transaction;
 import org.aarquelle.probenplan_pa.dto.*;
 import org.aarquelle.probenplan_pa.util.Pair;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -186,6 +185,74 @@ class PossibilitiesTest {
     @Test
     public void testUncertainActors() {
         RehearsalSceneTable results = Possibilities.uncertainActors();
+        assertEquals(0, results.get(rehearsal1, scene1));
+        assertEquals(0, results.get(rehearsal1, scene2));
+        assertEquals(0, results.get(rehearsal1, scene3));
+        assertEquals(0, results.get(rehearsal1, scene4));
+        assertEquals(0, results.get(rehearsal1, scene5));
+
+        assertEquals(0, results.get(rehearsal2, scene1));
+        assertEquals(0, results.get(rehearsal2, scene2));
+        assertEquals(0, results.get(rehearsal2, scene3));
+        assertEquals(0, results.get(rehearsal2, scene4));
+        assertEquals(0, results.get(rehearsal2, scene5));
+
+        assertEquals(0, results.get(rehearsal3, scene1));
+        assertEquals(0, results.get(rehearsal3, scene2));
+        assertEquals(0, results.get(rehearsal3, scene3));
+        assertEquals(0, results.get(rehearsal3, scene4));
+        assertEquals(0, results.get(rehearsal3, scene5));
+
+        assertEquals(0, results.get(rehearsal4, scene1));
+        assertEquals(0, results.get(rehearsal4, scene2));
+        assertEquals(0, results.get(rehearsal4, scene3));
+        assertEquals(0, results.get(rehearsal4, scene4));
+        assertEquals(0, results.get(rehearsal4, scene5));
+
+        assertEquals(1, results.get(rehearsal5, scene1));
+        assertEquals(0, results.get(rehearsal5, scene2));
+        assertEquals(1, results.get(rehearsal5, scene3));
+        assertEquals(1, results.get(rehearsal5, scene4));
+        assertEquals(1, results.get(rehearsal5, scene5));
+    }
+
+    @Test
+    public void testMissingMajorActors() {
+        RehearsalSceneTable results = Possibilities.majorMissingActors();
+        assertEquals(1, results.get(rehearsal1, scene1));
+        assertEquals(0, results.get(rehearsal1, scene2));
+        assertEquals(1, results.get(rehearsal1, scene3));
+        assertEquals(1, results.get(rehearsal1, scene4));
+        assertEquals(1, results.get(rehearsal1, scene5));
+
+        assertEquals(0, results.get(rehearsal2, scene1));
+        assertEquals(2, results.get(rehearsal2, scene2));
+        assertEquals(1, results.get(rehearsal2, scene3));
+        assertEquals(0, results.get(rehearsal2, scene4));
+        assertEquals(1, results.get(rehearsal2, scene5));
+
+        assertEquals(0, results.get(rehearsal3, scene1));
+        assertEquals(1, results.get(rehearsal3, scene2));
+        assertEquals(0, results.get(rehearsal3, scene3));
+        assertEquals(0, results.get(rehearsal3, scene4));
+        assertEquals(0, results.get(rehearsal3, scene5));
+
+        assertEquals(0, results.get(rehearsal4, scene1));
+        assertEquals(1, results.get(rehearsal4, scene2));
+        assertEquals(1, results.get(rehearsal4, scene3));
+        assertEquals(0, results.get(rehearsal4, scene4));
+        assertEquals(1, results.get(rehearsal4, scene5));
+
+        assertEquals(0, results.get(rehearsal5, scene1));
+        assertEquals(0, results.get(rehearsal5, scene2));
+        assertEquals(0, results.get(rehearsal5, scene3));
+        assertEquals(0, results.get(rehearsal5, scene4));
+        assertEquals(0, results.get(rehearsal5, scene5));
+    }
+
+    @Test
+    public void testUncertainMajorActors() {
+        RehearsalSceneTable results = Possibilities.majorUncertainActors();
         assertEquals(0, results.get(rehearsal1, scene1));
         assertEquals(0, results.get(rehearsal1, scene2));
         assertEquals(0, results.get(rehearsal1, scene3));

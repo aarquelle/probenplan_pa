@@ -50,6 +50,5 @@ In diesem Modus kannst du sehen, welche Szenen an welchen Tagen geprobt werden k
 - `setNumberOfRehearsals (number)` --- Legt fest, wie oft eine Szene im Schnitt geprobt werden soll. Die Durchlaufprobe ist dabei nicht miteinberechnet.
 - `generate` --- Generiert einen Probenplan basierend auf den Parametern.
 - `showGenerated` --- Zeigt erneut den generierten Probenplan.
-- `setGeneratedDatesInPast` --- Setzt alle Proben und Termine (wie in `setDate`), die sich zum Zeitpunkt des Aufrufs in der Vergangenheit befinden, so, wie sie im generierten Probenplan vorkommen.
 - `setGeneratedDates` --- Setzt alle Proben und Termine (wie in `setDate`) so, wie sie im generierten Probenplan vorkommen.
 - `saveToCsv` --- Generiert eine csv-Datei aus dem generierten Probenplan.
