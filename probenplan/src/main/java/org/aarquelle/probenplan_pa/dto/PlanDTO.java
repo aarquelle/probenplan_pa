@@ -14,19 +14,38 @@ public class PlanDTO {
     }
 
     public List<SceneDTO> get(RehearsalDTO r) {
-        return plan.get(r);
+        List<SceneDTO> scenes = plan.get(r);
+        if (scenes == null) {
+            return Collections.emptyList();
+        } else {
+            scenes.sort(Comparator.comparing(SceneDTO::getPosition));
+            return scenes;
+        }
+    }
+
+    public List<RehearsalDTO> getRehearsals() {
+        List<RehearsalDTO> rehearsals = new ArrayList<>(plan.keySet());
+        rehearsals.sort(Comparator.comparing(RehearsalDTO::getDate));
+        return rehearsals;
+    }
+
+    public List<SceneDTO> getScenes() {
+        Set<SceneDTO> scenes = new HashSet<>();
+        for (List<SceneDTO> sceneList : plan.values()) {
+            scenes.addAll(sceneList);
+        }
+        List<SceneDTO> l = new ArrayList<>(scenes);
+        l.sort(Comparator.comparing(SceneDTO::getPosition));
+        return l;
     }
 
     public String verboseToString() {
         StringBuilder sb = new StringBuilder();
-        List<RehearsalDTO> rehearsals = new ArrayList<>(plan.keySet());
-        rehearsals.sort(Comparator.comparing(RehearsalDTO::getDate));
-
+        List<RehearsalDTO> rehearsals = getRehearsals();
 
         for (RehearsalDTO r : rehearsals) {
             sb.append(r.getDate()).append(": ");
-            List<SceneDTO> scenes = plan.get(r);
-            scenes.sort(Comparator.comparing(SceneDTO::getPosition));
+            List<SceneDTO> scenes = get(r);
             for (SceneDTO scene : scenes) {
                 sb.append(scene.getName()).append(", ");
             }

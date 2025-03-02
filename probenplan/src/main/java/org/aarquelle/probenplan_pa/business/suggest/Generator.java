@@ -70,8 +70,7 @@ public class Generator {
                 RehearsalDTO resultRehearsal = rehearsalCards.getFirst();
                 SceneDTO resultScene = sceneCards.getFirst();
                 if (result.get(resultRehearsal) != null && result.get(resultRehearsal).contains(resultScene)) {
-                    sceneCards.add(resultScene);
-                    sceneCards.removeFirst();
+                    rehearsalCards.removeFirst();
                     continue;
                 }
                 result.put(resultRehearsal, resultScene);
