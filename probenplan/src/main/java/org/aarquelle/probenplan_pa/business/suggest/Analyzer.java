@@ -20,7 +20,13 @@ public class Analyzer {
 
     static RehearsalSceneTable<Double> scoreTable;
 
+    static List<SceneDTO> allScenes;
+    static double lengthOfPlay;
+
     public static void runAnalysis() {
+        allScenes = getAllScenes();
+        lengthOfPlay = calculateLengthOfPlay();
+
         allRoles = tableNumberOfRoles(false);
         majorRoles = tableNumberOfRoles(true);
         allMissing = missingActors();
@@ -28,6 +34,24 @@ public class Analyzer {
         allUncertain = uncertainActors();
         majorUncertain = majorUncertainActors();
         scoreTable = completenessScores();
+    }
+
+    public static List<SceneDTO> getAllScenes() {
+        if (allScenes == null) {
+            try (Transaction t = new Transaction()) {
+                ReadDAO dao = t.getReadDAO();
+                allScenes = dao.getScenes();
+            }
+        }
+        return allScenes;
+    }
+
+    public static double calculateLengthOfPlay() {
+        double result = 0;
+        for (SceneDTO scene : allScenes) {
+            result += scene.getLength();
+        }
+        return result;
     }
 
     public static Map<SceneDTO, Integer> tableNumberOfRoles(boolean onlyMajorRoles) {

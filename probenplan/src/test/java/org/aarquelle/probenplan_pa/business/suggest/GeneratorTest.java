@@ -19,7 +19,7 @@ public class GeneratorTest {
     @Test
     public void testSingleGenerator() {
         ParamsDTO params = new ParamsDTO();
-        Generator generator = new Generator(5, params);
+        Generator generator = new Generator(1, params);
         PlanDTO plan = generator.generatePlan();
         System.out.println(plan.verboseToString());
         Analyzer.runAnalysis();

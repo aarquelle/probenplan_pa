@@ -15,20 +15,21 @@ public class Evaluator {
     List<RehearsalDTO> rehearsals;
     List<SceneDTO> scenes;
 
-    double totalLength;
+
+    double totalLengthOfRehearsals;
 
     public Evaluator (PlanDTO plan, ParamsDTO params) {
         this.plan = plan;
         this.params = params;
         this.rehearsals = plan.getRehearsals();
         this.scenes = plan.getScenes();
-        this.totalLength = plan.totalLength();
+        this.totalLengthOfRehearsals = plan.totalLength();
 
         durchlaufprobe = findDurchlaufprobe();
     }
 
     public double evaluate () {
-        return 0;
+        return totalCompleteness() * 2 + dlpCompleteness();
     }
 
     boolean allScenesBeforeDurchlaufprobe () {
@@ -51,10 +52,19 @@ public class Evaluator {
         throw new IllegalStateException("No Durchlaufprobe found");
     }
 
+    double dlpCompleteness() {
+        double result = 0;
+        for (SceneDTO scene : plan.get(durchlaufprobe)) {
+            result += Analyzer.completenessScore(durchlaufprobe, scene) * scene.getLength() / Analyzer.lengthOfPlay;
+        }
+        return result;
+    }
+
     double totalCompleteness() {
         double result = 0;
         for (Pair<RehearsalDTO, SceneDTO> pair : plan.getAllPairs()) {
-            result += Analyzer.completenessScore(pair.getFirst(), pair.getSecond());
+            result += Analyzer.completenessScore(pair.getFirst(), pair.getSecond())
+                    * pair.getSecond().getLength() / totalLengthOfRehearsals;
         }
 
         return result;

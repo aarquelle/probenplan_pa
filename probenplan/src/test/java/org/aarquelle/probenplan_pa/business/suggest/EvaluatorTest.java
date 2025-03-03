@@ -17,6 +17,8 @@ class EvaluatorTest {
     @BeforeAll
     static void setUp() throws BusinessException {
         createTestData();
+        Analyzer.runAnalysis();
+
         plan1 = new PlanDTO();
         plan1.put(rehearsal1, scene1);
         plan1.put(rehearsal1, scene2);
@@ -52,5 +54,16 @@ class EvaluatorTest {
         assertTrue(evaluator.allScenesBeforeDurchlaufprobe());
 
         assertFalse(new Evaluator(plan2, new ParamsDTO()).allScenesBeforeDurchlaufprobe());
+    }
+
+    @Test
+    void testTotalLength() {
+        assertEquals(12, plan1.totalLength());
+    }
+
+    @Test
+    void testDlpCompleteness() {
+        Evaluator evaluator = new Evaluator(plan1, new ParamsDTO());
+        assertDoubleEquals(0.793333, evaluator.dlpCompleteness());
     }
 }

@@ -27,7 +27,8 @@ public class PlanDTO {
 
     public double totalLength() {
         double length = 0;
-        for (List<SceneDTO> sceneList : plan.values()) {
+        for (RehearsalDTO r : plan.keySet()) {
+            List<SceneDTO> sceneList = plan.get(r);
             for (SceneDTO scene : sceneList) {
                 length += scene.getLength();
             }

@@ -80,22 +80,27 @@ public class TestUtils {
         scene1 = new SceneDTO();
         scene1.setName("Hirtenszene");
         scene1.setPosition(1);
+        scene1.setLength(1);
 
         scene2 = new SceneDTO();
         scene2.setName("Botenszene");
         scene2.setPosition(2);
+        scene2.setLength(1);
 
         scene3 = new SceneDTO();
         scene3.setName("Herausforderung");
         scene3.setPosition(3);
+        scene3.setLength(1);
 
         scene4 = new SceneDTO();
         scene4.setName("Monolog");
         scene4.setPosition(4);
+        scene4.setLength(1);
 
         scene5 = new SceneDTO();
         scene5.setName("Kampf");
         scene5.setPosition(5);
+        scene5.setLength(1);
 
         Creator.createScene(scene1, scene2, scene3, scene4, scene5);
 
