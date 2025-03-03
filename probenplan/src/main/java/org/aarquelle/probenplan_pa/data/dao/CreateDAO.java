@@ -48,7 +48,6 @@ public class CreateDAO extends AbstractDAO{
                 role.setId(rs.getInt(1));
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
             if (e.getMessage().contains("UNIQUE constraint failed")) {
                 throw new DuplicateException("Role names have to be unique!", e);
             } else {

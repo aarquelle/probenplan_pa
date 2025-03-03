@@ -1,5 +1,7 @@
 package org.aarquelle.probenplan_pa.dto;
 
+import org.aarquelle.probenplan_pa.util.Pair;
+
 import java.util.*;
 
 public class PlanDTO {
@@ -63,5 +65,11 @@ public class PlanDTO {
             sb.append("\n");
         }
         return sb.toString();
+    }
+
+    public List<Pair<RehearsalDTO, SceneDTO>> getAllPairs() {
+        List<Pair<RehearsalDTO, SceneDTO>> pairs = new ArrayList<>();
+        plan.forEach((r, value) -> value.forEach(s -> pairs.add(new Pair<>(r, s))));
+        return pairs;
     }
 }

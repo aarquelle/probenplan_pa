@@ -1,10 +1,10 @@
 package org.aarquelle.probenplan_pa.business.suggest;
 
 import org.aarquelle.probenplan_pa.dto.*;
+import org.aarquelle.probenplan_pa.util.Pair;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class Evaluator {
@@ -14,12 +14,6 @@ public class Evaluator {
     ParamsDTO params;
     List<RehearsalDTO> rehearsals;
     List<SceneDTO> scenes;
-    Map<SceneDTO, Integer> allRoles;
-    Map<SceneDTO, Integer> majorRoles;
-    RehearsalSceneTable allMissing;
-    RehearsalSceneTable majorMissing;
-    RehearsalSceneTable allUncertain;
-    RehearsalSceneTable majorUncertain;
 
     double totalLength;
 
@@ -29,12 +23,6 @@ public class Evaluator {
         this.rehearsals = plan.getRehearsals();
         this.scenes = plan.getScenes();
         this.totalLength = plan.totalLength();
-        this.allRoles = Analyzer.tableNumberOfRoles(false);
-        this.majorRoles = Analyzer.tableNumberOfRoles(true);
-        this.allMissing = Analyzer.missingActors();
-        this.majorMissing = Analyzer.majorMissingActors();
-        this.allUncertain = Analyzer.uncertainActors();
-        this.majorUncertain = Analyzer.majorUncertainActors();
 
         durchlaufprobe = findDurchlaufprobe();
     }
@@ -63,9 +51,12 @@ public class Evaluator {
         throw new IllegalStateException("No Durchlaufprobe found");
     }
 
+    double totalCompleteness() {
+        double result = 0;
+        for (Pair<RehearsalDTO, SceneDTO> pair : plan.getAllPairs()) {
+            result += Analyzer.completenessScore(pair.getFirst(), pair.getSecond());
+        }
 
-
-    private double proportionalImportance (SceneDTO scene) {
-        return scene.getLength() / totalLength;
+        return result;
     }
 }
