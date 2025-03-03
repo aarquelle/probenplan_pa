@@ -1,11 +1,7 @@
 package org.aarquelle.probenplan_pa.business.suggest;
 
-import org.aarquelle.probenplan_pa.TestUtils;
 import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.business.create.Creator;
-import org.aarquelle.probenplan_pa.data.dao.Transaction;
 import org.aarquelle.probenplan_pa.dto.*;
-import org.aarquelle.probenplan_pa.util.Pair;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +10,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.aarquelle.probenplan_pa.TestUtils.*;
 
-class PossibilitiesTest {
-
+class AnalyzerTest {
 
 
     @BeforeAll
@@ -25,14 +20,14 @@ class PossibilitiesTest {
 
     @Test
     public void testNumberOfActors() {
-        Map<SceneDTO, Integer> allRoles = Possibilities.tableNumberOfRoles(false);
+        Map<SceneDTO, Integer> allRoles = Analyzer.tableNumberOfRoles(false);
         assertEquals(2, allRoles.get(scene1));
         assertEquals(2, allRoles.get(scene2));
         assertEquals(2, allRoles.get(scene3));
         assertEquals(1, allRoles.get(scene4));
         assertEquals(3, allRoles.get(scene5));
 
-        Map<SceneDTO, Integer> majorRoles = Possibilities.tableNumberOfRoles(true);
+        Map<SceneDTO, Integer> majorRoles = Analyzer.tableNumberOfRoles(true);
         assertEquals(1, majorRoles.get(scene1));
         assertEquals(2, majorRoles.get(scene2));
         assertEquals(2, majorRoles.get(scene3));
@@ -43,7 +38,7 @@ class PossibilitiesTest {
 
     @Test
     public void testMissingActors() {
-        RehearsalSceneTable results = Possibilities.missingActors();
+        RehearsalSceneTable<Integer> results = Analyzer.missingActors();
         assertEquals(1, results.get(rehearsal1, scene1));
         assertEquals(0, results.get(rehearsal1, scene2));
         assertEquals(1, results.get(rehearsal1, scene3));
@@ -77,7 +72,7 @@ class PossibilitiesTest {
 
     @Test
     public void testUncertainActors() {
-        RehearsalSceneTable results = Possibilities.uncertainActors();
+        RehearsalSceneTable<Integer> results = Analyzer.uncertainActors();
         assertEquals(0, results.get(rehearsal1, scene1));
         assertEquals(0, results.get(rehearsal1, scene2));
         assertEquals(0, results.get(rehearsal1, scene3));
@@ -111,7 +106,7 @@ class PossibilitiesTest {
 
     @Test
     public void testMissingMajorActors() {
-        RehearsalSceneTable results = Possibilities.majorMissingActors();
+        RehearsalSceneTable<Integer> results = Analyzer.majorMissingActors();
         assertEquals(1, results.get(rehearsal1, scene1));
         assertEquals(0, results.get(rehearsal1, scene2));
         assertEquals(1, results.get(rehearsal1, scene3));
@@ -145,7 +140,7 @@ class PossibilitiesTest {
 
     @Test
     public void testUncertainMajorActors() {
-        RehearsalSceneTable results = Possibilities.majorUncertainActors();
+        RehearsalSceneTable<Integer> results = Analyzer.majorUncertainActors();
         assertEquals(0, results.get(rehearsal1, scene1));
         assertEquals(0, results.get(rehearsal1, scene2));
         assertEquals(0, results.get(rehearsal1, scene3));
@@ -175,5 +170,17 @@ class PossibilitiesTest {
         assertEquals(1, results.get(rehearsal5, scene3));
         assertEquals(1, results.get(rehearsal5, scene4));
         assertEquals(1, results.get(rehearsal5, scene5));
+    }
+
+    @Test
+    void testCompletenessScore() {
+        Analyzer.runAnalysis();
+        RehearsalSceneTable<Double> results = Analyzer.scoreTable;
+        
+        assertDoubleEquals(1.0/3, results.get(rehearsal1, scene1));
+        assertDoubleEquals(1, results.get(rehearsal1, scene2));
+        assertDoubleEquals(0.5, results.get(rehearsal1, scene3));
+        assertDoubleEquals(0, results.get(rehearsal1, scene4));
+        assertDoubleEquals(3.0/5, results.get(rehearsal1, scene5));
     }
 }

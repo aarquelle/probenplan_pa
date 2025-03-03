@@ -9,6 +9,8 @@ import org.aarquelle.probenplan_pa.dto.RoleDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
 import org.aarquelle.probenplan_pa.util.Pair;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class TestUtils {
 
     public static ActorDTO alice, charlie, bob;
@@ -125,5 +127,12 @@ public class TestUtils {
         Creator.hasNoTime(rehearsal3, new Pair<>(charlie, false));
         Creator.hasNoTime(rehearsal4, new Pair<>(bob, false));
         Creator.hasNoTime(rehearsal5, new Pair<>(alice, true));
+    }
+
+
+
+
+    public static void assertDoubleEquals(double expected, double actual) {
+        assertEquals(expected, actual, 0.0001);
     }
 }
