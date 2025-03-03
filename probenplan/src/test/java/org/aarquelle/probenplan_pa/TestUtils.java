@@ -16,6 +16,27 @@ public class TestUtils {
     public static SceneDTO scene1, scene2, scene3, scene4, scene5;
     public static RehearsalDTO rehearsal1, rehearsal2, rehearsal3, rehearsal4, rehearsal5;
 
+
+    /**
+     * Testszenario:
+     * <p>
+     * Alice spielt den Helden, Bob den Bösewicht und Charlie den Boten und den Hirten.
+     * <p>
+     * Szene 1: Hirtenszene: Held, Hirte (klein)
+     * Szene 2: Botenszene: Bösewicht, Bote
+     * Szene 3: Herausforderung: Held trifft Bösewicht.
+     * Szene 4: Monolog: Held hält Monolog.
+     * Szene 5: Kampf: Held trifft Bösewicht und Boten (klein).
+     * <p>
+     * Proben:
+     * 1.1, 1.2, 1.3, 1.4, 1.5 2025
+     * <p>
+     * Alice kann am 1.1 nicht. Also: Nur Szene 2 am 1.1
+     * Nur Alice kann am 1.2. Also: Szene 1 semi, Szene 4 am 1.2
+     * Charlie kann am 1.3 nicht. Also: Szenen 3 und 4 ganz, Szenen 1 und 5 semi, Szene 2 gar nicht
+     * Bob kann am 1.4 nicht. Also: Szene 1 und 4 ganz, Szenen 2, 3 und 5 gar nicht.
+     * Am 1.5 können alle, aber Alice nur vielleicht. Also: Szene 2 ganz, Szenen 1, 3, 4, 5 semi.
+     */
     public static void createTestData() throws BusinessException {
 
         Transaction.onStartup();

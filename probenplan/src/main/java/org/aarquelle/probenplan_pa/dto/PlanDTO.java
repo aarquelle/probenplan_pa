@@ -23,6 +23,16 @@ public class PlanDTO {
         }
     }
 
+    public double totalLength() {
+        double length = 0;
+        for (List<SceneDTO> sceneList : plan.values()) {
+            for (SceneDTO scene : sceneList) {
+                length += scene.getLength();
+            }
+        }
+        return length;
+    }
+
     public List<RehearsalDTO> getRehearsals() {
         List<RehearsalDTO> rehearsals = new ArrayList<>(plan.keySet());
         rehearsals.sort(Comparator.comparing(RehearsalDTO::getDate));

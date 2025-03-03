@@ -54,4 +54,17 @@ class EvaluatorTest {
         assertFalse(new Evaluator(plan2, new ParamsDTO()).allScenesBeforeDurchlaufprobe());
     }
 
+    @Test
+    void testCompletenessScore() {
+        Evaluator evaluator = new Evaluator(plan1, new ParamsDTO());
+        assertDoubleEquals(1.0/3, evaluator.completenessScore(rehearsal1, scene1));
+        assertDoubleEquals(1, evaluator.completenessScore(rehearsal1, scene2));
+        assertDoubleEquals(0.5, evaluator.completenessScore(rehearsal1, scene3));
+        assertDoubleEquals(0, evaluator.completenessScore(rehearsal1, scene4));
+        assertDoubleEquals(3.0/5, evaluator.completenessScore(rehearsal1, scene5));
+    }
+
+    private void assertDoubleEquals(double expected, double actual) {
+        assertEquals(expected, actual, 0.0001);
+    }
 }
