@@ -62,7 +62,7 @@ public class ReadDAO extends AbstractDAO {
 
 
     public List<SceneDTO> getScenes() {
-        String sql = "select * from scenes";
+        String sql = "select * from scenes order by position asc";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             List<SceneDTO> results = new ArrayList<>();

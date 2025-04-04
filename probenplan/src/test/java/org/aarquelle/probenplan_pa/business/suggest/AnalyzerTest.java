@@ -5,10 +5,13 @@ import org.aarquelle.probenplan_pa.dto.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.aarquelle.probenplan_pa.TestUtils.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AnalyzerTest {
 
@@ -182,5 +185,39 @@ class AnalyzerTest {
         assertDoubleEquals(0.5, results.get(rehearsal1, scene3));
         assertDoubleEquals(0, results.get(rehearsal1, scene4));
         assertDoubleEquals(3.0/5, results.get(rehearsal1, scene5));
+    }
+
+    @Test
+    void testGetAllScenes() {
+        List<SceneDTO> scenes = Analyzer.getAllScenes();
+        assertEquals(5, scenes.size());
+        assertEquals(scene1, scenes.get(0));
+        assertEquals(scene2, scenes.get(1));
+        assertEquals(scene3, scenes.get(2));
+        assertEquals(scene4, scenes.get(3));
+        assertEquals(scene5, scenes.get(4));
+    }
+
+    @Test
+    void testIsNextScene() {
+        Analyzer.runAnalysis();
+        assertTrue(Analyzer.isNextScene(scene1, scene2));
+        assertTrue(Analyzer.isNextScene(scene2, scene3));
+        assertTrue(Analyzer.isNextScene(scene3, scene4));
+        assertTrue(Analyzer.isNextScene(scene4, scene5));
+        assertFalse(Analyzer.isNextScene(scene5, scene1));
+        assertFalse(Analyzer.isNextScene(scene1, scene3));
+    }
+
+    @Test
+    void testNumberOfLumps() {
+        Analyzer.runAnalysis();
+        assertEquals(1, Analyzer.getNumberOfLumps(scene1));
+        assertEquals(1, Analyzer.getNumberOfLumps(scene5));
+        assertEquals(1, Analyzer.getNumberOfLumps(scene1, scene2, scene3));
+        assertEquals(1, Analyzer.getNumberOfLumps(scene2, scene1, scene3));
+        assertEquals(2, Analyzer.getNumberOfLumps(scene1, scene3));
+        assertEquals(2, Analyzer.getNumberOfLumps(scene1, scene3, scene4, scene5));
+        assertEquals(3, Analyzer.getNumberOfLumps(scene1, scene3, scene5));
     }
 }

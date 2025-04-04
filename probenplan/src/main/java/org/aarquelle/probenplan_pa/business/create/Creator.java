@@ -61,7 +61,7 @@ public class Creator {
     public static void takesPart(SceneDTO scene, Pair<RoleDTO, Boolean>... role) throws BusinessException {
         try (Transaction t = new Transaction()) {
             for (Pair<RoleDTO, Boolean> r : role) {
-                t.getCreateDAO().createPlaysIn(scene, r.getFirst(), r.getSecond());
+                t.getCreateDAO().createPlaysIn(scene, r.first(), r.second());
             }
             t.commit();
         } catch (DuplicateException e) {
@@ -80,7 +80,7 @@ public class Creator {
     public static void hasNoTime(RehearsalDTO rehearsal, Pair<ActorDTO, Boolean>... actor) throws BusinessException {
         try (Transaction t = new Transaction()) {
             for (Pair<ActorDTO, Boolean> a : actor) {
-                t.getCreateDAO().createHasNoTime(a.getFirst(), rehearsal, a.getSecond());
+                t.getCreateDAO().createHasNoTime(a.first(), rehearsal, a.second());
             }
             t.commit();
         } catch (DuplicateException e) {

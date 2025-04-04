@@ -102,7 +102,7 @@ public class TestUtils {
         scene5.setPosition(5);
         scene5.setLength(1);
 
-        Creator.createScene(scene1, scene2, scene3, scene4, scene5);
+        Creator.createScene(scene5, scene2, scene3, scene4, scene1);
 
         rehearsal1 = new RehearsalDTO();
         rehearsal1.setDate(java.sql.Date.valueOf("2025-01-01"));

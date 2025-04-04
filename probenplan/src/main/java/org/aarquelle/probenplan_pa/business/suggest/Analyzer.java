@@ -145,6 +145,21 @@ public class Analyzer {
         return 1 - score;
     }
 
+    public static boolean isNextScene(SceneDTO first, SceneDTO second) {
+        return allScenes.indexOf(first) + 1 == allScenes.indexOf(second);
+    }
+
+    public static int getNumberOfLumps(SceneDTO... scenes) {
+        Arrays.sort(scenes);
+        int result = 1;
+        for (int i = 0; i < scenes.length - 1; i++) {
+            if (!isNextScene(scenes[i], scenes[i + 1])) {
+                result++;
+            }
+        }
+        return result;
+    }
+
     private static double ratio (int a, int b) {
         if (b != 0) {
             return a / (double) b;

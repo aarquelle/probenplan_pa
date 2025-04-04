@@ -23,7 +23,7 @@ public class GeneratorTest {
         PlanDTO plan = generator.generatePlan();
         System.out.println(plan.verboseToString());
         Analyzer.runAnalysis();
-        System.out.println(new Evaluator(plan, params).totalCompleteness());
+        System.out.println(new Evaluator(plan, params).evaluate());
     }
 
     @Test
@@ -33,10 +33,10 @@ public class GeneratorTest {
         double maximum = 0;
         PlanDTO maxPlan = null;
         int basisSeed = 0;
-        for (int i = basisSeed; i < basisSeed + 1000; i++) {
+        for (int i = basisSeed; i < basisSeed + 10000; i++) {
             Generator generator = new Generator(i, params);
             PlanDTO plan = generator.generatePlan();
-            double result = new Evaluator(plan, params).totalCompleteness();
+            double result = new Evaluator(plan, params).evaluate();
             if (result > maximum) {
                 maximum = result;
                 maxPlan = plan;

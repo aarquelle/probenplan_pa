@@ -1,6 +1,8 @@
 package org.aarquelle.probenplan_pa.dto;
 
-public class SceneDTO {
+import org.jetbrains.annotations.NotNull;
+
+public class SceneDTO implements Comparable<SceneDTO> {
     private int id;
     private String name;
     private double length;
@@ -48,5 +50,10 @@ public class SceneDTO {
     @Override
     public int hashCode() {
         return getName().hashCode();
+    }
+
+    @Override
+    public int compareTo(@NotNull SceneDTO o) {
+        return Double.compare(this.getPosition(), o.getPosition());
     }
 }

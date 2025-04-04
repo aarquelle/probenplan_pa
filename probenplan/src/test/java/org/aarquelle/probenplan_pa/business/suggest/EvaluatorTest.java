@@ -66,4 +66,18 @@ class EvaluatorTest {
         Evaluator evaluator = new Evaluator(plan1, new ParamsDTO());
         assertDoubleEquals(0.793333, evaluator.dlpCompleteness());
     }
+
+    @Test
+    void testBeforeDlpCompleteness() {
+        Evaluator evaluator = new Evaluator(plan1, new ParamsDTO());
+        assertDoubleEquals(0.6466666666667, evaluator.completenessBeforeDLP());
+    }
+
+    @Test
+    void testLumpiness() {
+        Evaluator evaluator = new Evaluator(plan1, new ParamsDTO());
+        assertDoubleEquals(1.0, evaluator.lumpiness());
+        evaluator = new Evaluator(plan2, new ParamsDTO());
+        assertDoubleEquals(0.9, evaluator.lumpiness());
+    }
 }
