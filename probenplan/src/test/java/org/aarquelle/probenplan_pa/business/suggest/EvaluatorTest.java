@@ -80,4 +80,16 @@ class EvaluatorTest {
         evaluator = new Evaluator(plan2, new ParamsDTO());
         assertDoubleEquals(0.9, evaluator.lumpiness());
     }
+
+    @Test
+    void testNumberOfRepeats() {
+        Evaluator evaluator = new Evaluator(plan1, new ParamsDTO());
+        assertEquals(3, evaluator.numberOfRepeats.get(scene1));
+        assertEquals(2, evaluator.numberOfRepeats.get(scene2));
+        assertEquals(2, evaluator.numberOfRepeats.get(scene3));
+        assertEquals(2, evaluator.numberOfRepeats.get(scene4));
+        assertEquals(3, evaluator.numberOfRepeats.get(scene5));
+        assertEquals(10.0/12, evaluator.getMinimumRepeats());
+        assertEquals(10.0/12, evaluator.getMedianRepeats());
+    }
 }

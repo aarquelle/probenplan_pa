@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.random.RandomGenerator;
 
 public class Generator {
     Random random;
     List<RehearsalDTO> rehearsals;
     List<SceneDTO> scenes;
     ParamsDTO params;
+
 
     public Generator(long seed, ParamsDTO params) {
         scenes = BasicService.getScenes();
@@ -29,10 +29,8 @@ public class Generator {
     }
 
     private void validateParams() {
-        if (params.getAverageNumberOfRepeats() < 1) {
-            throw new IllegalArgumentException("Average number of repeats must be at least 1");
-        } else if (params.getAverageNumberOfRepeats() >= rehearsals.size()) {
-            throw new IllegalArgumentException("Average number of repeats must be less than the number of rehearsals");
+        if (params.getAverageRehearsalLength() < 0) {
+            throw new IllegalArgumentException("Average number of repeats must be positive");
         }
 
         if (params.getEarliestDurchlaufprobe() < 0 || params.getEarliestDurchlaufprobe() > 1) {
@@ -55,10 +53,26 @@ public class Generator {
                 params.getEarliestDurchlaufprobe(), params.getLatestDurchlaufprobe());
         addDurchlaufprobe(result, durchlaufprobe);
 
-        List<SceneDTO> sceneCards = new ArrayList<>();
+
+        double lengthOfPlay = scenes.stream()
+                .mapToDouble(SceneDTO::getLength)
+                .sum();
+        int amountOfAllScenes = (int)((params.getAverageRehearsalLength() * scenes.size() * rehearsals.size())
+                / lengthOfPlay);
+
+        for (int i = 0; i < amountOfAllScenes; i++) {
+            RehearsalDTO rehearsal = durchlaufprobe;
+            while (rehearsal == durchlaufprobe) {
+                rehearsal = rehearsals.get(random.nextInt(rehearsals.size()));
+            }
+            SceneDTO scene = scenes.get(random.nextInt(scenes.size()));
+            result.put(rehearsal, scene);
+        }
+
+        /*List<SceneDTO> sceneCards = new ArrayList<>();
         List<RehearsalDTO> rehearsalCards = new ArrayList<>();
 
-        for (int i = 0; i < params.getAverageNumberOfRepeats(); i++) { //TODO check for non-integer values
+        for (int i = 0; i < params.getAverageRehearsalLength(); i++) { //TODO check for non-integer values
             sceneCards.addAll(scenes);
             Collections.shuffle(sceneCards, random);
             while (!sceneCards.isEmpty()) {
@@ -77,7 +91,7 @@ public class Generator {
                 rehearsalCards.removeFirst();
                 sceneCards.removeFirst();
             }
-        }
+        }*/
 
         return result;
     }

@@ -3,7 +3,7 @@ package org.aarquelle.probenplan_pa.dto;
 public class ParamsDTO {
     private double earliestDurchlaufprobe = 0.33;
     private double latestDurchlaufprobe = 0.66;
-    private double averageNumberOfRepeats = 2;
+    private double averageRehearsalLength = 2;
 
     public double getEarliestDurchlaufprobe() {
         return earliestDurchlaufprobe;
@@ -21,11 +21,11 @@ public class ParamsDTO {
         this.latestDurchlaufprobe = latestDurchlaufprobe;
     }
 
-    public double getAverageNumberOfRepeats() {
-        return averageNumberOfRepeats;
+    public double getAverageRehearsalLength() {
+        return averageRehearsalLength;
     }
 
-    public void setAverageNumberOfRepeats(double averageNumberOfRepeats) {
-        this.averageNumberOfRepeats = averageNumberOfRepeats;
+    public void setAverageRehearsalLength(double averageRehearsalLength) {
+        this.averageRehearsalLength = averageRehearsalLength;
     }
 }

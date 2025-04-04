@@ -18,6 +18,9 @@ public class Evaluator {
     List<RehearsalDTO> rehearsals;
     List<SceneDTO> scenes;
 
+    double expectedNumberOfRepeats;
+    Map<SceneDTO, Integer> numberOfRepeats;
+
 
     double totalLengthOfRehearsals;
 
@@ -27,6 +30,9 @@ public class Evaluator {
         this.rehearsals = plan.getRehearsals();
         this.scenes = plan.getScenes();
         this.totalLengthOfRehearsals = plan.totalLength();
+        this.expectedNumberOfRepeats = getExpectedNumberOfRepeats();
+
+        this.numberOfRepeats = getNumberOfRepeats();
 
         durchlaufprobe = findDurchlaufprobe();
     }
@@ -35,7 +41,9 @@ public class Evaluator {
         return totalCompleteness() * 2
                 + dlpCompleteness() * 1
                 + completenessBeforeDLP() * 1
-                + lumpiness() * 0.5;
+                + lumpiness() * 0.5
+                + getMinimumRepeats() * 1
+                + getMedianRepeats() * 0.5;
     }
 
     boolean allScenesBeforeDurchlaufprobe () {
@@ -104,6 +112,13 @@ public class Evaluator {
         return result;
     }
 
+    /**
+     * Calculates the lumpiness of the rehearsal plan.
+     * The lumpiness higher, the fewer different lumps there are.
+     * A lump is a sequence of continuous scenes within a rehearsal.
+     *
+     * @return the lumpiness of the rehearsal plan
+     */
     double lumpiness() {
         double result = 0;
 
@@ -113,5 +128,35 @@ public class Evaluator {
             result += 1.0 / numberOfLumps;
         }
         return result / rehearsals.size();
+    }
+
+    double getExpectedNumberOfRepeats() {
+        return (double)plan.getAllPairs().size() / scenes.size();
+    }
+
+    double getMinimumRepeats() {
+        return numberOfRepeats.values().stream()
+                .mapToInt(Integer::intValue)
+                .min()
+                .orElse(0) / expectedNumberOfRepeats;
+    }
+
+    double getMedianRepeats() {
+        return numberOfRepeats.values().stream()
+                .mapToInt(Integer::intValue)
+                .sorted()
+                .skip(numberOfRepeats.size() / 2)
+                .findFirst()
+                .orElse(0) / expectedNumberOfRepeats;
+    }
+
+    public Map<SceneDTO, Integer> getNumberOfRepeats() {
+        if (numberOfRepeats == null) {
+            numberOfRepeats = new HashMap<>();
+            for (Pair<RehearsalDTO, SceneDTO> pair : plan.getAllPairs()) {
+                numberOfRepeats.put(pair.second(), numberOfRepeats.getOrDefault(pair.second(), 0) + 1);
+            }
+        }
+        return numberOfRepeats;
     }
 }
