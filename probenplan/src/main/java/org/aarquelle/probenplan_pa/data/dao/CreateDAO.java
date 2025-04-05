@@ -127,4 +127,40 @@ public class CreateDAO extends AbstractDAO{
             }
         }
     }
+
+    public void lockScene(SceneDTO scene, RehearsalDTO rehearsal) throws DuplicateException {
+        String sql = "insert into locked_scenes (scene_id, rehearsal_id) values (?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, scene.getId());
+            stmt.setInt(2, rehearsal.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getMessage().contains("UNIQUE constraint failed")) {
+                throw new DuplicateException("A scene can only be locked once per rehearsal!", e);
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void removeLock(SceneDTO scene, RehearsalDTO rehearsal) {
+        String sql = "delete from locked_scenes where scene_id = ? and rehearsal_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, scene.getId());
+            stmt.setInt(2, rehearsal.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings("SqlWithoutWhere")
+    public void clearLocks() {
+        String sql = "delete from locked_scenes";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

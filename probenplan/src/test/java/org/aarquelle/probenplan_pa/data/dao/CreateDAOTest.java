@@ -6,6 +6,7 @@ import org.aarquelle.probenplan_pa.dto.ActorDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.RoleDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.util.Pair;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -245,6 +246,25 @@ class CreateDAOTest {
 
             List<ActorDTO> results3 = readDao.getMissingActorsForRehearsal(p1, false);
             assertEquals(0, results3.size());
+        }
+    }
+
+    @Test
+    void testLocks() throws Exception {
+        try (Transaction t = new Transaction()) {
+            CreateDAO createDAO = t.getCreateDAO();
+            createDAO.createRehearsal(p1);
+            createDAO.createScene(s1);
+            createDAO.lockScene(s1, p1);
+            t.commit();
+        }
+
+        try (Transaction t = new Transaction()) {
+            ReadDAO readDao = t.getReadDAO();
+            List<Pair<RehearsalDTO, SceneDTO>> results = readDao.getLockedScenes();
+            assertEquals(1, results.size());
+            assertEquals(p1, results.getFirst().first());
+            assertEquals(s1, results.getFirst().second());
         }
     }
 

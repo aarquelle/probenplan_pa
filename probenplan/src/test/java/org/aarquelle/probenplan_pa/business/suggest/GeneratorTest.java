@@ -1,13 +1,17 @@
 package org.aarquelle.probenplan_pa.business.suggest;
 
 import org.aarquelle.probenplan_pa.business.BusinessException;
+import org.aarquelle.probenplan_pa.business.create.Creator;
 import org.aarquelle.probenplan_pa.dto.PlanDTO;
+import org.aarquelle.probenplan_pa.util.Pair;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.aarquelle.probenplan_pa.dto.ParamsDTO;
 
 import static org.aarquelle.probenplan_pa.TestUtils.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GeneratorTest {
 
@@ -45,5 +49,17 @@ public class GeneratorTest {
         }
         assertNotNull(maxPlan);
         System.out.println(maxPlan.verboseToString());
+    }
+
+    @Test
+    public void testLocks() throws BusinessException {
+        ParamsDTO params = new ParamsDTO();
+        Generator generator = new Generator(1, params);
+
+        Creator.lockScene(scene1, rehearsal1);
+
+        PlanDTO plan = generator.generatePlan();
+        System.out.println(plan.verboseToString());
+        assertTrue(plan.get(rehearsal1).contains(scene1));
     }
 }

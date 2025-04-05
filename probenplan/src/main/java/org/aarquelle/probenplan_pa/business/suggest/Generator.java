@@ -5,6 +5,7 @@ import org.aarquelle.probenplan_pa.dto.ParamsDTO;
 import org.aarquelle.probenplan_pa.dto.PlanDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,7 +61,12 @@ public class Generator {
         int amountOfAllScenes = (int)((params.getAverageRehearsalLength() * scenes.size() * rehearsals.size())
                 / lengthOfPlay);
 
-        for (int i = 0; i < amountOfAllScenes; i++) {
+        List<Pair<RehearsalDTO, SceneDTO>> lockedScenes = BasicService.getLockedScenes();
+        for (Pair<RehearsalDTO, SceneDTO> pair : lockedScenes) {
+            result.put(pair.first(), pair.second());
+        }
+
+        for (int i = 0; i < amountOfAllScenes - lockedScenes.size(); i++) {
             RehearsalDTO rehearsal = durchlaufprobe;
             while (rehearsal == durchlaufprobe) {
                 rehearsal = rehearsals.get(random.nextInt(rehearsals.size()));

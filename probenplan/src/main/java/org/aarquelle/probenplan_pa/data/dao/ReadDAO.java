@@ -4,6 +4,7 @@ import org.aarquelle.probenplan_pa.dto.ActorDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.RoleDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.util.Pair;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -191,6 +192,29 @@ public class ReadDAO extends AbstractDAO {
             ResultSet rs = stmt.executeQuery();
             rs.next();
             return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Pair<RehearsalDTO, SceneDTO>> getLockedScenes() {
+        String sql = "select rehearsals.rehearsal_id, rehearsals.day, scenes.scene_id, scene_name " +
+                "from locked_scenes, rehearsals, scenes " +
+                "where locked_scenes.rehearsal_id = rehearsals.rehearsal_id " +
+                "and locked_scenes.scene_id = scenes.scene_id";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            List<Pair<RehearsalDTO, SceneDTO>> results = new ArrayList<>();
+            while (rs.next()) {
+                RehearsalDTO rehearsal = new RehearsalDTO();
+                rehearsal.setId(rs.getInt("rehearsal_id"));
+                rehearsal.setDate(rs.getDate("day"));
+                SceneDTO scene = new SceneDTO();
+                scene.setId(rs.getInt("scene_id"));
+                scene.setName(rs.getString("scene_name"));
+                results.add(new Pair<>(rehearsal, scene));
+            }
+            return results;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

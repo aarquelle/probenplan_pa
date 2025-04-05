@@ -72,11 +72,22 @@ public class DBManager extends AbstractDAO {
                         )
                         """
         );
+
+        executeUpdate(
+                """
+                        create table if not exists locked_scenes (
+                            rehearsal_id INTEGER references rehearsals not null,
+                            scene_id INTEGER references scenes not null,
+                            CONSTRAINT unq unique (rehearsal_id, scene_id)
+                        )
+                    """
+        );
     }
 
     public void clearDB() {
         executeUpdate("drop table if exists plays_in;");
         executeUpdate("drop table if exists has_no_time;");
+        executeUpdate("drop table if exists locked_scenes;");
         executeUpdate("drop table if exists rehearsals;");
         executeUpdate("drop table if exists scenes;");
         executeUpdate("drop table if exists roles;");

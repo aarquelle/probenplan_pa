@@ -87,4 +87,27 @@ public class Creator {
             throw new BusinessException(e.getMessage());
         }
     }
+
+    public static void lockScene(SceneDTO scene, RehearsalDTO rehearsal) throws BusinessException {
+        try (Transaction t = new Transaction()) {
+            t.getCreateDAO().lockScene(scene, rehearsal);
+            t.commit();
+        } catch (DuplicateException e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    public static void removeLock(SceneDTO scene, RehearsalDTO rehearsal) {
+        try (Transaction t = new Transaction()) {
+            t.getCreateDAO().removeLock(scene, rehearsal);
+            t.commit();
+        }
+    }
+
+    public static void clearLocks() {
+        try (Transaction t = new Transaction()) {
+            t.getCreateDAO().clearLocks();
+            t.commit();
+        }
+    }
 }
