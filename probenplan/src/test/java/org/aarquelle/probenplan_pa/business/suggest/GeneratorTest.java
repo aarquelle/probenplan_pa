@@ -61,5 +61,7 @@ public class GeneratorTest {
         PlanDTO plan = generator.generatePlan();
         System.out.println(plan.verboseToString());
         assertTrue(plan.get(rehearsal1).contains(scene1));
+
+        Creator.clearLocks();
     }
 }

@@ -99,6 +99,7 @@ public class Generator {
             }
         }*/
 
+        clearDuplicates(result);
         return result;
     }
 
@@ -117,6 +118,23 @@ public class Generator {
     private void addDurchlaufprobe(PlanDTO plan, RehearsalDTO rehearsal) {
         for (SceneDTO scene : scenes) {
             plan.put(rehearsal, scene);
+        }
+    }
+
+    static void clearDuplicates(PlanDTO plan) {
+        List<RehearsalDTO> rehearsals = plan.getRehearsals();
+        for (RehearsalDTO rehearsal : rehearsals) {
+            List<SceneDTO> scenes = plan.get(rehearsal);
+            List<SceneDTO> uniqueScenes = new ArrayList<>();
+            for (int i = 0; i < scenes.size(); i++) {
+                SceneDTO scene = scenes.get(i);
+                if (!uniqueScenes.contains(scene)) {
+                    uniqueScenes.add(scene);
+                } else {
+                    scenes.remove(scene);
+                    i--;
+                }
+            }
         }
     }
 }

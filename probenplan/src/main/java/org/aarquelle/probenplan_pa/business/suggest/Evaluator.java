@@ -19,12 +19,12 @@ public class Evaluator {
     List<SceneDTO> scenes;
 
     double expectedNumberOfRepeats;
-    Map<SceneDTO, Integer> numberOfRepeats;
+    Map<SceneDTO, Double> numberOfRepeats;
 
 
     double totalLengthOfRehearsals;
 
-    public Evaluator (PlanDTO plan, ParamsDTO params) {
+    public Evaluator(PlanDTO plan, ParamsDTO params) {
         this.plan = plan;
         this.params = params;
         this.rehearsals = plan.getRehearsals();
@@ -37,7 +37,7 @@ public class Evaluator {
         durchlaufprobe = findDurchlaufprobe();
     }
 
-    public double evaluate () {
+    public double evaluate() {
         return totalCompleteness() * 2
                 + dlpCompleteness() * 1
                 + completenessBeforeDLP() * 1
@@ -46,7 +46,7 @@ public class Evaluator {
                 + getMedianRepeats() * 0.5;
     }
 
-    boolean allScenesBeforeDurchlaufprobe () {
+    boolean allScenesBeforeDurchlaufprobe() {
         Set<SceneDTO> allScenes = new HashSet<>(scenes);
         for (RehearsalDTO rehearsal : rehearsals) {
             if (rehearsal.equals(durchlaufprobe)) {
@@ -131,30 +131,39 @@ public class Evaluator {
     }
 
     double getExpectedNumberOfRepeats() {
-        return (double)plan.getAllPairs().size() / scenes.size();
+        //return (double) plan.getAllPairs().size() / scenes.size();
+        double lengthOfPlay = scenes.stream()
+                .mapToDouble(SceneDTO::getLength)
+                .sum();
+        int amountOfAllScenes = (int)((params.getAverageRehearsalLength() * scenes.size() * rehearsals.size())
+                / lengthOfPlay);
+        return (double) (amountOfAllScenes + scenes.size()) / scenes.size(); //scenes.size() is added to reflect DLP
     }
 
     double getMinimumRepeats() {
         return numberOfRepeats.values().stream()
-                .mapToInt(Integer::intValue)
+                .mapToDouble(Double::doubleValue)
                 .min()
                 .orElse(0) / expectedNumberOfRepeats;
     }
 
     double getMedianRepeats() {
         return numberOfRepeats.values().stream()
-                .mapToInt(Integer::intValue)
+                .mapToDouble(Double::doubleValue)
                 .sorted()
                 .skip(numberOfRepeats.size() / 2)
                 .findFirst()
                 .orElse(0) / expectedNumberOfRepeats;
     }
 
-    public Map<SceneDTO, Integer> getNumberOfRepeats() {
+    public Map<SceneDTO, Double> getNumberOfRepeats() {
         if (numberOfRepeats == null) {
             numberOfRepeats = new HashMap<>();
             for (Pair<RehearsalDTO, SceneDTO> pair : plan.getAllPairs()) {
-                numberOfRepeats.put(pair.second(), numberOfRepeats.getOrDefault(pair.second(), 0) + 1);
+                double completeness = Analyzer.completenessScore(pair.first(), pair.second());
+                numberOfRepeats.put(pair.second(),
+                        numberOfRepeats.getOrDefault(pair.second(), 0.0)
+                                + completeness);
             }
         }
         return numberOfRepeats;
