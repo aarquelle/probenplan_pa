@@ -1,54 +1,73 @@
 # Probenplan
-Ein kleines Tool, um den Probenplanerstellungs- und bearbeitungsprozess nicht ganz so ätzend zu machen. Die Voreinstellungen sollten genügen, wenn alles glatt läuft, müsst ihr nur mit `csvActorsTimes` und `csvRolesScenes` die Daten importieren und dann mit `generate` einen Probenplan erstellen. Die restlichen Kommandos dienen zum Finetuning oder um Änderungen während der Probenzeit zu berücksichtigen.
+Ein kleines Tool, um den Probenplanerstellungs- und bearbeitungsprozess nicht ganz so ätzend zu machen. Mit wenigen grundlegenden Kommandos sollte ein Probenplan zu generieren sein, zum nachträglichen Ausbessern stehen eine Reihe weiterer Kommandos zur Verfügung.
 
-## Installation:
+## Installation und Start:
+### Linux:
+(Ausprobiert auf Linux Mint 22.1 mit Xfce 4.18)
+TODO
+### Windows:
+(Ausprobiert auf Windows 11.TODO)
+
+### MacOS:
 TODO
 
-## Ausführung:
-TODO
+## Verwendung:
 
-## Kommandos:
-Das Programm wird durch die Eingabe von Kommandos benutzt. Einige Kommandos können weitere Parameter annehmen. Wenn diese Paramter erforderlich sind, werden sie in dieser Hilfe in (runden Klammern) angezeigt. Sind sie optional, sind sie in [eckigen Klammern] angezeigt. 
-Beispiel: Einfach nur `deleteRole` einzutippen, führt zu einem Fehler. `deleteRole König` kann dagegen erfolgreich sein (wenn eine Rolle namens "König" existiert und gelöscht werden darf). Sowohl `editActor` als auch `editActor Sara` dagegen sind erfolgreich, denn der Parameter `actor_name` ist optional. Es geschehen dann unterschiedliche Dinge. 
-Innerhalb des Programms gibt es zwei verschiedene Modi, in denen unterschiedliche Kommandos zur Verfügung stehen. Einige Kommandos sind immer verfügbar:
+### Das Terminal:
+Das Programm wird mit Kommandos in einer Terminal (je nach Betriebsystem vielleicht auch Konsole, Eingabeaufforderung oder PowerShell genannt) ausgeführt. Es gibt Autovervollständigung mit der `TAB`-Taste. Die Werte in Klammern sind die Argumente des Befehls. 
 
-- `help` --- Zeigt diese Hilfe an.
-- `create` --- Wechselt in den `createMode`.
-- `suggest` --- Wechselt in den `suggestMode`.
+Um also zum Beispiel die Rolle des Königs hinzuzufügen, tippst du ein: `add-actor König` und drückst Enter.
 
-### createMode
-In diesem Modus kannst du festlegen, welche Szenen, Rollen, Schauspielenden und Probentermine es gibt, welche Schauspielenden an welchen Terminen Zeit haben, von welcher Schauspielerin eine Rolle gespielt wird, welche Rollen in welchen Szenen vorkommen und wie lang die Szenen sind.
+### Zur "Länge" der Szenen:
+Jeder Szene kann eine Dezimalzahl als "Länge" zugewiesen werden. Standardmäßig versucht das Programm, den Probenplan so zu erstellen, dass die Summe aller in einer Probe geprobten Szenen ungefähr `1` ist.
 
-- `csvActorsTimes (csvData)` --- Importiert eine Tabelle aus Schauspielenden und Probenterminen, mit Markierungen, an welchen Tagen sie nicht können: "x" für "gar nicht", "?" für "vielleicht", alles andere für ja.
+### Zum Einfügen von csv-Daten:
+Die wichtigsten Befehle, um schnell größere Datenmengen zu importieren, verlangen "csv-Daten" als Argument. Gemeint ist damit, dass Daten in einem Tabellenkalkulationsprogramm wie LibreOffice Calc, Excel oder Google Sheets markiert, kopiert und dann in das Terminal eingefügt werden. Je nach Terminal kann die Tastenkombination `Ctrl+V` vielleicht nicht benutzt werden, mit Rechtsklick oder einer anderen Tastenkombination (Ctrl+Shift+V auf Linux-Terminals z.B.) lassen sich die Daten aber trotzdem einfügen.
+Je nach verwendetem Terminal wird beim Einfügen der CSV-Daten eine Warnung angezeigt, dass beim Einfügen Kommandos ausgeführt werden. Diese Warnung kommt immer, wenn im einzufügenden Text ein Zeilenumbruch vorkommt und ist kein Grund zur Sorge.
+
+### Die wichtigsten Kommandos:
+- `help` --- Zeigt alle Kommandos mit einer kurzen Beschreibung an.
+- `csv-actors-roles (csvData)` --- Importiert eine Tabelle aus Schauspielenden und den Rollen, die sie Spielen. Die Schauspielenden sind in der obersten Reihe, ihre Rollen darunter.
+Beispiel: ![Bild einer Tabelle](beispielcsvs/actors_roles.png)
+
+Einfach aus LibreOffice Calc/Google-Sheets/Excel kopieren und hinter "csv-actors-times" einfügen.
+- `csv-actors-times (csv-data)` --- Importiert eine Tabelle aus Schauspielenden und Probenterminen, mit Markierungen, an welchen Tagen sie nicht können: "x" für "gar nicht", "?" für "vielleicht", alles andere für ja.
 Beispiel: ![Bild einer Tabelle](beispielcsvs/actors_times.png)
-Einfach aus LibreOffice Calc/Google-Sheets/Excel kopieren und hinter "csvActorsTimes" einfügen.
-- `csvRolesScenes (csvData)` --- Importiert eine Tabelle aus Rollen und Szenen: "x" für "wichtig", "?" für "weniger wichtig", alles andere für "kommt nicht vor".
-TODO Screenshot einbinden! Zeile unter den Rollennamen: Schauspielernamen. Spalte neben den Szenen: Größe
-Einfach aus LibreOffice Calc/Google-Sheets/Excel kopieren und hinter "csvRolesScenes" einfügen.
-- `editActor [actor_name]` --- Namen ändern. Ohne Argument kannst du auch eine neue Schauspielerin hinzufügen.
-- `editRole [role_name]` --- Namen und zugeschriebene Schauspielerin ändern. Ohne Argument kannst du eine neue Rolle hinzufügen.
-- `editScene [scene_name]` --- Namen, Länge und Index (für die Reihenfolge) ändern. Ohne Argument kannst du eine neue Szene hinzufügen.
-- `editHasTime (actor_name) (rehearsal_date)` --- Ändern, ob eine bestimmte Schauspielerin an einem bestimmten Termin Zeit hat.
-- `editTakesPart (role_name) (scene_name)` --- Ändern, ob eine bestimmte Rolle in einer Szene vorkommt.
-- `deleteActor (actor_name)` --- Löscht eine Schauspielerin.
-- `deleteRole (role_name)` --- Löscht eine Rolle.
 
-### suggestMode
-In diesem Modus kannst du sehen, welche Szenen an welchen Tagen geprobt werden können, kannst die Parameter festlegen, nach denen ein Probenplan automatisch generiert werden soll, und kannst diesen Probenplan ansehen und speichern.
-
-- `possibleDates` --- Zeigt eine Tabelle aller Szenen an, und an welchen Tagen sie geprobt werden können.
-- `possibleScenes` --- Zeigt eine Tabelle aller Probentermine an, und welche Szenen an ihnen geprobt werden können.
-- `possibleOverview` --- Zeigt diese Daten in komprimierter Form an.
-- `showParams` --- Zeigt den aktuellen Wert der Generierungsparameter.
-- `durchlaufprobeAmount` --- Legt die Anzahl an Durchlaufproben fest.
-- `durchlaufprobeDate (earliest_date) (latest_date) [index]` --- Legt fest, in welchem Bereich die `index`-te Durchlaufprobe stattfinden soll. Wenn `index` weggelassen wird, setzt es die Werte für die erste Durchlaufprobe.
-- `setDate (scene_name) (rehearsal_date)` --- Setzt eine bestimmte Szene auf eine bestimmte Probe. Dies wird bei der Probenplangenerierung immer berücksichtigt.
-- `unsetDate [scene_name] [rehearsal_date]` --- Macht den obigen Befehl wieder rückgängig. Löscht alle gesetzten Befehle, wenn genauere Angaben fehlen.
-- `setStickyWeight (weight)` --- Legt die Präferenz, dass benachbarte Szenen in der gleichen Probe geprobt werden, auf einen Wert zwischen 0 (unwichtig) und 4 (sehr wichtig).
-- `setOrderWeight (weight)` --- Legt die Präferenz, dass die Szenen in der richtigen Reihenfolge geprobt werden (frühe Szenen an frühen Terminen etc.), auf einen Wert zwischen 0 (unwichtig) und 4 (sehr wichtig).
-- `setCompletenessweight (weight)` --- Legt die Präferenz, dass möglichst alle Schauspielenden in einer Probe sein können, inklusive derer, die nur einen kleinen Auftritt in der Szene haben, auf einen Wert zwischen 0 (unwichtig) und 4 (sehr wichtig).
-- `setNumberOfRehearsals (number)` --- Legt fest, wie oft eine Szene im Schnitt geprobt werden soll. Die Durchlaufprobe ist dabei nicht miteinberechnet.
+Einfach aus LibreOffice Calc/Google-Sheets/Excel kopieren und hinter "csv-actors-times" einfügen.
+- `csv-roles-scenes (csv-data)` --- Importiert eine Tabelle aus Rollen und Szenen: "x" für "wichtig", "?" für "weniger wichtig", alles andere für "kommt nicht vor".
+TODO Screenshot einbinden! Spalte neben den Szenen: Größe
+Einfach aus LibreOffice Calc/Google-Sheets/Excel kopieren und hinter "csv-roles-scenes" einfügen.
+- `csv-lock (csv-data)` --- Importiert eine Tabelle aus Rollen und Szene: "x" heißt, dass diese Szene an diesem Tag auf jeden Fall geprobt werden soll. Das ist zum Beispiel nützlich, um bereits vergangene Proben bei der Generierung zu berücksichtigen.
+TODO Screenshot einbinden!
+- `clear-data` --- Löscht alle Daten.
+- `show-data` --- Zeigt den aktuellen Stand der Daten, die du eingegeben hast.
+- `possible-overview` --- Zeigt eine Tabelle aller Szenen und Probentermine an, und wie vollständig sie geprobt werden könnten.
 - `generate` --- Generiert einen Probenplan basierend auf den Parametern.
-- `showGenerated` --- Zeigt erneut den generierten Probenplan.
-- `setGeneratedDates` --- Setzt alle Proben und Termine (wie in `setDate`) so, wie sie im generierten Probenplan vorkommen.
-- `saveToCsv` --- Generiert eine csv-Datei aus dem generierten Probenplan.
+- `lock-generated` --- Setzt alle Proben und Termine (wie in `lock`) so, wie sie im generierten Probenplan vorkommen.
+- `save-to-csv` --- Generiert eine csv-Datei aus dem generierten Probenplan.
+
+### Für kleinere Änderungen während des Probenprozesses:
+- `add-actor (name)` --- Schauspielerin mit angegebenem Namen hinzufügen.
+- `add-rehearsal (date)` --- Probendatum hinzufügen. Datum sollte im Format tt.MM.yyyy oder tt.MM.yy sein.
+- `add-role (name)` --- Rolle mit angegebenem Namen hinzufügen.
+- `add-scene (name) (length) (index)` --- Szene hinzufügen. Die Länge soll eine Vergleichbarkeit zwischen Szenen bieten, `index` bestimmt die Reihenfolge (Szenen mit niedrigerem Index kommen zuerst im Stück vor).
+- `assign-actor (role-name) (actor-name)` --- Rolle einer Schauspielerin zuweisen.
+- `edit-actor (old-name) (new-name)` --- Namen einer Schauspielerin ändern.
+- `edit-role (old-role-name) (new-role-name)` --- Namen einer Rolle ändern.
+- `edit-scene-name (old-scene-name) (new-scene-name)` --- Namen einer Szene ändern.
+- `edit-scene-length (scene-name) (length)` --- Ändert die Länge einer Szene.
+- `edit-scene-index (scene-name) (index)` --- Ändert den Index einer Szene.
+- `set-has-time (actor-name) (rehearsal-date) (x|y|?)` --- Legt fest, ob eine Schauspielerin an einem bestimmten Termin Zeit hat. `x` bedeutet, sie hat keine Zeit, `y` bedeutet, sie hat Zeit, `?` bedeutet, sie ist unsicher, oder dass es ungünstig wäre.
+- `set-takes-part (role-name) (scene-name) (x|n|?)` --- Legt fest, ob eine Rolle in einer Szene vorkommt. `x`, wenn sie eine große oder normale Rolle spielt, `?`, wenn sie nur am Rand vorkommt, `n`, wenn sie gar nicht vorkommt.
+- `delete-actor (actor-name)` --- Löscht eine Schauspielerin. Die zugewiesenen Rollen bleiben erhalten.
+- `delete-role (role-name)` --- Löscht eine Rolle. Die zugeschriebene Schauspielerin bleibt erhalten.
+- `lock (scene-name) (rehearsal-date)` --- Setzt eine bestimmte Szene auf eine bestimmte Probe. Dies wird bei der Probenplangenerierung immer berücksichtigt.
+- `unlock (scene-name) (rehearsal-date)` --- Macht den obigen Befehl wieder rückgängig.
+- `unlock-all` --- Entfernt alle locks auf Szenen und Proben.
+
+### Finetuning der Generierung
+- `show-params` --- Zeigt den aktuellen Wert der Generierungsparameter.
+- `set-param (param-name) (value)` --- Legt einen Generierungsparameter auf einen bestimmten Wert fest. Die Standardwerte sollten gut funktionieren, aber du kannst auch mit anderen Werten experimentieren. Beschreibungen der Parameter sind im Quellcode unter ParamsDTO.java zu finden. Wenn du mit anderen Werten bessere Ergebnisse erzielst, teile es mir bitte mit!
+
+
