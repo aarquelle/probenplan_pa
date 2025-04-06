@@ -1,7 +1,7 @@
 package org.aarquelle.probenplan_pa;
 
-import org.aarquelle.probenplan_pa.data.dao.DBManager;
 import org.aarquelle.probenplan_pa.data.dao.Transaction;
+import org.aarquelle.probenplan_pa.ui.cli.CommandLineUI;
 
 public class Main {
     public static boolean TEST_MODE = true;
@@ -9,10 +9,17 @@ public class Main {
 
     public static void main(String[] args) {
         Transaction.onStartup();
-        try (Transaction t = new Transaction()) {
-            DBManager dbManager = t.getDBManager();
-            dbManager.initDB();
-            t.commit();
+
+        if (TEST_MODE) {
+            try (Transaction t = new Transaction()) {
+                t.getDBManager().clearDB();
+                t.getDBManager().initDB();
+                t.commit();
+            } catch (Exception e) {
+                System.err.println("Error creating database: " + e.getMessage());
+            }
         }
+
+        new CommandLineUI().start();
     }
 }

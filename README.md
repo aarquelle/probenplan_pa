@@ -20,7 +20,7 @@ Innerhalb des Programms gibt es zwei verschiedene Modi, in denen unterschiedlich
 In diesem Modus kannst du festlegen, welche Szenen, Rollen, Schauspielenden und Probentermine es gibt, welche Schauspielenden an welchen Terminen Zeit haben, von welcher Schauspielerin eine Rolle gespielt wird, welche Rollen in welchen Szenen vorkommen und wie lang die Szenen sind.
 
 - `csvActorsTimes (csvData)` --- Importiert eine Tabelle aus Schauspielenden und Probenterminen, mit Markierungen, an welchen Tagen sie nicht können: "x" für "gar nicht", "?" für "vielleicht", alles andere für ja.
-TODO Screenshot einbinden!
+Beispiel: ![Bild einer Tabelle](beispielcsvs/actors_times.png)
 Einfach aus LibreOffice Calc/Google-Sheets/Excel kopieren und hinter "csvActorsTimes" einfügen.
 - `csvRolesScenes (csvData)` --- Importiert eine Tabelle aus Rollen und Szenen: "x" für "wichtig", "?" für "weniger wichtig", alles andere für "kommt nicht vor".
 TODO Screenshot einbinden! Zeile unter den Rollennamen: Schauspielernamen. Spalte neben den Szenen: Größe

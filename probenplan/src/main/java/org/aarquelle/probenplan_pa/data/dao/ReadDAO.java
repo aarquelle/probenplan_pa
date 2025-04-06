@@ -1,5 +1,6 @@
 package org.aarquelle.probenplan_pa.data.dao;
 
+import org.aarquelle.probenplan_pa.data.exception.NoSuchDataException;
 import org.aarquelle.probenplan_pa.dto.ActorDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.RoleDTO;
@@ -217,6 +218,74 @@ public class ReadDAO extends AbstractDAO {
             return results;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void fillActorDTO(ActorDTO dto) throws NoSuchDataException {
+        if (dto.getId() == 0) {
+            if (dto.getName() == null) {
+                throw new IllegalArgumentException("ActorDTO must have a name or an id");
+            } else {
+                String sql = "select actor_id from actors where actor_name = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, dto.getName());
+                    ResultSet rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        dto.setId(rs.getInt("actor_id"));
+                    } else {
+                        throw new NoSuchDataException("ActorDTO not found in database");
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } else {
+            String sql = "select actor_name from actors where actor_id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, dto.getId());
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    dto.setName(rs.getString("actor_name"));
+                } else {
+                    throw new NoSuchDataException("ActorDTO not found in database");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void fillRoleDTO(RoleDTO dto) throws NoSuchDataException {
+        if (dto.getId() == 0) {
+            if (dto.getName() == null) {
+                throw new IllegalArgumentException("RoleDTO must have a name or an id");
+            } else {
+                String sql = "select role_id from roles where role_name = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, dto.getName());
+                    ResultSet rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        dto.setId(rs.getInt("role_id"));
+                    } else {
+                        throw new NoSuchDataException("RoleDTO not found in database");
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } else {
+            String sql = "select role_name from roles where role_id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, dto.getId());
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    dto.setName(rs.getString("role_name"));
+                } else {
+                    throw new NoSuchDataException("RoleDTO not found in database");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

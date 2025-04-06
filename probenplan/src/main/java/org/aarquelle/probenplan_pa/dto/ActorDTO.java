@@ -1,6 +1,8 @@
 package org.aarquelle.probenplan_pa.dto;
 
-public class ActorDTO {
+import org.jetbrains.annotations.NotNull;
+
+public class ActorDTO implements Comparable<ActorDTO> {
 
     private int id;
     private String name;
@@ -26,5 +28,10 @@ public class ActorDTO {
         if (o.getClass() != this.getClass()) {
             return false;
         } else return getName().equals(((ActorDTO) o).getName());
+    }
+
+    @Override
+    public int compareTo(@NotNull ActorDTO o) {
+        return getName().compareTo(o.getName());
     }
 }

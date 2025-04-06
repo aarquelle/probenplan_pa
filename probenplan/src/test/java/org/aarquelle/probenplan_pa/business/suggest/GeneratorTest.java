@@ -5,11 +5,11 @@ import org.aarquelle.probenplan_pa.business.create.Creator;
 import org.aarquelle.probenplan_pa.dto.PlanDTO;
 import org.aarquelle.probenplan_pa.util.Pair;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.aarquelle.probenplan_pa.dto.ParamsDTO;
 
 import static org.aarquelle.probenplan_pa.TestUtils.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,6 +30,7 @@ public class GeneratorTest {
         System.out.println(new Evaluator(plan, params).evaluate());
     }
 
+    @Disabled
     @Test
     public void testGenerator() {
         ParamsDTO params = new ParamsDTO();

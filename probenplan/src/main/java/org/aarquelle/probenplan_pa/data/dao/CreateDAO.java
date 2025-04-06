@@ -6,13 +6,14 @@ import org.aarquelle.probenplan_pa.dto.ActorDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.RoleDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CreateDAO extends AbstractDAO{
+public class CreateDAO extends AbstractDAO {
     public CreateDAO(Connection conn) {
         super(conn);
     }
@@ -53,6 +54,20 @@ public class CreateDAO extends AbstractDAO{
             } else {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    public void updateRole(@NotNull RoleDTO role) throws RequiredValueMissingException {
+        String sql = "update roles set actor_id = ? where role_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            if (role.getId() == 0 || role.getActor() == null || role.getActor().getId() == 0) {
+                throw new RequiredValueMissingException("ID, Actor and Actor.ID must be set!");
+            }
+            stmt.setInt(1, role.getActor().getId());
+            stmt.setInt(2, role.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 

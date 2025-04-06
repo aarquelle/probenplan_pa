@@ -3,6 +3,7 @@ package org.aarquelle.probenplan_pa.business.create;
 import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.data.dao.Transaction;
 import org.aarquelle.probenplan_pa.data.exception.DuplicateException;
+import org.aarquelle.probenplan_pa.data.exception.NoSuchDataException;
 import org.aarquelle.probenplan_pa.data.exception.RequiredValueMissingException;
 import org.aarquelle.probenplan_pa.dto.ActorDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
@@ -108,6 +109,17 @@ public class Creator {
         try (Transaction t = new Transaction()) {
             t.getCreateDAO().clearLocks();
             t.commit();
+        }
+    }
+
+    public static void updateRole(RoleDTO role) throws BusinessException {
+        try (Transaction t = new Transaction()) {
+            t.getReadDAO().fillActorDTO(role.getActor());
+            t.getReadDAO().fillRoleDTO(role);
+            t.getCreateDAO().updateRole(role);
+            t.commit();
+        } catch (RequiredValueMissingException | NoSuchDataException e) {
+            throw new BusinessException(e.getMessage());
         }
     }
 }

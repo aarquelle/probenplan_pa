@@ -4,6 +4,7 @@ import org.aarquelle.probenplan_pa.ui.cli.commands.AbstractCommand;
 import org.aarquelle.probenplan_pa.ui.cli.commands.*;
 import org.aarquelle.probenplan_pa.ui.cli.commands.create.Echo;
 import org.aarquelle.probenplan_pa.ui.cli.in.In;
+import org.jline.reader.UserInterruptException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -12,18 +13,20 @@ import static org.aarquelle.probenplan_pa.ui.cli.out.Out.*;
 
 public class CommandLineUI {
 
-    HashMap<String, AbstractCommand> commands = new HashMap<>();
+    public static CommandLineUI INSTANCE;
+    private final HashMap<String, AbstractCommand> commands = new HashMap<>();
 
-    public static void main(String[] args) {
-        CommandLineUI cli = new CommandLineUI();
-        cli.start();
-    }
 
     public CommandLineUI() {
         // Initialize commands
         putCommand(Help.class);
         putCommand(Echo.class);
+        putCommand(CsvActorsTimes.class);
+        putCommand(CsvActorsRoles.class);
         // Add more commands as needed
+
+
+        INSTANCE = this;
     }
 
     private void putCommand(Class<? extends AbstractCommand> commandClass) {
@@ -53,10 +56,18 @@ public class CommandLineUI {
             } catch (CancelCommandException e) {
                 // Handle cancel command exception
                 info("Befehl abgebrochen.");
+            } catch (UserInterruptException e) {
+                line("Ciao.");
+                System.exit(0);
             } catch (Exception e) {
                 // Handle other exceptions
                 error("Ein Fehler ist aufgetreten: " + e.getMessage());
+                throw new RuntimeException(e);
             }
         }
+    }
+
+    public HashMap<String, AbstractCommand> getCommands() {
+        return commands;
     }
 }

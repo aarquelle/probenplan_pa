@@ -39,4 +39,8 @@ public class Out {
     public static void error(String message) {
         println(ANSI_RED + message + ANSI_RESET);
     }
+
+    public static String prompt(String prompt) {
+        return ANSI_MAGENTA + prompt + ANSI_RESET + "> ";
+    }
 }

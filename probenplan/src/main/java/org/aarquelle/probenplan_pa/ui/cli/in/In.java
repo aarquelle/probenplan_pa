@@ -3,14 +3,11 @@ package org.aarquelle.probenplan_pa.ui.cli.in;
 import org.aarquelle.probenplan_pa.ui.cli.CancelCommandException;
 import org.aarquelle.probenplan_pa.ui.cli.completers.CommandCompleter;
 import org.aarquelle.probenplan_pa.ui.cli.completers.DynamicCompleter;
+import org.aarquelle.probenplan_pa.ui.cli.out.Out;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.completer.NullCompleter;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.IntStream;
 
 public class In {
 
@@ -38,7 +35,7 @@ public class In {
 
 
         setCompleter(completer);
-        input = reader.readLine(prompt(prompt), null, buffer);
+        input = reader.readLine(Out.prompt(prompt), null, buffer);
 
         setCompleter(nullCompleter);
         if (trimmed) {
@@ -51,11 +48,7 @@ public class In {
     }
 
     public static String getCommandString() {
-        return getString(prompt("propenplan_pa"), "", true, commandCompleter);
-    }
-
-    private static String prompt(String prompt) {
-        return prompt + ":>";
+        return getString("propenplan_pa", "", true, commandCompleter);
     }
 
     private static void setCompleter(Completer completer) {
