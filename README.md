@@ -27,6 +27,7 @@ Je nach verwendetem Terminal wird beim Einfügen der CSV-Daten eine Warnung ange
 
 ### Die wichtigsten Kommandos:
 - `help` --- Zeigt alle Kommandos mit einer kurzen Beschreibung an.
+- `exit` --- Beendet das Programm. Hinweis: Das Programm lässt sich auch mit den Standard-"Interrupt"-Tastenkombinationen beenden: Ctrl+C auf Linux, Ctrl+B auf Windows, Cmd+C auf MacOS. (TODO ausprobieren.)
 - `csv-actors-roles (csvData)` --- Importiert eine Tabelle aus Schauspielenden und den Rollen, die sie Spielen. Die Schauspielenden sind in der obersten Reihe, ihre Rollen darunter.
 Beispiel: ![Bild einer Tabelle](beispielcsvs/actors_roles.png)
 

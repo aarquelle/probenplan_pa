@@ -3,7 +3,6 @@ package org.aarquelle.probenplan_pa.ui.cli;
 import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.ui.cli.commands.AbstractCommand;
 import org.aarquelle.probenplan_pa.ui.cli.commands.*;
-import org.aarquelle.probenplan_pa.ui.cli.commands.create.Echo;
 import org.aarquelle.probenplan_pa.ui.cli.in.In;
 import org.jline.reader.UserInterruptException;
 
@@ -21,9 +20,9 @@ public class CommandLineUI {
     public CommandLineUI() {
         // Initialize commands
         putCommand(Help.class);
-        putCommand(Echo.class);
         putCommand(CsvActorsTimes.class);
         putCommand(CsvActorsRoles.class);
+        putCommand(Exit.class);
         // Add more commands as needed
 
 

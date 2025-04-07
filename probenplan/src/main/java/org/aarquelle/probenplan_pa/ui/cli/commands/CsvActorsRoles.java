@@ -13,7 +13,7 @@ import java.util.List;
 public class CsvActorsRoles extends AbstractCommand {
 
     public CsvActorsRoles() {
-        super("csv_actors_roles", "Importiere Schauspielende und Rollen aus einem CSV-copy-paste");
+        super("csv-actors-roles", "Importiere Schauspielende und Rollen aus einem CSV-copy-paste");
     }
 
     @Override
