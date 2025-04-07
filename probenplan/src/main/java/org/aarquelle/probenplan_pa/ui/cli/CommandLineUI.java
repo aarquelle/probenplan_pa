@@ -1,5 +1,6 @@
 package org.aarquelle.probenplan_pa.ui.cli;
 
+import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.ui.cli.commands.AbstractCommand;
 import org.aarquelle.probenplan_pa.ui.cli.commands.*;
 import org.aarquelle.probenplan_pa.ui.cli.commands.create.Echo;
@@ -40,7 +41,6 @@ public class CommandLineUI {
 
     public void start() {
         info("Interaktiver Modus für Probenplan_PA. Gebe 'help' ein, um Hilfe zu erhalten.");
-        // Add more functionality here as needed
         while(true) {
             try {
                 String input = In.getCommandString();
@@ -59,7 +59,11 @@ public class CommandLineUI {
             } catch (UserInterruptException e) {
                 line("Ciao.");
                 System.exit(0);
-            } catch (Exception e) {
+            } catch (BusinessException e) {
+                // Handle business exception
+                error("Ein Fehler ist aufgetreten: " + e.getMessage());
+            }
+            catch (Exception e) {
                 // Handle other exceptions
                 error("Ein Fehler ist aufgetreten: " + e.getMessage());
                 throw new RuntimeException(e);

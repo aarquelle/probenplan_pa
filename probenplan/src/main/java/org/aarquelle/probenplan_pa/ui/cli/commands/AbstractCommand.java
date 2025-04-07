@@ -1,5 +1,6 @@
 package org.aarquelle.probenplan_pa.ui.cli.commands;
 
+import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.ui.cli.CancelCommandException;
 
 public abstract class AbstractCommand {
@@ -15,7 +16,7 @@ public abstract class AbstractCommand {
         this(name, "");
     }
 
-    public abstract void execute(String[] args) throws CancelCommandException;
+    public abstract void execute(String[] args) throws BusinessException;
 
     public String getName() {
         return name;

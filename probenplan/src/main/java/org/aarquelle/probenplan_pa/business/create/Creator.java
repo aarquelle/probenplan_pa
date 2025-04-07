@@ -81,10 +81,11 @@ public class Creator {
     public static void hasNoTime(RehearsalDTO rehearsal, Pair<ActorDTO, Boolean>... actor) throws BusinessException {
         try (Transaction t = new Transaction()) {
             for (Pair<ActorDTO, Boolean> a : actor) {
+                t.getReadDAO().fillActorDTO(a.first());
                 t.getCreateDAO().createHasNoTime(a.first(), rehearsal, a.second());
             }
             t.commit();
-        } catch (DuplicateException e) {
+        } catch (DuplicateException | NoSuchDataException e) { //TODO Ist Runtime für NoSuchData nicht besser?
             throw new BusinessException(e.getMessage());
         }
     }
