@@ -8,6 +8,7 @@ import org.jline.reader.UserInterruptException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 import static org.aarquelle.probenplan_pa.ui.cli.out.Out.*;
 
@@ -20,9 +21,10 @@ public class CommandLineUI {
     public CommandLineUI() {
         // Initialize commands
         putCommand(Help.class);
-        putCommand(CsvActorsTimes.class);
-        putCommand(CsvActorsRoles.class);
+        putCommand(CsvTimes.class);
         putCommand(Exit.class);
+        putCommand(CsvRolesScenes.class);
+        putCommand(Generate.class);
         // Add more commands as needed
 
 
@@ -64,7 +66,10 @@ public class CommandLineUI {
             }
             catch (Exception e) {
                 // Handle other exceptions
-                error("Ein Fehler ist aufgetreten: " + e.getMessage());
+                error("Ein fateler Fehler ist aufgetreten, und das Programm muss beendet werden: " + e.getMessage());
+                Stream.of(e.getStackTrace()).forEach(
+                        element -> error(element.toString())
+                );
                 throw new RuntimeException(e);
             }
         }

@@ -42,7 +42,7 @@ public class Creator {
             }
             t.commit();
         } catch (DuplicateException | RequiredValueMissingException e) {
-            throw new BusinessException(e.getMessage());
+            throw new BusinessException(e.getMessage() + " caused by " + e.getCause());
         }
     }
 

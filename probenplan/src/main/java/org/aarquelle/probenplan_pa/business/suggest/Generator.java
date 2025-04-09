@@ -75,30 +75,6 @@ public class Generator {
             result.put(rehearsal, scene);
         }
 
-        /*List<SceneDTO> sceneCards = new ArrayList<>();
-        List<RehearsalDTO> rehearsalCards = new ArrayList<>();
-
-        for (int i = 0; i < params.getAverageRehearsalLength(); i++) { //TODO check for non-integer values
-            sceneCards.addAll(scenes);
-            Collections.shuffle(sceneCards, random);
-            while (!sceneCards.isEmpty()) {
-                if (rehearsalCards.isEmpty()) {
-                    rehearsalCards.addAll(rehearsals);
-                    rehearsalCards.remove(durchlaufprobe); // TODO kann optimiert werden
-                    Collections.shuffle(rehearsalCards, random);
-                }
-                RehearsalDTO resultRehearsal = rehearsalCards.getFirst();
-                SceneDTO resultScene = sceneCards.getFirst();
-                if (result.get(resultRehearsal) != null && result.get(resultRehearsal).contains(resultScene)) {
-                    rehearsalCards.removeFirst();
-                    continue;
-                }
-                result.put(resultRehearsal, resultScene);
-                rehearsalCards.removeFirst();
-                sceneCards.removeFirst();
-            }
-        }*/
-
         clearDuplicates(result);
         return result;
     }
@@ -136,5 +112,24 @@ public class Generator {
                 }
             }
         }
+    }
+
+    public static PlanDTO generateBestPlan(ParamsDTO params) {
+        Analyzer.runAnalysis();
+        double maximum = 0;
+        PlanDTO maxPlan = null;
+        int seed = params.getInitialSeed();
+        int iterations = params.getNumberOfIterations();
+        for (int i = seed; i < seed + iterations; i++) {
+            Generator generator = new Generator(i, params);
+            PlanDTO plan = generator.generatePlan();
+            double result = new Evaluator(plan, params).evaluate();
+            if (result > maximum) {
+                maximum = result;
+                maxPlan = plan;
+                System.out.println("New maximum: " + maximum + " reached at step " + i);
+            }
+        }
+        return maxPlan;
     }
 }

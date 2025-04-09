@@ -10,14 +10,13 @@ import org.aarquelle.probenplan_pa.util.DateUtils;
 import org.aarquelle.probenplan_pa.util.Pair;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import static org.aarquelle.probenplan_pa.ui.cli.out.Out.*;
 
-public class CsvActorsTimes extends AbstractCommand {
-    public CsvActorsTimes() {
-        super("csv-actors-times", "Importiere copy-paste-Daten aus einer Tabelle, um Schauspielende, "
+public class CsvTimes extends AbstractCommand {
+    public CsvTimes() {
+        super("csv-times", "Importiere copy-paste-Daten aus einer Tabelle, um Schauspielende, "
                 + "Probentermine und Verfügbarkeiten anzulegen. Schaue in die README-Datei im Repository, "
                 + "um zu erfahren, wie die Daten aussehen müssen.");
     }
@@ -36,7 +35,6 @@ public class CsvActorsTimes extends AbstractCommand {
             actors.add(actor);
         }
 
-        actors.sort(ActorDTO::compareTo);
         List<ActorDTO> existingActors = BasicService.getActors();
 
         for (ActorDTO a : actors) {
@@ -66,7 +64,6 @@ public class CsvActorsTimes extends AbstractCommand {
                     boolean maybe = content.equals("?");
                     ActorDTO actor = actors.get(j);
                     RehearsalDTO rehearsalDate = rehearsalDates.get(i);
-                    info(actor.getName() + " kann am " + rehearsalDate + (maybe ? " vielleicht." : "nicht."));
                     Creator.hasNoTime(rehearsalDate, new Pair<>(actor, maybe));
                 }
             }

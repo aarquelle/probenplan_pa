@@ -9,7 +9,7 @@ import org.aarquelle.probenplan_pa.util.CsvUtils;
 
 import java.util.List;
 
-
+@Deprecated
 public class CsvActorsRoles extends AbstractCommand {
 
     public CsvActorsRoles() {

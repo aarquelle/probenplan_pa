@@ -84,7 +84,8 @@ public class CreateDAO extends AbstractDAO {
             }
         } catch (SQLException e) {
             if (e.getMessage().contains("UNIQUE constraint failed")) {
-                throw new DuplicateException("Scene names have to be unique!", e);
+                throw new DuplicateException("Cannot create scene " + scene.getName()
+                        + ". Scene names have to be unique!", e);
             } else if (e.getMessage().contains("NOT NULL constraint failed")) {
                 throw new RequiredValueMissingException("Scene name, length and position are required!", e);
             }

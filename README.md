@@ -22,23 +22,17 @@ Um also zum Beispiel die Rolle des Königs hinzuzufügen, tippst du ein: `add-ac
 Jeder Szene kann eine Dezimalzahl als "Länge" zugewiesen werden. Standardmäßig versucht das Programm, den Probenplan so zu erstellen, dass die Summe aller in einer Probe geprobten Szenen ungefähr `1` ist.
 
 ### Zum Einfügen von csv-Daten:
-Die wichtigsten Befehle, um schnell größere Datenmengen zu importieren, verlangen "csv-Daten" als Argument. Gemeint ist damit, dass Daten in einem Tabellenkalkulationsprogramm wie LibreOffice Calc, Excel oder Google Sheets markiert, kopiert und dann in das Terminal eingefügt werden. Je nach Terminal kann die Tastenkombination `Ctrl+V` vielleicht nicht benutzt werden, mit Rechtsklick oder einer anderen Tastenkombination (Ctrl+Shift+V auf Linux-Terminals z.B.) lassen sich die Daten aber trotzdem einfügen.
-Je nach verwendetem Terminal wird beim Einfügen der CSV-Daten eine Warnung angezeigt, dass beim Einfügen Kommandos ausgeführt werden. Diese Warnung kommt immer, wenn im einzufügenden Text ein Zeilenumbruch vorkommt und ist kein Grund zur Sorge.
+Die wichtigsten Befehle, um schnell größere Datenmengen zu importieren, verlangen "csv-Daten" als Argument. Gemeint ist damit, dass Daten in einem Tabellenkalkulationsprogramm wie LibreOffice Calc, Excel oder Google Sheets markiert, kopiert und dann in das Terminal eingefügt werden. 
+In Linux-Terminals (zumindest auf `xfce4-terminal`, `gnome-terminal` oder `konsole`) kann die Tastenkombination `Ctrl+V` nicht benutzt werden, mit Rechtsklick oder `Ctrl+Shift+V` lassen sich die Daten aber trotzdem einfügen. 
+In manchen Terminals, etwa `xfce4-terminal`, wird beim Einfügen der CSV-Daten eine Warnung angezeigt, dass beim Einfügen Kommandos ausgeführt werden. Diese Warnung kommt immer, wenn im einzufügenden Text ein Zeilenumbruch vorkommt und ist kein Grund zur Sorge.
 
 ### Die wichtigsten Kommandos:
 - `help` --- Zeigt alle Kommandos mit einer kurzen Beschreibung an.
 - `exit` --- Beendet das Programm. Hinweis: Das Programm lässt sich auch mit den Standard-"Interrupt"-Tastenkombinationen beenden: Ctrl+C auf Linux, Ctrl+B auf Windows, Cmd+C auf MacOS. (TODO ausprobieren.)
-- `csv-actors-roles (csvData)` --- Importiert eine Tabelle aus Schauspielenden und den Rollen, die sie Spielen. Die Schauspielenden sind in der obersten Reihe, ihre Rollen darunter.
-Beispiel: ![Bild einer Tabelle](beispielcsvs/actors_roles.png)
-
-Einfach aus LibreOffice Calc/Google-Sheets/Excel kopieren und hinter "csv-actors-times" einfügen.
-- `csv-actors-times (csv-data)` --- Importiert eine Tabelle aus Schauspielenden und Probenterminen, mit Markierungen, an welchen Tagen sie nicht können: "x" für "gar nicht", "?" für "vielleicht", alles andere für ja.
-Beispiel: ![Bild einer Tabelle](beispielcsvs/actors_times.png)
-
-Einfach aus LibreOffice Calc/Google-Sheets/Excel kopieren und hinter "csv-actors-times" einfügen.
-- `csv-roles-scenes (csv-data)` --- Importiert eine Tabelle aus Rollen und Szenen: "x" für "wichtig", "?" für "weniger wichtig", alles andere für "kommt nicht vor".
-TODO Screenshot einbinden! Spalte neben den Szenen: Größe
-Einfach aus LibreOffice Calc/Google-Sheets/Excel kopieren und hinter "csv-roles-scenes" einfügen.
+- `csv-times (csv-data)` --- Importiert eine Tabelle aus Schauspielenden und Probenterminen, mit Markierungen, an welchen Tagen sie nicht können: "x" für "gar nicht", "?" für "vielleicht", alles andere für ja.
+Beispiel: ![Bild einer Tabelle](beispielcsvs/times.png)
+- `csv-scenes (csv-data)` --- Importiert eine Tabelle aus Rollen und Szenen: "x" für "wichtig", "?" für "weniger wichtig", alles andere für "kommt nicht vor". In der Spalte neben den Szenennamen ist die Länge der Szene notiert. In der Zeile unter den Rollennamen sind die Schauspieler notiert.
+Beispiel: ![Bild einer Tabelle](beispielcsvs/scenes.png)
 - `csv-lock (csv-data)` --- Importiert eine Tabelle aus Rollen und Szene: "x" heißt, dass diese Szene an diesem Tag auf jeden Fall geprobt werden soll. Das ist zum Beispiel nützlich, um bereits vergangene Proben bei der Generierung zu berücksichtigen.
 TODO Screenshot einbinden!
 - `clear-data` --- Löscht alle Daten.
