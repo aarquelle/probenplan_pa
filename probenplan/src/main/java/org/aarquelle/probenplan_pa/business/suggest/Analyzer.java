@@ -2,9 +2,12 @@ package org.aarquelle.probenplan_pa.business.suggest;
 
 import org.aarquelle.probenplan_pa.data.dao.ReadDAO;
 import org.aarquelle.probenplan_pa.data.dao.Transaction;
+import org.aarquelle.probenplan_pa.dto.ActorDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalSceneTable;
+import org.aarquelle.probenplan_pa.dto.RoleDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.util.Pair;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -23,6 +26,12 @@ public class Analyzer {
     static List<SceneDTO> allScenes;
     static double lengthOfPlay;
 
+    /**
+     * This is a map of all scenes and their roles. The boolean indicates whether the role is a major role or not.
+     */
+    public static Map<SceneDTO, List<Pair<RoleDTO, Boolean>>> rolesForScene;
+    public static Map<RehearsalDTO, List<Pair<ActorDTO, Boolean>>> missingActorsForRehearsal;
+
     public static void runAnalysis() {
         allScenes = getAllScenes();
         lengthOfPlay = calculateLengthOfPlay();
@@ -34,6 +43,8 @@ public class Analyzer {
         allUncertain = uncertainActors();
         majorUncertain = majorUncertainActors();
         scoreTable = completenessScores();
+        rolesForScene = getRolesForScene();
+        missingActorsForRehearsal = getMissingActorsForRehearsal();
     }
 
     public static List<SceneDTO> getAllScenes() {
@@ -114,15 +125,19 @@ public class Analyzer {
 
     public static RehearsalSceneTable<Double> completenessScores() {
         return mapFunctionToSceneTable(
-                (Analyzer::completenessScore)
+                (Analyzer::calculateCompletenessScore)
         );
+    }
+
+    public static double completenessScore(RehearsalDTO rehearsal, SceneDTO scene) {
+        return scoreTable.get(rehearsal, scene);
     }
 
     /**
      * Returns a value between 0 and 1 that represents how many actors are present in the rehearsal.
      * 1 means that all actors are definitely present, 0 means that no actors are present.
      */
-    static double completenessScore (RehearsalDTO rehearsal, SceneDTO scene) {
+    private static double calculateCompletenessScore(RehearsalDTO rehearsal, SceneDTO scene) {
         int numberOfTotalRoles = allRoles.get(scene);
         int numberOfMajorRoles = majorRoles.get(scene);
         int numberOfMissing = allMissing.get(rehearsal, scene);
@@ -186,6 +201,50 @@ public class Analyzer {
             }
             return table;
         }
+    }
+
+    private static Map<SceneDTO, List<Pair<RoleDTO, Boolean>>> getRolesForScene() {
+        try (Transaction t = new Transaction()) {
+            ReadDAO dao = t.getReadDAO();
+            Map<SceneDTO, List<Pair<RoleDTO, Boolean>>> results = new HashMap<>();
+            List<SceneDTO> scenes = dao.getScenes();
+            for (SceneDTO scene : scenes) {
+                List<RoleDTO> majorRoles = dao.getRolesForScene(scene, false);
+                List<RoleDTO> minorRoles = dao.getRolesForScene(scene, true);
+                fillMapWithPairs(results, scene, majorRoles, false);
+                fillMapWithPairs(results, scene, minorRoles, true);
+            }
+            return results;
+        }
+    }
+
+    private static Map<RehearsalDTO, List<Pair<ActorDTO, Boolean>>> getMissingActorsForRehearsal() {
+        try (Transaction t = new Transaction()) {
+            ReadDAO dao = t.getReadDAO();
+            Map<RehearsalDTO, List<Pair<ActorDTO, Boolean>>> results = new HashMap<>();
+            List<RehearsalDTO> rehearsals = dao.getRehearsals();
+            for (RehearsalDTO rehearsal : rehearsals) {
+                List<ActorDTO> maybeActors = dao.getMissingActorsForRehearsal(rehearsal, true);
+                fillMapWithPairs(results, rehearsal, maybeActors, true);
+                List<ActorDTO> missingActors = dao.getMissingActorsForRehearsal(rehearsal, false);
+                fillMapWithPairs(results, rehearsal, missingActors, false);
+            }
+            return results;
+        }
+    }
+
+    /**
+     * Fills a map with Lists of value pairs. The pair consists of the values of the list and a fixed boolean.
+     * The key is always fixed.
+     */
+    private static <K, V> void fillMapWithPairs(Map<K, List<Pair<V, Boolean>>> results,
+                                                K k, List<V> vs, boolean b) {
+        vs.forEach(v -> {
+            if (!results.containsKey(k)) {
+                results.put(k, new ArrayList<>());
+            }
+            results.get(k).add(new Pair<>(v, b));
+        });
     }
 
 }

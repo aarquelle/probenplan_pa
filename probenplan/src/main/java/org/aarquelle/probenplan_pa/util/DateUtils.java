@@ -21,4 +21,11 @@ public class DateUtils {
             + System.lineSeparator() + e.getMessage());
         }
     }
+
+    public static String getString(Date date) {
+        if (date == null) {
+            return "";
+        }
+        return format.format(date);
+    }
 }

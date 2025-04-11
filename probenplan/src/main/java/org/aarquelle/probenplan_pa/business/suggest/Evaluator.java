@@ -1,5 +1,6 @@
 package org.aarquelle.probenplan_pa.business.suggest;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.dto.*;
 import org.aarquelle.probenplan_pa.util.Pair;
 
@@ -27,8 +28,8 @@ public class Evaluator {
     public Evaluator(PlanDTO plan, ParamsDTO params) {
         this.plan = plan;
         this.params = params;
-        this.rehearsals = plan.getRehearsals();
-        this.scenes = plan.getScenes();
+        this.rehearsals = BasicService.getRehearsals();
+        this.scenes = BasicService.getScenes();
         this.totalLengthOfRehearsals = plan.totalLength();
         this.expectedNumberOfRepeats = getExpectedNumberOfRepeats();
 
@@ -38,12 +39,24 @@ public class Evaluator {
     }
 
     public double evaluate() {
-        return totalCompleteness() * 2
-                + dlpCompleteness() * 1
-                + completenessBeforeDLP() * 1
-                + lumpiness() * 0.5
-                + getMinimumRepeats() * 1
-                + getMedianRepeats() * 0.5;
+        double totalCompleteness = totalCompleteness();
+        double dlpCompleteness = dlpCompleteness();
+        double completenessBeforeDLP = completenessBeforeDLP();
+        double lumpiness = lumpiness();
+        double minimumRepeats = getMinimumRepeats();
+        double medianRepeats = getMedianRepeats();
+        double overSize = overSize();
+
+        plan.setTestResults(
+                new TestResults(totalCompleteness, dlpCompleteness, completenessBeforeDLP,
+                        lumpiness, minimumRepeats, medianRepeats, overSize, expectedNumberOfRepeats));
+        return totalCompleteness * 4
+                + dlpCompleteness * 1
+                + completenessBeforeDLP * 1
+                + lumpiness * 0
+                + minimumRepeats * 1
+                + medianRepeats * 0.5
+                + overSize;
     }
 
     boolean allScenesBeforeDurchlaufprobe() {
@@ -128,6 +141,16 @@ public class Evaluator {
             result += 1.0 / numberOfLumps;
         }
         return result / rehearsals.size();
+    }
+
+    double overSize() {
+        double result = 0;
+        for (RehearsalDTO r : rehearsals) {
+            double rehearsalLength = plan.getLengthOfRehearsal(r);
+            double oversize = Math.max(0, rehearsalLength - params.getAverageRehearsalLength());
+            result += Math.pow(oversize, 2);
+        }
+        return 1 - result / rehearsals.size();
     }
 
     double getExpectedNumberOfRepeats() {

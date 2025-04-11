@@ -8,7 +8,6 @@ import org.aarquelle.probenplan_pa.dto.SceneDTO;
 import org.aarquelle.probenplan_pa.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -67,11 +66,14 @@ public class Generator {
         }
 
         for (int i = 0; i < amountOfAllScenes - lockedScenes.size(); i++) {
-            RehearsalDTO rehearsal = durchlaufprobe;
-            while (rehearsal == durchlaufprobe) {
-                rehearsal = rehearsals.get(random.nextInt(rehearsals.size()));
-            }
             SceneDTO scene = scenes.get(random.nextInt(scenes.size()));
+            List<RehearsalDTO> candidates = new ArrayList<>(rehearsals);
+            candidates.remove(durchlaufprobe);
+            candidates.removeIf(c -> result.get(c) != null && result.getLengthOfRehearsal(c) + scene.getLength() > 2);
+            if (candidates.isEmpty()) {
+                continue;
+            }
+            RehearsalDTO rehearsal = candidates.get(random.nextInt(candidates.size()));
             result.put(rehearsal, scene);
         }
 

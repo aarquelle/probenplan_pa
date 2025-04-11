@@ -123,4 +123,14 @@ public class Creator {
             throw new BusinessException(e.getMessage());
         }
     }
+
+    public static void clearDB() {
+        try (Transaction t = new Transaction()) {
+            t.getDBManager().clearDB();
+            t.getDBManager().initDB();
+            t.commit();
+        } catch (Exception e) {
+            throw new RuntimeException("Error clearing database: " + e.getMessage(), e);
+        }
+    }
 }

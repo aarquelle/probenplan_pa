@@ -176,7 +176,7 @@ class AnalyzerTest {
     }
 
     @Test
-    void testCompletenessScore() {
+    void testCalculateCompletenessScore() {
         Analyzer.runAnalysis();
         RehearsalSceneTable<Double> results = Analyzer.scoreTable;
         

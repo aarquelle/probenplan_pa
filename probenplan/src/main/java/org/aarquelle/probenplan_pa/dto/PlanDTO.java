@@ -6,6 +6,7 @@ import java.util.*;
 
 public class PlanDTO {
     private final Map<RehearsalDTO, List<SceneDTO>> plan = new HashMap<>();
+    private TestResults testResults;
 
     public void put(RehearsalDTO r, SceneDTO s) {
         if (!plan.containsKey(r)) {
@@ -72,5 +73,22 @@ public class PlanDTO {
         List<Pair<RehearsalDTO, SceneDTO>> pairs = new ArrayList<>();
         plan.forEach((r, value) -> value.forEach(s -> pairs.add(new Pair<>(r, s))));
         return pairs;
+    }
+
+    public double getLengthOfRehearsal(RehearsalDTO rehearsal) {
+        double length = 0;
+        List<SceneDTO> scenes = get(rehearsal);
+        for (SceneDTO scene : scenes) {
+            length += scene.getLength();
+        }
+        return length;
+    }
+
+    public TestResults getTestResults() {
+        return testResults;
+    }
+
+    public void setTestResults(TestResults testResults) {
+        this.testResults = testResults;
     }
 }

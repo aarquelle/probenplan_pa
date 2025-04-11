@@ -3,9 +3,9 @@ package org.aarquelle.probenplan_pa.dto;
 public class ParamsDTO {
     private double earliestDurchlaufprobe = 0.33;
     private double latestDurchlaufprobe = 0.66;
-    private double averageRehearsalLength = 2;
-    private int numberOfIterations = 10000;
-    private int initialSeed = 0;
+    private double averageRehearsalLength = 1;
+    private int numberOfIterations = 100000;
+    private int initialSeed = 50000;
 
     public double getEarliestDurchlaufprobe() {
         return earliestDurchlaufprobe;

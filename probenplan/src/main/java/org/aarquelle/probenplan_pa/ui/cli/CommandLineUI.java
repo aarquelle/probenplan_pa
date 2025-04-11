@@ -25,6 +25,9 @@ public class CommandLineUI {
         putCommand(Exit.class);
         putCommand(CsvRolesScenes.class);
         putCommand(Generate.class);
+        putCommand(ShowData.class);
+        putCommand(ClearData.class);
+        putCommand(Test.class);
         // Add more commands as needed
 
 

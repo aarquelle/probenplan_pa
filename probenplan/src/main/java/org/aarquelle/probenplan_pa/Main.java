@@ -3,21 +3,24 @@ package org.aarquelle.probenplan_pa;
 import org.aarquelle.probenplan_pa.data.dao.Transaction;
 import org.aarquelle.probenplan_pa.ui.cli.CommandLineUI;
 
+import java.nio.file.Path;
+
 public class Main {
-    public static boolean TEST_MODE = true;
-    public static String URL = "test.db";
+    public static boolean TEST_MODE = false;
+    public static String URL = "/home/aaron/probenplan_pa/test.db";
 
     public static void main(String[] args) {
         Transaction.onStartup();
+        System.out.println("Opened file: " + Path.of(URL).toAbsolutePath());
 
-        if (TEST_MODE) {
-            try (Transaction t = new Transaction()) {
+        try (Transaction t = new Transaction()) {
+            if (TEST_MODE) {
                 t.getDBManager().clearDB();
-                t.getDBManager().initDB();
-                t.commit();
-            } catch (Exception e) {
-                System.err.println("Error creating database: " + e.getMessage());
             }
+            t.getDBManager().initDB();
+            t.commit();
+        } catch (Exception e) {
+            System.err.println("Error creating database: " + e.getMessage());
         }
 
         new CommandLineUI().start();
