@@ -47,6 +47,11 @@ public class Generator {
         }
     }
 
+    /**
+     * Generates a random plan. It is not fully optimized, but used a few heuristics to make it more likely to be.
+     * {@link Analyzer#runAnalysis} must be called before this method.
+     * @return A new, randomly generated plan.
+     */
     public PlanDTO generatePlan() {
         PlanDTO result = new PlanDTO();
         RehearsalDTO durchlaufprobe = chooseRandomRehearsal(
@@ -69,7 +74,9 @@ public class Generator {
             SceneDTO scene = scenes.get(random.nextInt(scenes.size()));
             List<RehearsalDTO> candidates = new ArrayList<>(rehearsals);
             candidates.remove(durchlaufprobe);
-            candidates.removeIf(c -> result.get(c) != null && result.getLengthOfRehearsal(c) + scene.getLength() > 2);
+            candidates.removeIf(c ->
+                    (Analyzer.completenessScore(c, scene) < 0.5)
+                    || (result.get(c) != null && result.getLengthOfRehearsal(c) + scene.getLength() > 2));
             if (candidates.isEmpty()) {
                 continue;
             }
