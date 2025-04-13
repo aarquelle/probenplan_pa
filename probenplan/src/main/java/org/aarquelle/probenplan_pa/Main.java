@@ -8,6 +8,7 @@ import java.nio.file.Path;
 public class Main {
     public static boolean TEST_MODE = false;
     public static String URL = "/home/aaron/probenplan_pa/test.db";
+    public static final int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
 
     public static void main(String[] args) {
         Transaction.onStartup();

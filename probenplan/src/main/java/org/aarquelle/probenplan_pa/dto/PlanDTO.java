@@ -66,6 +66,7 @@ public class PlanDTO {
             sb.delete(sb.length() - 2, sb.length());
             sb.append("\n");
         }
+        sb.append(testResults);
         return sb.toString();
     }
 

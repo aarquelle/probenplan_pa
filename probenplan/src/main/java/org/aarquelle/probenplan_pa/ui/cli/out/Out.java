@@ -1,6 +1,9 @@
 package org.aarquelle.probenplan_pa.ui.cli.out;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
+import org.aarquelle.probenplan_pa.business.suggest.Analyzer;
 import org.aarquelle.probenplan_pa.dto.ActorDTO;
+import org.aarquelle.probenplan_pa.dto.PlanDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.RoleDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
@@ -8,17 +11,20 @@ import org.aarquelle.probenplan_pa.util.DateUtils;
 
 public class Out {
     //Color codes
-    private static final String ANSI_RESET = "\u001B[0m";
-    private static final String ANSI_RED = "\u001B[31m";
-    private static final String ANSI_GREEN = "\u001B[32m";
-    private static final String ANSI_YELLOW = "\u001B[33m";
-    private static final String ANSI_BLUE = "\u001B[34m";
-    private static final String ANSI_MAGENTA = "\u001B[35m";
-    private static final String ANSI_CYAN = "\u001B[36m";
-    private static final String ANSI_WHITE = "\u001B[37m";
-    private static final String ANSI_DEFAULT = "\u001B[39m";
+    protected static final String ANSI_RESET = "\u001B[0m";
+    protected static final String ANSI_RED = "\u001B[31m";
+    protected static final String ANSI_GREEN = "\u001B[32m";
+    protected static final String ANSI_YELLOW = "\u001B[33m";
+    protected static final String ANSI_BLUE = "\u001B[34m";
+    protected static final String ANSI_MAGENTA = "\u001B[35m";
+    protected static final String ANSI_CYAN = "\u001B[36m";
+    protected static final String ANSI_WHITE = "\u001B[37m";
+    protected static final String ANSI_DEFAULT = "\u001B[39m";
+    protected static final String ANSI_ITALIC = "\u001B[3m";
 
-    private static final String ANSI_ITALIC = "\u001B[3m";
+    public static int getTerminalWidth() {
+        return 80;
+    }
 
 
     private static void println(String message) {
@@ -70,4 +76,20 @@ public class Out {
     public static void prRehearsal(RehearsalDTO rehearsal) {
         print(ANSI_WHITE + DateUtils.getString(rehearsal.getDate()) + ANSI_RESET);
     }
+
+    public static void plan(PlanDTO plan) {
+        for (RehearsalDTO r : BasicService.getRehearsals()) {
+            Out.prRehearsal(r);
+            Out.infoPr(": ");
+            plan.get(r).forEach(s -> {
+                Out.prScene(s);
+                Out.infoPr("(" + Analyzer.completenessScore(r, s) + ")");
+                Out.infoPr(", ");
+            });
+            Out.line("");
+        }
+        Out.info(plan.getTestResults().toString());
+    }
+
+
 }

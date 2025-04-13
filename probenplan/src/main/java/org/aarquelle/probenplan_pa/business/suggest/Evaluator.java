@@ -50,13 +50,14 @@ public class Evaluator {
         plan.setTestResults(
                 new TestResults(totalCompleteness, dlpCompleteness, completenessBeforeDLP,
                         lumpiness, minimumRepeats, medianRepeats, overSize, expectedNumberOfRepeats));
-        return totalCompleteness * 4
-                + dlpCompleteness * 1
-                + completenessBeforeDLP * 1
-                + lumpiness * 0
-                + minimumRepeats * 1
-                + medianRepeats * 0.5
-                + overSize;
+        return (totalCompleteness * params.getCompletenessWeight()
+                + dlpCompleteness * params.getDlpCompletenessWeight()
+                + completenessBeforeDLP * params.getCompletenessBeforeDLPWeight()
+                + lumpiness * params.getLumpinessWeight()
+                + minimumRepeats * params.getMinimumRepeatsWeight()
+                + medianRepeats * params.getMedianRepeatsWeight()
+                + overSize * params.getOverSizeWeight())
+                / params.getTotalWeight();
     }
 
     boolean allScenesBeforeDurchlaufprobe() {
@@ -117,12 +118,15 @@ public class Evaluator {
 
     double totalCompleteness() {
         double result = 0;
+        double planLength = 0;
         for (Pair<RehearsalDTO, SceneDTO> pair : plan.getAllPairs()) {
             result += Analyzer.completenessScore(pair.first(), pair.second())
-                    * pair.second().getLength() / totalLengthOfRehearsals;
+                    * pair.second().getLength();
+            planLength += pair.second().getLength();
+            //        (params.getAverageRehearsalLength() * (rehearsals.size() -1) + Analyzer.lengthOfPlay); //lengthOfPlay für DLP
         }
 
-        return result;
+        return result / planLength;
     }
 
     /**
@@ -146,11 +150,15 @@ public class Evaluator {
     double overSize() {
         double result = 0;
         for (RehearsalDTO r : rehearsals) {
+            if (r.equals(durchlaufprobe)) {
+                continue;
+            }
             double rehearsalLength = plan.getLengthOfRehearsal(r);
-            double oversize = Math.max(0, rehearsalLength - params.getAverageRehearsalLength());
+            double oversize = Math.max(0,
+                    (rehearsalLength - params.getAverageRehearsalLength()) / params.getAverageRehearsalLength());
             result += Math.pow(oversize, 2);
         }
-        return 1 - result / rehearsals.size();
+        return 1 - result / (rehearsals.size() - 1);
     }
 
     double getExpectedNumberOfRepeats() {

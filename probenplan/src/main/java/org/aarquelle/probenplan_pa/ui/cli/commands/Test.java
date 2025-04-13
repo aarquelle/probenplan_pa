@@ -28,30 +28,20 @@ public class Test extends AbstractCommand{
         plan = new PlanDTO();
         Analyzer.runAnalysis();
 
-        put(1,2);
-        put(0,4);
-        put(0,2,4,5);
-        put(1,3);
-        put(0,4);
-        put(4);
-        put(0,1,2,3,4,5);
+        put();
+        put();
         put(0,1,2,5);
-        put(5);
+        put(1,3,4);
+        put(3,4,5);
+        put(1);
+        put(0,1,2,3,4,5);
+        put(1,2,3);
+        put(0,2,5);
         put(2);
-        put(1,3);
+        put(4,5);
 
-        for (RehearsalDTO r : BasicService.getRehearsals()) {
-            Out.prRehearsal(r);
-            Out.infoPr(": ");
-            plan.get(r).forEach(s -> {
-                Out.prScene(s);
-                Out.infoPr("(" + Analyzer.completenessScore(r, s) + ")");
-                Out.infoPr(", ");
-            });
-            Out.line("");
-        }
         System.out.println(new Evaluator(plan, new ParamsDTO()).evaluate());
-        System.out.println(plan.getTestResults());
+        Out.plan(plan);
 
         rehearsalCount = 0;
         plan = new PlanDTO();
@@ -69,16 +59,7 @@ public class Test extends AbstractCommand{
         put(2);
         put(1,3);
 
-        for (RehearsalDTO r : BasicService.getRehearsals()) {
-            Out.prRehearsal(r);
-            Out.infoPr(": ");
-            plan.get(r).forEach(s -> {
-                Out.prScene(s);
-                Out.infoPr("(" + Analyzer.completenessScore(r, s) + ")");
-                Out.infoPr(", ");
-            });
-            Out.line("");
-        }
+        Out.plan(plan);
         System.out.println(new Evaluator(plan, new ParamsDTO()).evaluate());
         System.out.println(plan.getTestResults());
     }

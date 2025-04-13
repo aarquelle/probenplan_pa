@@ -10,12 +10,15 @@ import org.aarquelle.probenplan_pa.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 
 public class Generator {
     Random random;
     List<RehearsalDTO> rehearsals;
     List<SceneDTO> scenes;
     ParamsDTO params;
+    private static PlanDTO maxPlan;
+    private static double maxResult = 0;
 
 
     public Generator(long seed, ParamsDTO params) {
@@ -50,6 +53,7 @@ public class Generator {
     /**
      * Generates a random plan. It is not fully optimized, but used a few heuristics to make it more likely to be.
      * {@link Analyzer#runAnalysis} must be called before this method.
+     *
      * @return A new, randomly generated plan.
      */
     public PlanDTO generatePlan() {
@@ -58,29 +62,26 @@ public class Generator {
                 params.getEarliestDurchlaufprobe(), params.getLatestDurchlaufprobe());
         addDurchlaufprobe(result, durchlaufprobe);
 
-
-        double lengthOfPlay = scenes.stream()
-                .mapToDouble(SceneDTO::getLength)
-                .sum();
-        int amountOfAllScenes = (int)((params.getAverageRehearsalLength() * scenes.size() * rehearsals.size())
-                / lengthOfPlay);
-
+        double lengthOfPlan = 0;
         List<Pair<RehearsalDTO, SceneDTO>> lockedScenes = BasicService.getLockedScenes();
         for (Pair<RehearsalDTO, SceneDTO> pair : lockedScenes) {
             result.put(pair.first(), pair.second());
+            lengthOfPlan += pair.second().getLength();
         }
 
-        for (int i = 0; i < amountOfAllScenes - lockedScenes.size(); i++) {
+        while (lengthOfPlan < rehearsals.size() * params.getAverageRehearsalLength()) {
             SceneDTO scene = scenes.get(random.nextInt(scenes.size()));
             List<RehearsalDTO> candidates = new ArrayList<>(rehearsals);
             candidates.remove(durchlaufprobe);
             candidates.removeIf(c ->
                     (Analyzer.completenessScore(c, scene) < 0.5)
-                    || (result.get(c) != null && result.getLengthOfRehearsal(c) + scene.getLength() > 2));
+                            || (result.get(c) != null && result.getLengthOfRehearsal(c) + scene.getLength() > 2
+                            * params.getAverageRehearsalLength()));
             if (candidates.isEmpty()) {
                 continue;
             }
             RehearsalDTO rehearsal = candidates.get(random.nextInt(candidates.size()));
+            lengthOfPlan += scene.getLength();
             result.put(rehearsal, scene);
         }
 
@@ -123,22 +124,58 @@ public class Generator {
         }
     }
 
-    public static PlanDTO generateBestPlan(ParamsDTO params) {
+    public static PlanDTO generateBestPlan(ParamsDTO params, Consumer<Integer> consumer) {
+        maxPlan = null;
+        maxResult = 0;
         Analyzer.runAnalysis();
-        double maximum = 0;
-        PlanDTO maxPlan = null;
-        int seed = params.getInitialSeed();
+        long seed = params.getInitialSeed();
         int iterations = params.getNumberOfIterations();
-        for (int i = seed; i < seed + iterations; i++) {
-            Generator generator = new Generator(i, params);
-            PlanDTO plan = generator.generatePlan();
-            double result = new Evaluator(plan, params).evaluate();
-            if (result > maximum) {
-                maximum = result;
-                maxPlan = plan;
-                System.out.println("New maximum: " + maximum + " reached at step " + i);
+        int cores = Runtime.getRuntime().availableProcessors();
+
+        Thread[] threads = new Thread[cores];
+        for (int i = 0; i < cores; i++) {
+            int finalI = i;
+            threads[i] = new Thread(() -> generatePlans(seed + (long) finalI * (iterations / cores),
+                    iterations / cores, params, finalI == 0 ? consumer : null));
+        }
+        for (Thread thread : threads) {
+            thread.start();
+        }
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
         return maxPlan;
+    }
+
+    private static synchronized void updateMax(double result, PlanDTO planDTO) {
+        if (result > maxResult) {
+            maxResult = result;
+            maxPlan = planDTO;
+        }
+    }
+
+
+    private static void generatePlans(long seed, int iterations, ParamsDTO params, Consumer<Integer> consumer) {
+        double localMax = 0;
+        PlanDTO localMaxPlan = null;
+        for (long i = seed; i < seed + iterations; i++) {
+            Generator generator = new Generator(i, params);
+            PlanDTO plan = generator.generatePlan();
+            double result = new Evaluator(plan, params).evaluate();
+            if (consumer != null) {
+                consumer.accept((int) (i - seed));
+            }
+            if (result > localMax) {
+                localMax = result;
+                localMaxPlan = plan;
+                //System.out.println("New maximum: " + result + " reached at step " + i);
+            }
+        }
+
+        updateMax(localMax, localMaxPlan);
     }
 }

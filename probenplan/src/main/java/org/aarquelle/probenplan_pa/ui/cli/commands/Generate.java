@@ -1,13 +1,14 @@
 package org.aarquelle.probenplan_pa.ui.cli.commands;
 
-import org.aarquelle.probenplan_pa.business.BasicService;
+import org.aarquelle.probenplan_pa.Main;
 import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.business.suggest.Analyzer;
 import org.aarquelle.probenplan_pa.business.suggest.Generator;
 import org.aarquelle.probenplan_pa.dto.ParamsDTO;
 import org.aarquelle.probenplan_pa.dto.PlanDTO;
-import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.ui.cli.out.Out;
+import org.aarquelle.probenplan_pa.ui.cli.out.ProgressBar;
+
+import java.text.DecimalFormat;
 
 public class Generate extends AbstractCommand {
 
@@ -19,17 +20,25 @@ public class Generate extends AbstractCommand {
     @Override
     public void execute(String[] args) throws BusinessException {
         Out.info("Generiere Testdaten... Das kann einen kurzen Moment dauern, bitte warten.");
-        PlanDTO plan = Generator.generateBestPlan(new ParamsDTO());
-        Out.info("Generierter Plan:");
-        for (RehearsalDTO r : BasicService.getRehearsals()) {
-            Out.prRehearsal(r);
-            Out.infoPr(": ");
-            plan.get(r).forEach(s -> {
-                Out.prScene(s);
-                Out.infoPr("(" + Analyzer.completenessScore(r, s) + ")");
-                Out.infoPr(", ");
-            });
-            Out.line("");
+        long startTime = System.currentTimeMillis();
+        ParamsDTO params = new ParamsDTO();
+        if (args != null && args.length > 0) {
+            params.setNumberOfIterations(Integer.parseInt(args[0]));
+            if (args.length > 1) {
+                params.setInitialSeed(Long.parseLong(args[1]));
+            } else {
+                params.setInitialSeed(System.currentTimeMillis());
+            }
         }
+
+        ProgressBar progressBar = new ProgressBar(params.getNumberOfIterations() / Main.NUMBER_OF_CORES);
+        PlanDTO plan = Generator.generateBestPlan(params, progressBar::update);
+        progressBar.finish();
+        Out.info("Generierter Plan:");
+        Out.plan(plan);
+
+        DecimalFormat df = new DecimalFormat("#.###");
+        String time = df.format((double)(System.currentTimeMillis() - startTime) / 1000);
+        System.out.println("Found plan in " + time + " seconds.");
     }
 }
