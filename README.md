@@ -1,8 +1,9 @@
 # Probenplan
-Ein kleines Tool, um den Probenplanerstellungs- und bearbeitungsprozess nicht ganz so ätzend zu machen. Mit wenigen grundlegenden Kommandos sollte ein Probenplan zu generieren sein, zum nachträglichen Ausbessern stehen eine Reihe weiterer Kommandos zur Verfügung.
+Ein kleines Tool, um den Probenplanerstellungs- und bearbeitungsprozess nicht ganz so ätzend zu machen. Mit wenigen grundlegenden Kommandos sollte ein Probenplan zu generieren sein.
 
 ## Voraussetzungen:
-Eine Java Runtime Environment Version 21 oder höher ist erforderlich, um das Programm auszuführen. Falls das nicht eh schon installiert ist, findest du hier eine Anleitung: 
+Ein Java Development Kit Version 21 oder höher ist erforderlich, um das Programm auszuführen. Falls das nicht eh schon installiert ist, findest du hier eine Anleitung: <https://www.oracle.com/java/technologies/downloads/#java21>
+Auf vielen modernen Rechnern ist Java aber schon installiert.
 
 ## Installation und Start:
 Zuerst muss das Zip-Archiv, das alle nötigen Dateien enthält, heruntergeladen werden. Du findest es rechts im Browser unter "Releases". Wähle die neueste Version, falls es verschiedene Versionen gibt. Jetzt kannst du die Datei irgendwo entpacken, am Besten in ihren eigenen Ordner.
