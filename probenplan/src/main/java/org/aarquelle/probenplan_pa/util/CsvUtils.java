@@ -16,16 +16,30 @@
 
 package org.aarquelle.probenplan_pa.util;
 
+import org.aarquelle.probenplan_pa.business.BusinessException;
+
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 
 public class CsvUtils {
 
-    public static String[][] parseArgs(String[] args) {
-        String csvData = String.join(" ", args);
+    public static String[][] parseArgs(String[] args) throws BusinessException {
+        String csvData;
+        if (args.length == 1 && args[0].equals("!")) {
+            csvData = getClipBoard();
+        }
+        else {
+            csvData = String.join(" ", args);
+        }
         if (csvData.isEmpty()) {
             return new String[0][0];
+        } else if (!csvData.contains(System.lineSeparator())) {
+            throw new BusinessException("Keine Zeilenumbrüche im Paste. Bist du auf Windows? Dann verwende " +
+                    "\"!\" als Argument, um die kopierten Daten zu verwenden.");
         }
         String[] lines = csvData.split(System.lineSeparator());
         String[][] data = new String[lines.length][];
@@ -57,5 +71,17 @@ public class CsvUtils {
         StringSelection stringSelection = new StringSelection(s);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, null);
+    }
+
+    public static String getClipBoard(){
+        try {
+            String javaString = (String)Toolkit.getDefaultToolkit().getSystemClipboard().
+                    getData(DataFlavor.stringFlavor);
+            return javaString.replace("\n", System.lineSeparator());
+        } catch (HeadlessException e) {
+            throw new RuntimeException("Headless: ", e);
+        } catch (UnsupportedFlavorException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

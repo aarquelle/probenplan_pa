@@ -38,7 +38,7 @@ public class CommandLineUI {
         // Initialize commands
         putCommand(Help.class);
         putCommand(CsvLocks.class);
-        putCommand(CsvRolesScenes.class);
+        putCommand(CsvScenes.class);
         putCommand(CsvTimes.class);
         putCommand(Exit.class);
         putCommand(Generate.class);
@@ -59,14 +59,15 @@ public class CommandLineUI {
         try {
             AbstractCommand instance = commandClass.getDeclaredConstructor().newInstance();
             commands.put(instance.getName(), instance);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void start() {
         info("Interaktiver Modus für Probenplan_PA. Gebe 'help' ein, um Hilfe zu erhalten.");
-        while(true) {
+        while (true) {
             try {
                 String input = In.getCommandString();
                 int spaceIndex = input.indexOf(" ");
@@ -78,19 +79,15 @@ public class CommandLineUI {
                 } else {
                     error("Unbekannter Befehl: " + firstWord);
                 }
-            } catch (CancelCommandException e) {
-                // Handle cancel command exception
-                info("Befehl abgebrochen.");
             } catch (UserInterruptException e) {
                 line("Ciao.");
                 System.exit(0);
             } catch (BusinessException e) {
                 // Handle business exception
                 error("Ein Fehler ist aufgetreten: " + e.getMessage());
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 // Handle other exceptions
-                error("Ein fateler Fehler ist aufgetreten, und das Programm muss beendet werden: " + e.getMessage());
+                error("Ein fataler Fehler ist aufgetreten, und das Programm muss beendet werden: " + e.getMessage());
                 Stream.of(e.getStackTrace()).forEach(
                         element -> error(element.toString())
                 );

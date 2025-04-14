@@ -28,9 +28,11 @@ import java.nio.file.Path;
 public class Main {
     public static boolean TEST_MODE = false;
     public static String URL = getDbFile().toString();
+    public static Path directory;
     public static final int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
     public static PlanDTO plan = null;
     public static ParamsDTO params = new ParamsDTO();
+    public static String os = System.getProperty("os.name").toLowerCase().contains("windows") ? "windows" : "unix";
 
     public static void main(String[] args) {
         Transaction.onStartup();
@@ -49,13 +51,19 @@ public class Main {
         new CommandLineUI().start();
     }
 
-    private static Path getDbFile() {
-        Path folder = Path.of(System.getProperty("user.home"), "Documents", "Probenplan_PA");
+    private static Path getDirectory() {
+        if (directory == null) {
+            directory = Path.of(System.getProperty("user.home"), "Documents", "Probenplan_PA");
+        }
         try {
-            Files.createDirectories(folder);
+            Files.createDirectories(directory);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return folder.resolve("probenplan.db");
+        return directory;
+    }
+
+    private static Path getDbFile() {
+        return getDirectory().resolve("probenplan.db");
     }
 }

@@ -17,7 +17,6 @@
 package org.aarquelle.probenplan_pa.ui.cli.commands;
 
 import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.ui.cli.CancelCommandException;
 
 public abstract class AbstractCommand {
     private final String name;

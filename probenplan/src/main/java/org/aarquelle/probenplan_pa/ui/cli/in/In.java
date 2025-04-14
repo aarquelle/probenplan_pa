@@ -16,7 +16,6 @@
 
 package org.aarquelle.probenplan_pa.ui.cli.in;
 
-import org.aarquelle.probenplan_pa.ui.cli.CancelCommandException;
 import org.aarquelle.probenplan_pa.ui.cli.completers.CommandCompleter;
 import org.aarquelle.probenplan_pa.ui.cli.completers.DynamicCompleter;
 import org.aarquelle.probenplan_pa.ui.cli.out.Out;
@@ -31,7 +30,6 @@ public class In {
     private static final CommandCompleter commandCompleter = new CommandCompleter();
     private static final Completer nullCompleter = new NullCompleter();
 
-    private static final String INTERRUPT_COMMAND = ":q";
     private static final LineReader reader = LineReaderBuilder.builder().completer(dynamicCompleter).build();
 
     /**
@@ -44,7 +42,6 @@ public class In {
      * @param trimmed   If true, the input is trimmed.
      * @param completer The completer to be used.
      * @return The unmodified input.
-     * @throws CancelCommandException Thrown when the user types in {@link In#INTERRUPT_COMMAND}.
      */
     public static String getString(String prompt, String buffer, boolean trimmed, Completer completer) {
         String input;
@@ -57,14 +54,14 @@ public class In {
         if (trimmed) {
             input = input.trim();
         }
-        if (input.equals(INTERRUPT_COMMAND)) {
-            throw new CancelCommandException();
-        }
         return input;
     }
 
     public static String getCommandString() {
-        return getString("propenplan_pa", "", true, commandCompleter);
+        String s = getString("probenplan_pa", "",
+                true, commandCompleter);
+        System.out.println(s);
+        return s;
     }
 
     private static void setCompleter(Completer completer) {

@@ -29,9 +29,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CsvRolesScenes extends AbstractCommand {
+public class CsvScenes extends AbstractCommand {
 
-    public CsvRolesScenes() {
+    public CsvScenes() {
         super("csv-scenes", "Importiere Rollen, Schauspielende" +
                 " und Szenen aus einem CSV-copy-paste. Schaue ins README, um zu erfahren, " +
                 "wie die Daten aussehen müssen.");

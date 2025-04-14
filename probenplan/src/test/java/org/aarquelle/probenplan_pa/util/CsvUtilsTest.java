@@ -16,14 +16,17 @@
 
 package org.aarquelle.probenplan_pa.util;
 
+import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CsvUtilsTest {
 
     @Test
-    void parseArgs() {
+    void parseArgs() throws BusinessException {
         String[] args = """
                 	Alfons Müller	Berta	Christian	Denise	Emil
                 1.4	x				x
@@ -33,7 +36,7 @@ class CsvUtilsTest {
                 19.6				\t
                \s
                \s
-               \s""".split(" ");
+               \s""".replace("\n", System.lineSeparator()).split(" ");
 
         String[][] result = CsvUtils.parseArgs(args);
         assertEquals("", result[0][0]);
