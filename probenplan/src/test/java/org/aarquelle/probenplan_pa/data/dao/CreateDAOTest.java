@@ -1,5 +1,6 @@
 package org.aarquelle.probenplan_pa.data.dao;
 
+import org.aarquelle.probenplan_pa.Main;
 import org.aarquelle.probenplan_pa.data.exception.DuplicateException;
 import org.aarquelle.probenplan_pa.data.exception.RequiredValueMissingException;
 import org.aarquelle.probenplan_pa.dto.ActorDTO;
@@ -24,6 +25,7 @@ class CreateDAOTest {
 
     @BeforeAll
     static void setUp() {
+        Main.TEST_MODE = true;
         Transaction.onStartup();
     }
 

@@ -41,6 +41,7 @@ public class TestUtils {
      */
     public static void createTestData() throws BusinessException {
 
+        Main.TEST_MODE = true;
         Transaction.onStartup();
         try (Transaction t = new Transaction()) {
             t.getDBManager().clearDB();
