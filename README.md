@@ -37,11 +37,12 @@ Beispiel: ![Bild einer Tabelle](beispielcsvs/scenes.png)
 Beispiel: ![Bild einer Tabelle](beispielcsvs/locks.png)
 - `clear-data` --- Löscht alle Daten.
 - `show-data` --- Zeigt den aktuellen Stand der Daten, die du eingegeben hast.
-- `possible-overview` --- Zeigt eine Tabelle aller Szenen und Probentermine an, und wie vollständig sie geprobt werden könnten.
+- `possible-overview` --- Zeigt eine Liste aller Szenen und Probentermine an, und wie vollständig sie geprobt werden könnten.
 - `generate [iterations] [initial_seed]` --- Generiert einen Probenplan basierend auf den Parametern. Je mehr `iterations` gewählt werden, desto länger dauert die Generierung, aber desto höher ist auch die Chance auf einen besseren Plan. Bei leergelassenem Feld ist der Standardwert 50.000. `initial_seed` bestimmt den Zufallsgenerator, bei gleichem seed kommt immer auch das gleiche Ergebnis raus. Wird das Feld leergelassen, wird ein zufälliger seed gewählt.
-- `lock-generated` --- Setzt alle Proben und Termine (wie in `lock`) so, wie sie im generierten Probenplan vorkommen.
-- `save-to-csv` --- Generiert eine csv-Datei aus dem generierten Probenplan.
+{::comment}- `lock-generated` --- Setzt alle Proben und Termine (wie in `lock`) so, wie sie im generierten Probenplan vorkommen.{:/comment}
+- `save-to-clipboard` --- Generiert eine csv-Daten aus dem generierten Probenplan, welche dann in ein Tabellenkalkulationsprogramm kopiert werden können.
 
+{::comment}
 ### Für kleinere Änderungen während des Probenprozesses:
 - `add-actor <name>` --- Schauspielerin mit angegebenem Namen hinzufügen.
 - `add-rehearsal <date>` --- Probendatum hinzufügen. Datum sollte im Format tt.MM.yyyy oder tt.MM.yy sein.
@@ -60,6 +61,7 @@ Beispiel: ![Bild einer Tabelle](beispielcsvs/locks.png)
 - `lock <scene-name> <rehearsal-date>` --- Setzt eine bestimmte Szene auf eine bestimmte Probe. Dies wird bei der Probenplangenerierung immer berücksichtigt.
 - `unlock <scene-name> <rehearsal-date>` --- Macht den obigen Befehl wieder rückgängig.
 - `unlock-all` --- Entfernt alle locks auf Szenen und Proben.
+{:/comment}
 
 ### Finetuning der Generierung
 - `show-params` --- Zeigt den aktuellen Wert der Generierungsparameter.

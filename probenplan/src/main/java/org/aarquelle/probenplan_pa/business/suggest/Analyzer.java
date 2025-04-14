@@ -81,6 +81,12 @@ public class Analyzer {
         }
     }
 
+    public static List<RoleDTO> getRolesForScene(SceneDTO scene) {
+        try (Transaction t = new Transaction()) {
+            return t.getReadDAO().getRolesForScene(scene);
+        }
+    }
+
 
     public static int getNumberOfMissingActorsForScene(RehearsalDTO rehearsal, SceneDTO scene, boolean maybe, boolean major) {
         try (Transaction t = new Transaction()) {

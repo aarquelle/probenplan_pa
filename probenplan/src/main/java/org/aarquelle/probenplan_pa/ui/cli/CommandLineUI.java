@@ -30,6 +30,7 @@ public class CommandLineUI {
         putCommand(ClearData.class);
         putCommand(Test.class);
         putCommand(Overview.class);
+        putCommand(SaveToCsv.class);
         // Add more commands as needed
 
 
