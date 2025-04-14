@@ -91,5 +91,17 @@ public class Out {
         Out.info(plan.getTestResults().toString());
     }
 
+    public static void percentage(double value) {
+        if (value >= 1) {
+            pr(ANSI_GREEN);
+        } else if (value >= 0.5) {
+            pr(ANSI_YELLOW);
+        } else {
+            pr(ANSI_RED);
+        }
+        int per = (int) (value * 100);
+        pr(per + "%" + ANSI_RESET);
+    }
+
 
 }
