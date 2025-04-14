@@ -1,6 +1,6 @@
 package org.aarquelle.probenplan_pa.dto;
 
-public class ParamsDTO {
+public class ParamsDTO implements Cloneable {
     private double earliestDurchlaufprobe = 0;
     private double latestDurchlaufprobe = 1;
     private double averageRehearsalLength = 1;
@@ -115,5 +115,77 @@ public class ParamsDTO {
     public double getTotalWeight() {
         return completenessWeight + dlpCompletenessWeight + completenessBeforeDLPWeight
                 + lumpinessWeight + minimumRepeatsWeight + medianRepeatsWeight + overSizeWeight;
+    }
+
+    public String getValueFromString(String name) {
+        return switch (name) {
+            case "earliestDurchlaufprobe" -> String.valueOf(earliestDurchlaufprobe);
+            case "latestDurchlaufprobe" -> String.valueOf(latestDurchlaufprobe);
+            case "averageRehearsalLength" -> String.valueOf(averageRehearsalLength);
+            case "numberOfIterations" -> String.valueOf(numberOfIterations);
+            case "initialSeed" -> String.valueOf(initialSeed);
+            case "completenessWeight" -> String.valueOf(completenessWeight);
+            case "dlpCompletenessWeight" -> String.valueOf(dlpCompletenessWeight);
+            case "completenessBeforeDLPWeight" -> String.valueOf(completenessBeforeDLPWeight);
+            case "lumpinessWeight" -> String.valueOf(lumpinessWeight);
+            case "minimumRepeatsWeight" -> String.valueOf(minimumRepeatsWeight);
+            case "medianRepeatsWeight" -> String.valueOf(medianRepeatsWeight);
+            case "overSizeWeight" -> String.valueOf(overSizeWeight);
+            default -> throw new IllegalArgumentException("Invalid parameter name: " + name);
+        };
+    }
+
+    public void setValueFromString(String name, String value) {
+        switch (name) {
+            case "earliestDurchlaufprobe" -> earliestDurchlaufprobe = Double.parseDouble(value);
+            case "latestDurchlaufprobe" -> latestDurchlaufprobe = Double.parseDouble(value);
+            case "averageRehearsalLength" -> averageRehearsalLength = Double.parseDouble(value);
+            case "numberOfIterations" -> numberOfIterations = Integer.parseInt(value);
+            case "initialSeed" -> initialSeed = Long.parseLong(value);
+            case "completenessWeight" -> completenessWeight = Double.parseDouble(value);
+            case "dlpCompletenessWeight" -> dlpCompletenessWeight = Double.parseDouble(value);
+            case "completenessBeforeDLPWeight" -> completenessBeforeDLPWeight = Double.parseDouble(value);
+            case "lumpinessWeight" -> lumpinessWeight = Double.parseDouble(value);
+            case "minimumRepeatsWeight" -> minimumRepeatsWeight = Double.parseDouble(value);
+            case "medianRepeatsWeight" -> medianRepeatsWeight = Double.parseDouble(value);
+            case "overSizeWeight" -> overSizeWeight = Double.parseDouble(value);
+            default -> throw new IllegalArgumentException("Invalid parameter name: " + name);
+        }
+    }
+
+    public String[] getParamNames() {
+        return new String[]{
+                "earliestDurchlaufprobe",
+                "latestDurchlaufprobe",
+                "averageRehearsalLength",
+                "numberOfIterations",
+                "initialSeed",
+                "completenessWeight",
+                "dlpCompletenessWeight",
+                "completenessBeforeDLPWeight",
+                "lumpinessWeight",
+                "minimumRepeatsWeight",
+                "medianRepeatsWeight",
+                "overSizeWeight"
+        };
+    }
+
+    public ParamsDTO clone() throws CloneNotSupportedException {
+        ParamsDTO cloned = (ParamsDTO) super.clone();
+        return cloned;
+        /*ParamsDTO clone = new ParamsDTO();
+        clone.earliestDurchlaufprobe = this.earliestDurchlaufprobe;
+        clone.latestDurchlaufprobe = this.latestDurchlaufprobe;
+        clone.averageRehearsalLength = this.averageRehearsalLength;
+        clone.numberOfIterations = this.numberOfIterations;
+        clone.initialSeed = this.initialSeed;
+        clone.completenessWeight = this.completenessWeight;
+        clone.dlpCompletenessWeight = this.dlpCompletenessWeight;
+        clone.completenessBeforeDLPWeight = this.completenessBeforeDLPWeight;
+        clone.lumpinessWeight = this.lumpinessWeight;
+        clone.minimumRepeatsWeight = this.minimumRepeatsWeight;
+        clone.medianRepeatsWeight = this.medianRepeatsWeight;
+        clone.overSizeWeight = this.overSizeWeight;
+        return clone;*/
     }
 }

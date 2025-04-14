@@ -1,6 +1,7 @@
 package org.aarquelle.probenplan_pa;
 
 import org.aarquelle.probenplan_pa.data.dao.Transaction;
+import org.aarquelle.probenplan_pa.dto.ParamsDTO;
 import org.aarquelle.probenplan_pa.dto.PlanDTO;
 import org.aarquelle.probenplan_pa.ui.cli.CommandLineUI;
 
@@ -12,6 +13,7 @@ public class Main {
     public static final int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
     public static final Os OS = getOs();
     public static PlanDTO plan = null;
+    public static ParamsDTO params = new ParamsDTO();
 
     public static void main(String[] args) {
         Transaction.onStartup();

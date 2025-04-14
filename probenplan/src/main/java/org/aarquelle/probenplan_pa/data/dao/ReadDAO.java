@@ -179,8 +179,6 @@ public class ReadDAO extends AbstractDAO {
      * @return The number of actors that are missing for the given scene in the given rehearsal.
      */
     public int getNumberOfMissingActorsForScene(RehearsalDTO rehearsal, SceneDTO scene, boolean maybe, boolean major) {
-        /*String sql = "select count(*) from plays_in, roles where scene_id = ? and plays_in.role_id = roles.role_id " +
-                "and roles.actor_id not in (select actor_id from has_no_time where rehearsal_id = ?)";*/
         String sql = "select count(*) from roles, plays_in, has_no_time where has_no_time.rehearsal_id = ? and " +
                 "has_no_time.actor_id = roles.actor_id and roles.role_id = plays_in.role_id and plays_in.scene_id = ?" +
                 " and has_no_time.maybe = ?";
@@ -312,9 +310,6 @@ public class ReadDAO extends AbstractDAO {
                     throw new RuntimeException(e);
                 }
             }
-        } else {
-            //TODO
-            //throw new RuntimeException("Not implemented.");
         }
     }
 
@@ -336,9 +331,6 @@ public class ReadDAO extends AbstractDAO {
                     throw new RuntimeException(e);
                 }
             }
-        } else {
-            //TODO
-            //throw new RuntimeException("Not implemented." + dto.getId());
         }
     }
 }

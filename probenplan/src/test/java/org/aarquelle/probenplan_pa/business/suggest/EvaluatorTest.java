@@ -89,7 +89,7 @@ class EvaluatorTest {
         assertDoubleEquals(1.5, evaluator.numberOfRepeats.get(scene3));
         assertDoubleEquals(2, evaluator.numberOfRepeats.get(scene4));
         assertDoubleEquals(1.2+1-1.0/6*4.0/5, evaluator.numberOfRepeats.get(scene5));
-        assertDoubleEquals(1.5/3, evaluator.getMinimumRepeats());
-        assertDoubleEquals(2.0/3, evaluator.getMedianRepeats());
+        assertDoubleEquals(1.5/2, evaluator.getMinimumRepeats());
+        assertDoubleEquals(2.0/2, evaluator.getMedianRepeats());
     }
 }

@@ -31,6 +31,8 @@ public class CommandLineUI {
         putCommand(Test.class);
         putCommand(Overview.class);
         putCommand(SaveToCsv.class);
+        putCommand(ShowParams.class);
+        putCommand(SetParam.class);
         // Add more commands as needed
 
 
