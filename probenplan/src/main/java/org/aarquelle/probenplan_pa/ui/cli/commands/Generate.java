@@ -37,7 +37,7 @@ public class Generate extends AbstractCommand {
     public void execute(String[] args) throws BusinessException {
         Out.info("Generiere Testdaten... Das kann einen kurzen Moment dauern, bitte warten.");
         long startTime = System.currentTimeMillis();
-        ParamsDTO params = null;
+        ParamsDTO params;
         try {
             params = Main.params.clone();
         } catch (CloneNotSupportedException e) {

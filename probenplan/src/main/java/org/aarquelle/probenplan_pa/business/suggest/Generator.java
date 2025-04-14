@@ -86,6 +86,7 @@ public class Generator {
         for (RehearsalDTO r : rehearsals) {
             if (result.get(r) != null && result.get(r).size() == scenes.size()) {
                 durchlaufprobe = r;
+                lengthOfPlan -= Analyzer.lengthOfPlay;
                 break;
             }
         }
