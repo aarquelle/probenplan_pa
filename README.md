@@ -6,7 +6,7 @@ Ein Java Development Kit Version 21 oder höher ist erforderlich, um das Program
 Auf vielen modernen Rechnern ist Java aber schon installiert.
 
 ## Installation und Start:
-Zuerst muss das Zip-Archiv, das alle nötigen Dateien enthält, heruntergeladen werden. Du findest es rechts im Browser unter "Releases". Wähle die neueste Version, falls es verschiedene Versionen gibt. Jetzt kannst du die Datei irgendwo entpacken, am Besten in ihren eigenen Ordner.
+Zuerst muss das Zip-Archiv `probenplan.zip`, das alle nötigen Dateien enthält, heruntergeladen werden. Du findest es rechts im Browser unter "Releases". Wähle die neueste Version, falls es verschiedene Versionen gibt. Jetzt kannst du die Datei irgendwo entpacken, am Besten in ihren eigenen Ordner.
 
 ### Linux und MacOS:
 (Ausprobiert auf Linux Mint 22.1 mit Xfce 4.18 und TODO Mac)
