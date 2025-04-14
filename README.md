@@ -1,15 +1,18 @@
 # Probenplan
 Ein kleines Tool, um den Probenplanerstellungs- und bearbeitungsprozess nicht ganz so ätzend zu machen. Mit wenigen grundlegenden Kommandos sollte ein Probenplan zu generieren sein, zum nachträglichen Ausbessern stehen eine Reihe weiterer Kommandos zur Verfügung.
 
+## Voraussetzungen:
+Eine Java Runtime Environment Version 21 oder höher ist erforderlich, um das Programm auszuführen. Falls das nicht eh schon installiert ist, findest du hier eine Anleitung: 
+
 ## Installation und Start:
-### Linux:
-(Ausprobiert auf Linux Mint 22.1 mit Xfce 4.18)
-TODO
+Zuerst muss das Zip-Archiv, das alle nötigen Dateien enthält, heruntergeladen werden. Du findest es rechts im Browser unter "Releases". Wähle die neueste Version, falls es verschiedene Versionen gibt. Jetzt kannst du die Datei irgendwo entpacken, am Besten in ihren eigenen Ordner.
+
+### Linux und MacOS:
+(Ausprobiert auf Linux Mint 22.1 mit Xfce 4.18 und TODO Mac)
+Führe einfach `run-on-unix.command` aus. Falls es mit Doppelklick nicht geht, sollte es sich über das Terminal ausführen lassen.
 ### Windows:
 (Ausprobiert auf Windows 11.TODO)
-
-### MacOS:
-TODO
+Doppelklicke `run-on-windows.bat`. 
 
 ## Verwendung:
 
