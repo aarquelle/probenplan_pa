@@ -20,8 +20,6 @@ Doppelklicke `run-on-windows.bat`.
 ### Das Terminal:
 Das Programm wird mit Kommandos in einem Terminal (je nach Betriebsystem vielleicht auch Konsole, Eingabeaufforderung oder PowerShell genannt) ausgeführt. Es gibt Autovervollständigung mit der `TAB`-Taste. Die Werte in Klammern sind die Argumente des Befehls. 
 
-Um also zum Beispiel die Rolle des Königs hinzuzufügen, tippst du ein: `add-actor König` und drückst Enter.
-
 ### Zur "Länge" der Szenen:
 Jeder Szene kann eine Dezimalzahl als "Länge" zugewiesen werden. Standardmäßig versucht das Programm, den Probenplan so zu erstellen, dass die Summe aller in einer Probe geprobten Szenen ungefähr `1` ist.
 
