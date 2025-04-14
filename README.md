@@ -12,7 +12,7 @@ Zuerst muss das Zip-Archiv `probenplan.zip`, das alle nötigen Dateien enthält,
 (Ausprobiert auf Linux Mint 22.1 mit Xfce 4.18 und TODO Mac)
 Führe einfach `run-on-unix.command` aus. Falls es mit Doppelklick nicht geht, sollte es sich über das Terminal ausführen lassen.
 ### Windows:
-(Ausprobiert auf Windows 11.TODO)
+(Ausprobiert auf Windows 11)
 Doppelklicke `run-on-windows.bat`. 
 
 ## Verwendung:
@@ -27,6 +27,8 @@ Jeder Szene kann eine Dezimalzahl als "Länge" zugewiesen werden. Standardmäßi
 
 ### Zum Einfügen von csv-Daten:
 Die wichtigsten Befehle, um schnell größere Datenmengen zu importieren, verlangen "csv-Daten" als Argument. Gemeint ist damit, dass Daten in einem Tabellenkalkulationsprogramm wie LibreOffice Calc, Excel oder Google Sheets markiert, kopiert und dann in das Terminal eingefügt werden. 
+#### WICHTIG: Windows:
+Wegen einigen... Eigenheiten des Windows-Terminals lassen sich die Daten leider nicht einfach einfügen. Stattdessen könnt ihr die Daten kopieren und als Argument dann einfach `!` eingeben. Die Daten werden dann direkt aus dem Clipboard kopiert. Die Daten müssen *nicht* eingefügt werden.
 In Linux-Terminals (zumindest auf `xfce4-terminal`, `gnome-terminal` oder `konsole`) kann die Tastenkombination `Ctrl+V` nicht benutzt werden, mit Rechtsklick oder `Ctrl+Shift+V` lassen sich die Daten aber trotzdem einfügen. 
 In manchen Terminals, etwa `xfce4-terminal`, wird beim Einfügen der CSV-Daten eine Warnung angezeigt, dass beim Einfügen Kommandos ausgeführt werden. Diese Warnung kommt immer, wenn im einzufügenden Text ein Zeilenumbruch vorkommt und ist kein Grund zur Sorge.
 
