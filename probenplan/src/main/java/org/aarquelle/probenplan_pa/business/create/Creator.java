@@ -92,9 +92,11 @@ public class Creator {
 
     public static void lockScene(SceneDTO scene, RehearsalDTO rehearsal) throws BusinessException {
         try (Transaction t = new Transaction()) {
+            t.getReadDAO().fillRehearsalDTO(rehearsal);
+            t.getReadDAO().fillSceneDTO(scene);
             t.getCreateDAO().lockScene(scene, rehearsal);
             t.commit();
-        } catch (DuplicateException e) {
+        } catch (DuplicateException | NoSuchDataException e) {
             throw new BusinessException(e.getMessage());
         }
     }
@@ -110,6 +112,16 @@ public class Creator {
         try (Transaction t = new Transaction()) {
             t.getCreateDAO().clearLocks();
             t.commit();
+        }
+    }
+
+    public static void lockRehearsal(RehearsalDTO rehearsal, boolean locked) throws BusinessException {
+        try (Transaction t = new Transaction()) {
+            t.getReadDAO().fillRehearsalDTO(rehearsal);
+            t.getCreateDAO().lockRehearsal(rehearsal, locked);
+            t.commit();
+        } catch (NoSuchDataException e) {
+            throw new BusinessException(e.getMessage(), e);
         }
     }
 

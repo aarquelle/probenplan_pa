@@ -48,7 +48,8 @@ public class DBManager extends AbstractDAO {
                 """
                         create table if not exists rehearsals (
                             rehearsal_id INTEGER primary key,
-                            day date unique not null
+                            day date unique not null,
+                            locked_rehearsal BOOLEAN not null
                         )
                         """
         );

@@ -93,6 +93,7 @@ public class ReadDAO extends AbstractDAO {
                 RehearsalDTO rehearsal = new RehearsalDTO();
                 rehearsal.setId(rs.getInt("rehearsal_id"));
                 rehearsal.setDate(rs.getDate("day"));
+                rehearsal.setLocked(rs.getBoolean("locked_rehearsal"));
                 results.add(rehearsal);
             }
             return results;
@@ -199,7 +200,7 @@ public class ReadDAO extends AbstractDAO {
     }
 
     public List<Pair<RehearsalDTO, SceneDTO>> getLockedScenes() {
-        String sql = "select rehearsals.rehearsal_id, rehearsals.day, scenes.scene_id, scene_name " +
+        String sql = "select rehearsals.rehearsal_id, rehearsals.day, scenes.scene_id, scene_name, length, position " +
                 "from locked_scenes, rehearsals, scenes " +
                 "where locked_scenes.rehearsal_id = rehearsals.rehearsal_id " +
                 "and locked_scenes.scene_id = scenes.scene_id";
@@ -213,6 +214,8 @@ public class ReadDAO extends AbstractDAO {
                 SceneDTO scene = new SceneDTO();
                 scene.setId(rs.getInt("scene_id"));
                 scene.setName(rs.getString("scene_name"));
+                scene.setLength(rs.getDouble("length"));
+                scene.setPosition(rs.getDouble("position"));
                 results.add(new Pair<>(rehearsal, scene));
             }
             return results;
@@ -286,6 +289,56 @@ public class ReadDAO extends AbstractDAO {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    public void fillSceneDTO(SceneDTO dto) throws NoSuchDataException {
+        if (dto.getId() == 0) {
+            if (dto.getName() == null) {
+                throw new IllegalArgumentException("SceneDTO must have a name or an id");
+            } else {
+                String sql = "select scene_id, length, position from scenes where scene_name = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, dto.getName());
+                    ResultSet rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        dto.setId(rs.getInt("scene_id"));
+                        dto.setPosition(rs.getDouble("position"));
+                        dto.setLength(rs.getDouble("length"));
+                    } else {
+                        throw new NoSuchDataException("SceneDTO " + dto.getName() + " not found in database");
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } else {
+            //TODO
+            //throw new RuntimeException("Not implemented.");
+        }
+    }
+
+    public void fillRehearsalDTO(RehearsalDTO dto) throws NoSuchDataException {
+        if (dto.getId() == 0) {
+            if (dto.getDate() == null) {
+                throw new IllegalArgumentException("SceneDTO must have a name or an id");
+            } else {
+                String sql = "select rehearsal_id from rehearsals where day = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setDate(1, dto.getDate());
+                    ResultSet rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        dto.setId(rs.getInt("rehearsal_id"));
+                    } else {
+                        throw new NoSuchDataException("RehearsalDTO " + dto.getDate() + " not found in database");
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } else {
+            //TODO
+            //throw new RuntimeException("Not implemented." + dto.getId());
         }
     }
 }

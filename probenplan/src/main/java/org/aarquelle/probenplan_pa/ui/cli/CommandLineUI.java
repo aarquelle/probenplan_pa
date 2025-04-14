@@ -21,9 +21,10 @@ public class CommandLineUI {
     public CommandLineUI() {
         // Initialize commands
         putCommand(Help.class);
+        putCommand(CsvLocks.class);
+        putCommand(CsvRolesScenes.class);
         putCommand(CsvTimes.class);
         putCommand(Exit.class);
-        putCommand(CsvRolesScenes.class);
         putCommand(Generate.class);
         putCommand(ShowData.class);
         putCommand(ClearData.class);

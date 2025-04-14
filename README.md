@@ -33,8 +33,8 @@ In manchen Terminals, etwa `xfce4-terminal`, wird beim Einfügen der CSV-Daten e
 Beispiel: ![Bild einer Tabelle](beispielcsvs/times.png)
 - `csv-scenes <csv-data>` --- Importiert eine Tabelle aus Rollen und Szenen: "x" für "wichtig", "?" für "weniger wichtig", alles andere für "kommt nicht vor". In der Spalte neben den Szenennamen ist die Länge der Szene notiert. In der Zeile unter den Rollennamen sind die Schauspieler notiert.
 Beispiel: ![Bild einer Tabelle](beispielcsvs/scenes.png)
-- `csv-lock <csv-data>` --- Importiert eine Tabelle aus Rollen und Szene: "x" heißt, dass diese Szene an diesem Tag auf jeden Fall geprobt werden soll. Das ist zum Beispiel nützlich, um bereits vergangene Proben bei der Generierung zu berücksichtigen.
-TODO Screenshot einbinden!
+- `csv-lock <csv-data>` --- Importiert eine Tabelle aus Rollen und Szene: "x" heißt, dass diese Szene an diesem Tag auf jeden Fall geprobt werden soll. Das ist zum Beispiel nützlich, um bereits vergangene Proben bei der Generierung zu berücksichtigen. In der Spalte neben den Probenterminen kann festgelegt werden, ob die ganze Probe "gelockt" sein soll – bei einem "x" können auch keine Szenen zu dieser Probe hinzugefügt werden.
+Beispiel: ![Bild einer Tabelle](beispielcsvs/locks.png)
 - `clear-data` --- Löscht alle Daten.
 - `show-data` --- Zeigt den aktuellen Stand der Daten, die du eingegeben hast.
 - `possible-overview` --- Zeigt eine Tabelle aller Szenen und Probentermine an, und wie vollständig sie geprobt werden könnten.

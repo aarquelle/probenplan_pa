@@ -6,6 +6,7 @@ import java.time.LocalDate;
 public class RehearsalDTO {
     private int id;
     private LocalDate date;
+    private boolean locked = false;
 
     public Date getDate() {
         return date != null ? Date.valueOf(date) : null;
@@ -39,5 +40,13 @@ public class RehearsalDTO {
     @Override
     public int hashCode() {
         return getDate().hashCode();
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 }

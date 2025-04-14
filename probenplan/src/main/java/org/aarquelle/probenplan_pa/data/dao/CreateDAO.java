@@ -93,7 +93,7 @@ public class CreateDAO extends AbstractDAO {
     }
 
     public void createRehearsal(RehearsalDTO rehearsal) throws DuplicateException, RequiredValueMissingException {
-        String sql = "insert into rehearsals (day) values (?)";
+        String sql = "insert into rehearsals (day, locked_rehearsal) values (?, false)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setDate(1, rehearsal.getDate());
             stmt.executeUpdate();
@@ -151,9 +151,7 @@ public class CreateDAO extends AbstractDAO {
             stmt.setInt(2, rehearsal.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            if (e.getMessage().contains("UNIQUE constraint failed")) {
-                throw new DuplicateException("A scene can only be locked once per rehearsal!", e);
-            } else {
+            if (!e.getMessage().contains("UNIQUE constraint failed")) {
                 throw new RuntimeException(e);
             }
         }
@@ -170,9 +168,26 @@ public class CreateDAO extends AbstractDAO {
         }
     }
 
+    public void lockRehearsal(RehearsalDTO rehearsal, boolean locked) {
+        String sql = "update rehearsals set locked_rehearsal = ? where rehearsal_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setBoolean(1, locked);
+            stmt.setInt(2, rehearsal.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @SuppressWarnings("SqlWithoutWhere")
     public void clearLocks() {
         String sql = "delete from locked_scenes";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        sql = "update rehearsals set locked_rehearsal = false";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
         } catch (SQLException e) {

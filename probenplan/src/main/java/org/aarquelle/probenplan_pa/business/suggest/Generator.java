@@ -51,16 +51,13 @@ public class Generator {
     }
 
     /**
-     * Generates a random plan. It is not fully optimized, but used a few heuristics to make it more likely to be.
+     * Generates a random plan. It is not fully optimized, but uses a few heuristics to make it more likely to be.
      * {@link Analyzer#runAnalysis} must be called before this method.
      *
      * @return A new, randomly generated plan.
      */
     public PlanDTO generatePlan() {
         PlanDTO result = new PlanDTO();
-        RehearsalDTO durchlaufprobe = chooseRandomRehearsal(
-                params.getEarliestDurchlaufprobe(), params.getLatestDurchlaufprobe());
-        addDurchlaufprobe(result, durchlaufprobe);
 
         double lengthOfPlan = 0;
         List<Pair<RehearsalDTO, SceneDTO>> lockedScenes = BasicService.getLockedScenes();
@@ -69,6 +66,20 @@ public class Generator {
             lengthOfPlan += pair.second().getLength();
         }
 
+        RehearsalDTO durchlaufprobe = null;
+        for (RehearsalDTO r : rehearsals) {
+            if (result.get(r) != null && result.get(r).size() == scenes.size()) {
+                durchlaufprobe = r;
+                break;
+            }
+        }
+        if (durchlaufprobe == null) {
+            durchlaufprobe = chooseRandomRehearsal(
+                    params.getEarliestDurchlaufprobe(), params.getLatestDurchlaufprobe());
+            addDurchlaufprobe(result, durchlaufprobe);
+        }
+
+        rehearsals.removeIf(RehearsalDTO::isLocked);
         while (lengthOfPlan < rehearsals.size() * params.getAverageRehearsalLength()) {
             SceneDTO scene = scenes.get(random.nextInt(scenes.size()));
             List<RehearsalDTO> candidates = new ArrayList<>(rehearsals);
