@@ -43,6 +43,8 @@ Jeder Szene kann eine Dezimalzahl als "Länge" zugewiesen werden. Standardmäßi
 Die wichtigsten Befehle, um schnell größere Datenmengen zu importieren, verlangen "table-Daten" als Argument. Gemeint ist damit, dass Daten in einem Tabellenkalkulationsprogramm wie LibreOffice Calc, Excel oder Google Sheets markiert, kopiert und dann in das Terminal eingefügt werden. 
 #### WICHTIG: Windows:
 Wegen einigen... Eigenheiten des Windows-Terminals lassen sich die Daten leider nicht einfach einfügen. Stattdessen kannst du die Daten kopieren und als Argument dann einfach `!` eingeben, also zum Beispiel `import-scenes !`, und dann `ENTER` drücken. Die Daten werden dann direkt aus dem Clipboard kopiert. Die Daten müssen *nicht* eingefügt werden.
+#### MacOS:
+Es kann vorkommen, dass das Terminal minimiert wird. Das ist kein Problem, rufe es einfach wieder auf.
 
 #### Linux:
 In Linux-Terminals (zumindest auf `xfce4-terminal`, `gnome-terminal` oder `konsole`) kann die Tastenkombination `Ctrl+V` nicht benutzt werden, mit Rechtsklick oder `Ctrl+Shift+V` lassen sich die Daten aber trotzdem einfügen. 
