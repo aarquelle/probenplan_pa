@@ -77,9 +77,14 @@ public class ImportScenes extends AbstractCommand {
             }
         }
 
+        List<SceneDTO> existingScenes = BasicService.getScenes();
         for (int i = 2; i < table.length; i++) {
             SceneDTO scene = createSceneDTO(table[i], i);
-            Creator.createScene(scene);
+            if (existingScenes.contains(scene)) {
+                scene = existingScenes.get(existingScenes.indexOf(scene));
+            } else {
+                Creator.createScene(scene);
+            }
             for (int j = 2; j < table[i].length; j++) {
                 String cell = table[i][j];
                 if (cell != null && !cell.isEmpty()) {

@@ -26,6 +26,7 @@ import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
 import org.aarquelle.probenplan_pa.ui.cli.out.Out;
 
+import java.io.IOException;
 import java.util.List;
 
 public class Test extends AbstractCommand{
@@ -40,6 +41,26 @@ public class Test extends AbstractCommand{
 
     @Override
     public void execute(String[] args) throws BusinessException {
+        try {
+            ex();
+        } catch (BusinessException e) {
+            throw new RuntimeException("Runtime", e);
+        }
+    }
+
+    private void ex() throws BusinessException {
+        try {
+            io();
+        } catch (IOException e) {
+            throw new BusinessException("BusinessException", e);
+        }
+    }
+
+    private void io() throws IOException {
+        throw new IOException("IOException");
+    }
+
+    private void eval() {
         rehearsalCount = 0;
         plan = new PlanDTO();
         Analyzer.runAnalysis();

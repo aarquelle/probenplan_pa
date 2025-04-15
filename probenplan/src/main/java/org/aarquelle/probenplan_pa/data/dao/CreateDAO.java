@@ -136,9 +136,7 @@ public class CreateDAO extends AbstractDAO {
             stmt.setBoolean(3, minor);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            if (e.getMessage().contains("UNIQUE constraint failed")) {
-                throw new DuplicateException("A role can only play in a scene once!", e);
-            } else {
+            if (!e.getMessage().contains("UNIQUE constraint failed")) {
                 throw new RuntimeException(e);
             }
         }

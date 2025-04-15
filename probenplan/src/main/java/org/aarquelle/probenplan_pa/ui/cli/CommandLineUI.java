@@ -36,6 +36,8 @@ public class CommandLineUI {
 
     public CommandLineUI() {
         // Initialize commands
+        INSTANCE = this;
+
         putCommand(Help.class);
         putCommand(ImportLocks.class);
         putCommand(ImportScenes.class);
@@ -44,15 +46,13 @@ public class CommandLineUI {
         putCommand(Generate.class);
         putCommand(ShowData.class);
         putCommand(ClearData.class);
-        putCommand(Test.class);
+        //putCommand(Test.class);
         putCommand(Overview.class);
         putCommand(ExportToClipboard.class);
         putCommand(ShowParams.class);
         putCommand(SetParam.class);
-        // Add more commands as needed
 
 
-        INSTANCE = this;
     }
 
     private void putCommand(Class<? extends AbstractCommand> commandClass) {
@@ -87,11 +87,19 @@ public class CommandLineUI {
                 error("Ein Fehler ist aufgetreten: " + e.getMessage());
             } catch (Exception e) {
                 // Handle other exceptions
-                error("Ein fataler Fehler ist aufgetreten, und das Programm muss beendet werden: " + e.getMessage());
-                Stream.of(e.getStackTrace()).forEach(
-                        element -> error(element.toString())
-                );
-                throw new RuntimeException(e);
+                error("Ein fataler Fehler ist aufgetreten, und das Programm muss beendet werden: ");
+                for (Throwable t = e; t != null; t = t.getCause()) {
+                    error(t.getClass().getName() + ": " +t.getMessage());
+                    Stream.of(t.getStackTrace()).forEach(
+                            element -> error("\t" + element.toString())
+                    );
+                    if (t.getCause() != null) {
+                        error("Caused by: ");
+                    }
+                }
+
+                In.getString("Drücke Enter, um das Programm zu beenden.", "", false, null);
+                System.exit(-1);
             }
         }
     }
