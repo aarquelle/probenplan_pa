@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Main {
+    public static final String REPOSITORY_URL = "https://github.com/aarquelle/probenplan_pa";
     public static boolean TEST_MODE = false;
     public static String URL = getDbFile().toString();
     public static Path directory;

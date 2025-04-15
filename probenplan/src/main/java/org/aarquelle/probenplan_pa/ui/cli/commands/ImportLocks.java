@@ -28,10 +28,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CsvLocks extends AbstractCommand {
+public class ImportLocks extends AbstractCommand {
 
-    public CsvLocks() {
-        super("csvlocks", "Importiere die festgelegten Proben und Szenen aus CSV-Daten.");
+    public ImportLocks() {
+        super("import-locks", "Importiere die festgelegten Proben und " +
+                "Szenen aus Tabellen-Daten.");
     }
 
     @Override
@@ -50,7 +51,9 @@ public class CsvLocks extends AbstractCommand {
         List<RehearsalDTO> existingRehearsals = BasicService.getRehearsals();
         for (RehearsalDTO rehearsalDTO : rehearsals) {
             if (!existingRehearsals.contains(rehearsalDTO)) {
-                throw new BusinessException("Rehearsal on " + rehearsalDTO.getDate() + " does not exist.");
+                throw new BusinessException("Es gibt keine Probe am "
+                        + DateUtils.getString(rehearsalDTO.getDate()) + ", erstelle sie zuerst mit" +
+                        " import-times.");
             }
         }
 

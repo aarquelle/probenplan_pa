@@ -29,11 +29,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CsvScenes extends AbstractCommand {
+public class ImportScenes extends AbstractCommand {
 
-    public CsvScenes() {
-        super("csv-scenes", "Importiere Rollen, Schauspielende" +
-                " und Szenen aus einem CSV-copy-paste. Schaue ins README, um zu erfahren, " +
+    public ImportScenes() {
+        super("import-scenes", "Importiere Rollen, Schauspielende" +
+                " und Szenen aus einem Tabellen-copy-paste. Schaue ins README, um zu erfahren, " +
                 "wie die Daten aussehen müssen.");
     }
 
@@ -101,12 +101,16 @@ public class CsvScenes extends AbstractCommand {
         SceneDTO scene = new SceneDTO();
         scene.setName(table[0]);
         scene.setPosition(position);
-        double length = Double.parseDouble(table[1].replace(",", "."));
         try {
+            double length = Double.parseDouble(table[1].replace(",", "."));
             scene.setLength(length);
+            if (length <= 0) {
+                throw new BusinessException("Die Länge der Szene \"" + scene.getName()
+                        + "\" ist ungültig (eingegebener Wert: " + length + "). Bitte gebe eine positive Zahl ein.");
+            }
         } catch (NumberFormatException e) {
             throw new BusinessException("Die Länge der Szene \"" + scene.getName()
-                    + "\" ist ungültig (eingegebener Wert: " + table[1] + "). Bitte gebe eine Zahl ein." +
+                    + "\" ist ungültig (eingegebener Wert: " + table[1] + "). Bitte gebe eine positive Zahl ein." +
                     "Erlaubt sind nur Ziffern von 0-9 und ein Punkt oder ein Komma als Dezimaltrennzeichen.");
         }
         return scene;

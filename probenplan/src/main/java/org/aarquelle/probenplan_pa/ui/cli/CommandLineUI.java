@@ -37,16 +37,16 @@ public class CommandLineUI {
     public CommandLineUI() {
         // Initialize commands
         putCommand(Help.class);
-        putCommand(CsvLocks.class);
-        putCommand(CsvScenes.class);
-        putCommand(CsvTimes.class);
+        putCommand(ImportLocks.class);
+        putCommand(ImportScenes.class);
+        putCommand(ImportTimes.class);
         putCommand(Exit.class);
         putCommand(Generate.class);
         putCommand(ShowData.class);
         putCommand(ClearData.class);
         putCommand(Test.class);
         putCommand(Overview.class);
-        putCommand(SaveToCsv.class);
+        putCommand(ExportToClipboard.class);
         putCommand(ShowParams.class);
         putCommand(SetParam.class);
         // Add more commands as needed

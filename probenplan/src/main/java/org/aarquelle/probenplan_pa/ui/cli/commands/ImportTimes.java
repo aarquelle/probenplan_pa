@@ -16,6 +16,7 @@
 
 package org.aarquelle.probenplan_pa.ui.cli.commands;
 
+import org.aarquelle.probenplan_pa.Main;
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.business.create.Creator;
@@ -30,11 +31,11 @@ import java.util.List;
 
 import static org.aarquelle.probenplan_pa.ui.cli.out.Out.*;
 
-public class CsvTimes extends AbstractCommand {
-    public CsvTimes() {
-        super("csv-times", "Importiere copy-paste-Daten aus einer Tabelle, um Schauspielende, "
-                + "Probentermine und Verfügbarkeiten anzulegen. Schaue in die README-Datei im Repository, "
-                + "um zu erfahren, wie die Daten aussehen müssen.");
+public class ImportTimes extends AbstractCommand {
+    public ImportTimes() {
+        super("import-times", "Importiere copy-paste-Daten aus einer Tabelle, um Schauspielende, "
+                + "Probentermine und Verfügbarkeiten anzulegen. Schaue in die README-Datei auf " + Main.REPOSITORY_URL
+                + ", um zu erfahren, wie die Daten aussehen müssen.");
     }
 
     @Override
@@ -56,7 +57,7 @@ public class CsvTimes extends AbstractCommand {
         for (ActorDTO a : actors) {
             if (!existingActors.contains(a)) {
                 throw new BusinessException("\"" + a.getName() + "\" ist nicht in der Datenbank vorhanden. "
-                        + "Bitte erstelle sie zuerst, z.B. mit dem Befehl 'csv-actors-roles'.");
+                        + "Bitte erstelle sie zuerst, z.B. mit dem Befehl 'import-scenes'.");
             }
         }
 

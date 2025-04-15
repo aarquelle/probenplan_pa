@@ -32,9 +32,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class SaveToCsv extends AbstractCommand {
-    public SaveToCsv() {
-        super("save-to-csv", "Speichert den Plan als csv-Daten ins Clipboard.");
+public class ExportToClipboard extends AbstractCommand {
+    public ExportToClipboard() {
+        super("export-to-clipboard", "Speichert den Plan als " +
+                "Tabellendaten ins Clipboard.");
     }
 
     @Override
