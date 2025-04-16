@@ -27,19 +27,10 @@ import java.io.IOException;
 
 public class CsvUtils {
 
-    public static String[][] parseArgs(String[] args) throws BusinessException {
-        String csvData;
-        if (args.length == 1 && args[0].equals("!")) {
-            csvData = getClipBoard();
-        }
-        else {
-            csvData = String.join(" ", args);
-        }
+    public static String[][] importFromClipboard() {
+        String csvData = getClipBoard();
         if (csvData.isEmpty()) {
             return new String[0][0];
-        } else if (!csvData.contains(System.lineSeparator())) {
-            throw new BusinessException("Keine Zeilenumbrüche im Paste. Bist du auf Windows? Dann verwende " +
-                    "\"!\" als Argument, um die kopierten Daten zu verwenden.");
         }
         String[] lines = csvData.split(System.lineSeparator());
         String[][] data = new String[lines.length][];
@@ -52,8 +43,13 @@ public class CsvUtils {
 
         return data;
     }
+    
+    public static void copyToClipboard(String[][] table) {
+        String csv = tableToCsv(table);
+        copyTextToClipboard(csv);
+    }
 
-    public static String tableToCsv(String[][] table) {
+    private static String tableToCsv(String[][] table) {
         StringBuilder csvBuilder = new StringBuilder();
         for (String[] row : table) {
             for (int i = 0; i < row.length; i++) {
@@ -67,7 +63,7 @@ public class CsvUtils {
         return csvBuilder.toString();
     }
 
-    public static void copyTextToClipboard(String s) {
+    private static void copyTextToClipboard(String s) {
         StringSelection stringSelection = new StringSelection(s);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, null);

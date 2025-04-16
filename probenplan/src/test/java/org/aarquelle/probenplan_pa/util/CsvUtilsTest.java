@@ -18,31 +18,37 @@ package org.aarquelle.probenplan_pa.util;
 
 import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
+import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 class CsvUtilsTest {
 
     @Test
-    void parseArgs() throws BusinessException {
-        String[] args = """
-                	Alfons Müller	Berta	Christian	Denise	Emil
-                1.4	x				x
-                2.4		?			?
-                5.4		?		\t
-                6.4				\t
-                19.6				\t
-               \s
-               \s
-               \s""".replace("\n", System.lineSeparator()).split(" ");
+    void importFromClipboard() throws BusinessException {
+        try (MockedStatic<CsvUtils> mockedClipboard = mockStatic(CsvUtils.class)) {
 
-        String[][] result = CsvUtils.parseArgs(args);
-        assertEquals("", result[0][0]);
-        assertEquals("Alfons Müller", result[0][1]);
-        assertEquals("Emil", result[0][5]);
-        assertEquals("x", result[1][1]);
-        assertEquals("19.6", result[5][0]);
+            String args = """
+                     	Alfons Müller	Berta	Christian	Denise	Emil
+                     1.4	x				x
+                     2.4		?			?
+                     5.4		?		\t
+                     6.4				\t
+                     19.6				\t
+                    \s
+                    \s
+                    \s""".replace("\n", System.lineSeparator());
+            mockedClipboard.when(CsvUtils::getClipBoard).thenReturn(args);
+            mockedClipboard.when(CsvUtils::importFromClipboard).thenCallRealMethod();
+            String[][] result = CsvUtils.importFromClipboard();
+
+            assertEquals("", result[0][0]);
+            assertEquals("Alfons Müller", result[0][1]);
+            assertEquals("Emil", result[0][5]);
+            assertEquals("x", result[1][1]);
+            assertEquals("19.6", result[5][0]);
+        }
     }
 }

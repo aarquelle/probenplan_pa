@@ -21,6 +21,7 @@ import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.business.create.Creator;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.ui.cli.out.Out;
 import org.aarquelle.probenplan_pa.util.CsvUtils;
 import org.aarquelle.probenplan_pa.util.DateUtils;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,7 @@ public class ImportLocks extends AbstractCommand {
 
     @Override
     public void execute(String[] args) throws BusinessException {
-        String[][] table = CsvUtils.parseArgs(args);
+        String[][] table = CsvUtils.importFromClipboard();
 
         List<SceneDTO> scenes = getSceneDTOS(table);
 
@@ -70,6 +71,7 @@ public class ImportLocks extends AbstractCommand {
                 }
             }
         }
+        Out.info("Locks wurden erfolgreich importiert.");
     }
 
     private static @NotNull List<SceneDTO> getSceneDTOS(String[][] table) throws BusinessException {

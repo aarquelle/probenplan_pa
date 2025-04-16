@@ -40,7 +40,7 @@ public class ImportTimes extends AbstractCommand {
 
     @Override
     public void execute(String[] args) throws BusinessException {
-        String[][] table = CsvUtils.parseArgs(args);
+        String[][] table = CsvUtils.importFromClipboard();
         if (table.length == 0) {
             error("Die Tabelle ist leer.");
             return;
@@ -85,5 +85,8 @@ public class ImportTimes extends AbstractCommand {
                 }
             }
         }
+        infoPr("Probentermine und Zeiten wurden erfolgreich importiert. Prüfe mit dem Befehl ");
+        pr("'show-data'");
+        info(", ob alles korrekt importiert wurde.");
     }
 }

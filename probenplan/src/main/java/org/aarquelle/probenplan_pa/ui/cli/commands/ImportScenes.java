@@ -29,6 +29,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.aarquelle.probenplan_pa.ui.cli.out.Out.info;
+import static org.aarquelle.probenplan_pa.ui.cli.out.Out.infoPr;
+import static org.aarquelle.probenplan_pa.ui.cli.out.Out.pr;
+
 public class ImportScenes extends AbstractCommand {
 
     public ImportScenes() {
@@ -39,7 +43,7 @@ public class ImportScenes extends AbstractCommand {
 
     @Override
     public void execute(String[] args) throws BusinessException {
-        String[][] table = CsvUtils.parseArgs(args);
+        String[][] table = CsvUtils.importFromClipboard();
 
         List<RoleDTO> roles = new ArrayList<>();
         List<RoleDTO> existingRoles = BasicService.getRoles();
@@ -100,6 +104,9 @@ public class ImportScenes extends AbstractCommand {
                 }
             }
         }
+        infoPr("Szenen und Rollen wurden erfolgreich importiert. Prüfe mit dem Befehl ");
+        pr("'show-data'");
+        info(", ob alles korrekt importiert wurde.");
     }
 
     private static @NotNull SceneDTO createSceneDTO(String[] table, int position) throws BusinessException {

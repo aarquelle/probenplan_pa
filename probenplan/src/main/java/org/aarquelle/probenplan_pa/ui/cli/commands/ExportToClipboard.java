@@ -46,7 +46,7 @@ public class ExportToClipboard extends AbstractCommand {
             throw new BusinessException("Erstelle zuerst einen Plan mit generate");
         }
 
-        String[][] table = null;
+        String[][] table;
         if (args.length < 1 || !Objects.equals(args[0], "1")) {
             table = new String[rehearsals.size() + 1] [3];
             table[0] = new String[]{"Datum", "Szenen", "Schauspielende"};
@@ -104,9 +104,7 @@ public class ExportToClipboard extends AbstractCommand {
                 }
             }
         }
-
-        String csv = CsvUtils.tableToCsv(table);
-        CsvUtils.copyTextToClipboard(csv);
+        CsvUtils.copyToClipboard(table);
 
     }
 }
