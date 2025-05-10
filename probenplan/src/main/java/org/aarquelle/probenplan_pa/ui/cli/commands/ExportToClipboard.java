@@ -48,7 +48,7 @@ public class ExportToClipboard extends AbstractCommand {
 
         String[][] table;
         if (args.length < 1 || !Objects.equals(args[0], "1")) {
-            table = new String[rehearsals.size() + 1] [3];
+            table = new String[rehearsals.size() + 1] [4];
             table[0] = new String[]{"Datum", "Szenen", "Schauspielende"};
             for (int i = 0; i < rehearsals.size(); i++) {
                 RehearsalDTO rehearsal = rehearsals.get(i);
@@ -85,6 +85,11 @@ public class ExportToClipboard extends AbstractCommand {
                     actorsString.append(actor.getName());
                 }
                 table[i + 1][2] = actorsString.toString();
+                double rehearsalLength = 0;
+                for (SceneDTO s : scenes) {
+                    rehearsalLength += s.getLength();
+                }
+                table[i + 1][3] = String.valueOf(rehearsalLength);
             }
         } else {
             List<SceneDTO> scenes = BasicService.getScenes();
