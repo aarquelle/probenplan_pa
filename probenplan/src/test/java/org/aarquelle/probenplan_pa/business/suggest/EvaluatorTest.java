@@ -108,4 +108,14 @@ class EvaluatorTest {
         assertDoubleEquals(1.5/2, evaluator.getMinimumRepeats());
         assertDoubleEquals(2.0/2, evaluator.getMedianRepeats());
     }
+
+    @Test
+    void testNumberOfRoles() {
+        Evaluator evaluator = new Evaluator(plan1, new ParamsDTO());
+        assertEquals(4, evaluator.getNumberOfRolesInRehearsal(rehearsal1));
+        assertEquals(3, evaluator.getNumberOfRolesInRehearsal(rehearsal2));
+        assertEquals(4, evaluator.getNumberOfRolesInRehearsal(rehearsal3));
+        assertEquals(2, evaluator.getNumberOfRolesInRehearsal(rehearsal4));
+        assertEquals(3, evaluator.getNumberOfRolesInRehearsal(rehearsal5));
+    }
 }

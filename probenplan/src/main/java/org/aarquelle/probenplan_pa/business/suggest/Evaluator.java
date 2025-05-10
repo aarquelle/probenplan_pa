@@ -72,7 +72,8 @@ public class Evaluator {
                 + lumpiness * params.getLumpinessWeight()
                 + minimumRepeats * params.getMinimumRepeatsWeight()
                 + medianRepeats * params.getMedianRepeatsWeight()
-                + overSize * params.getOverSizeWeight())
+                + overSize * params.getOverSizeWeight()
+                + getRoleNumberScore() * params.getNumberOfRolesWeight())
                 / params.getTotalWeight();
     }
 
@@ -214,5 +215,29 @@ public class Evaluator {
             }
         }
         return numberOfRepeats;
+    }
+
+    int getNumberOfRolesInRehearsal(RehearsalDTO rehearsal) {
+        List<RoleDTO> roles = new ArrayList<>();
+        List<SceneDTO> scenes = plan.get(rehearsal);
+        for (SceneDTO scene : scenes) {
+            List<Pair<RoleDTO, Boolean>> sceneRoles = Analyzer.rolesForScene.get(scene);
+            for (Pair<RoleDTO, Boolean> role : sceneRoles) {
+                if (!roles.contains(role.first())) {
+                    roles.add(role.first());
+                }
+            }
+        }
+        return roles.size();
+    }
+
+    double getRoleNumberScore() {
+        double result = 0;
+        for (RehearsalDTO rehearsalDTO : rehearsals) {
+            result += getNumberOfRolesInRehearsal(rehearsalDTO);
+        }
+        result /= rehearsals.size();
+        result /= Analyzer.numberOfRoles;
+        return 1 - result;
     }
 }

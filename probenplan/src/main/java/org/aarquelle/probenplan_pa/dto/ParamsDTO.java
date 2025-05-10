@@ -31,6 +31,7 @@ public class ParamsDTO implements Cloneable {
     private double minimumRepeatsWeight = 1;
     private double medianRepeatsWeight = 0.5;
     private double overSizeWeight = 2;
+    private double numberOfRolesWeight = 1;
 
     public double getEarliestDurchlaufprobe() {
         return earliestDurchlaufprobe;
@@ -128,9 +129,17 @@ public class ParamsDTO implements Cloneable {
         this.overSizeWeight = overSizeWeight;
     }
 
+    public double getNumberOfRolesWeight() {
+        return numberOfRolesWeight;
+    }
+
+    public void setNumberOfRolesWeight(double numberOfRolesWeight) {
+        this.numberOfRolesWeight = numberOfRolesWeight;
+    }
+
     public double getTotalWeight() {
         return completenessWeight + dlpCompletenessWeight + completenessBeforeDLPWeight
-                + lumpinessWeight + minimumRepeatsWeight + medianRepeatsWeight + overSizeWeight;
+                + lumpinessWeight + minimumRepeatsWeight + medianRepeatsWeight + overSizeWeight + numberOfRolesWeight;
     }
 
     public String getValueFromString(String name) {
@@ -147,6 +156,7 @@ public class ParamsDTO implements Cloneable {
             case "minimumRepeatsWeight" -> String.valueOf(minimumRepeatsWeight);
             case "medianRepeatsWeight" -> String.valueOf(medianRepeatsWeight);
             case "overSizeWeight" -> String.valueOf(overSizeWeight);
+            case "numberOfRolesWeight" -> String.valueOf(numberOfRolesWeight);
             default -> throw new IllegalArgumentException("Invalid parameter name: " + name);
         };
     }
@@ -165,6 +175,7 @@ public class ParamsDTO implements Cloneable {
             case "minimumRepeatsWeight" -> minimumRepeatsWeight = Double.parseDouble(value);
             case "medianRepeatsWeight" -> medianRepeatsWeight = Double.parseDouble(value);
             case "overSizeWeight" -> overSizeWeight = Double.parseDouble(value);
+            case "numberOfRolesWeight" -> numberOfRolesWeight = Double.parseDouble(value);
             default -> throw new IllegalArgumentException("Invalid parameter name: " + name);
         }
     }
@@ -182,7 +193,8 @@ public class ParamsDTO implements Cloneable {
                 "lumpinessWeight",
                 "minimumRepeatsWeight",
                 "medianRepeatsWeight",
-                "overSizeWeight"
+                "overSizeWeight",
+                "numberOfRolesWeight"
         };
     }
 

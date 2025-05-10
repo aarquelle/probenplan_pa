@@ -16,6 +16,7 @@
 
 package org.aarquelle.probenplan_pa.business.suggest;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.data.dao.ReadDAO;
 import org.aarquelle.probenplan_pa.data.dao.Transaction;
 import org.aarquelle.probenplan_pa.dto.ActorDTO;
@@ -40,6 +41,7 @@ public class Analyzer {
     static RehearsalSceneTable<Double> scoreTable;
 
     static List<SceneDTO> allScenes;
+    static int numberOfRoles;
     static double lengthOfPlay;
 
     /**
@@ -61,6 +63,7 @@ public class Analyzer {
         scoreTable = completenessScores();
         rolesForScene = getRolesForScene();
         missingActorsForRehearsal = getMissingActorsForRehearsal();
+        numberOfRoles = getTotalNumberOfRoles();
     }
 
     public static List<SceneDTO> getAllScenes() {
@@ -267,6 +270,10 @@ public class Analyzer {
             }
             results.get(k).add(new Pair<>(v, b));
         });
+    }
+
+    private static int getTotalNumberOfRoles() {
+        return BasicService.getRoles().size();
     }
 
 }
