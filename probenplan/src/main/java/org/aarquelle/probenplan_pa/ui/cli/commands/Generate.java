@@ -62,7 +62,7 @@ public class Generate extends AbstractCommand {
 
         DecimalFormat df = new DecimalFormat("#.###");
         String time = df.format((double)(System.currentTimeMillis() - startTime) / 1000);
-        System.out.println("Found plan in " + time + " seconds.");
+        Out.success("Found plan in " + time + " seconds.");
 
         Main.plan = plan;
     }

@@ -26,7 +26,9 @@ import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.RoleDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
 import org.aarquelle.probenplan_pa.util.CsvUtils;
+import org.aarquelle.probenplan_pa.util.Pair;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -65,24 +67,41 @@ public class ExportToClipboard extends AbstractCommand {
                 table[i + 1][1] = scenesString.toString();
 
                 List<RoleDTO> fullRoles = BasicService.getRoles();
+                List<ActorDTO> allMissingActors = Analyzer.missingActorsForRehearsal.get(rehearsal).stream()
+                        .filter(p -> !p.second())
+                        .map(Pair::first)
+                        .toList();
                 StringBuilder actorsString = new StringBuilder();
                 Set<RoleDTO> roles = new HashSet<>();
                 for (SceneDTO s : scenes) {
                     roles.addAll(Analyzer.getRolesForScene(s));
                 }
-                Set<ActorDTO> actors = new HashSet<>();
+                List<ActorDTO> presentActors = new ArrayList<>();
+                List<ActorDTO> missingActors = new ArrayList<>();
                 for (RoleDTO role : roles) {
                     for (RoleDTO fullRole : fullRoles) { //Nötig, weil getRolesForScene keine Actors auffüllt.
                         if (role.getId() == fullRole.getId()) {
-                            actors.add(fullRole.getActor());
+                            if (allMissingActors.contains(fullRole.getActor())
+                                    && !missingActors.contains(fullRole.getActor())) {
+                                missingActors.add(fullRole.getActor());
+                            } else if (!presentActors.contains(fullRole.getActor())) {
+                                presentActors.add(fullRole.getActor());
+                            }
                         }
                     }
                 }
-                for (ActorDTO actor : actors) {
+                for (ActorDTO actor : presentActors) {
                     if (!actorsString.isEmpty()) {
                         actorsString.append(", ");
                     }
                     actorsString.append(actor.getName());
+                }
+                if (!missingActors.isEmpty()) {
+                    actorsString.append(". Falls doch möglich: ");
+                    for (ActorDTO actor : missingActors) {
+                        actorsString.append(actor.getName()).append(", ");
+                    }
+                    actorsString.delete(actorsString.length() - 2, actorsString.length());
                 }
                 table[i + 1][2] = actorsString.toString();
                 double rehearsalLength = 0;

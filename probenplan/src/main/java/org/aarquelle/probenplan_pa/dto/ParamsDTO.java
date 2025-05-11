@@ -31,7 +31,7 @@ public class ParamsDTO implements Cloneable {
     private double minimumRepeatsWeight = 1;
     private double medianRepeatsWeight = 0.5;
     private double overSizeWeight = 2;
-    private double numberOfRolesWeight = 1;
+    private double numberOfRolesWeight = 3;
 
     public double getEarliestDurchlaufprobe() {
         return earliestDurchlaufprobe;

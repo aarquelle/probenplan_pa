@@ -128,5 +128,13 @@ public class Out {
         System.out.print("\033[?25h");
     }
 
+    public static void success(String message) {
+        println(ANSI_GREEN + message + ANSI_RESET);
+    }
+
+    public static void successPr(String message) {
+        print(ANSI_GREEN + message + ANSI_RESET);
+    }
+
 
 }
