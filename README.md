@@ -83,6 +83,20 @@ Beispiel: ![Bild einer Tabelle](beispielcsvs/locks.png)
 ### Finetuning der Generierung
 - `show-params` --- Zeigt die aktuellen Werte der Generierungsparameter.
 - `set-param <param-name> <value>` --- Legt einen Generierungsparameter auf einen bestimmten Wert fest. Die Standardwerte sollten gut funktionieren, aber du kannst auch mit anderen Werten experimentieren. Wenn du mit anderen Werten bessere Ergebnisse erzielst, teile es mir bitte mit! Die Werte werden nach jedem Neustart des Programms auf die Standardwerte zurückgesetzt.
+#### Parameter:
+- `earliestDurchlaufprobe` --- Legt den frühesten Termin fest, an dem eine Durchlaufprobe stattfinden darf. `0` ist dabei die erste Probe, `1` die letzte.
+- `latestDurchlaufprobe` --- Pendant zu oben, für den spätesten möglichen Termin.
+- `averageRehearsalLength` --- Legt fest, wie lang eine Probe sein soll - gemessen als Summe der Längen der einzelnen Szenen.
+- `numberOfIterations` --- Legt die Standardzahl von generierten Probenplänen fest, wenn bei `generate` kein entsprechendes Argument mitgeliefert wird.
+- `initialSeed` --- Legt den ersten Zufallsseed fest, wenn bei `generate` kein entsprechendes Argument mitgeliefert wird. Bei gleichem Seed kommen immer die gleichen Ergebnisse raus. **Hinweis**: Wenn bspw. `initialSeed` 1 ist und `numberOfIterations` 100000, dann werden alle Probenpläne nach den seeds von 1 bis 100001 generiert. Den seed auf 10 zu ändern, macht also kaum einen Unterschied, da dann die Probenpläne nach den seeds von 10 bis 100010 generiert würden (also größtenteils die gleichen Pläne).
+- `completenessWeight` --- Wie viel Wert darauf gelegt wird, dass die einzelnen Szenen möglichst vollständig sind, also dass möglichst wenige Schauspielende fehlen und eingesprochen werden müssen.
+- `dlpCompletenessWeight` --- Wie viel Wert darauf gelegt wird, dass die Durchlaufprobe möglichst vollständig gespielt werden kann.
+- `completenessBeforeDLPWeight` --- Wie viel Wert darauf gelegt wird, dass vor der Durchlaufprobe möglichst jede Szene schon vollständig gespielt werden konnte.
+- `lumpinessWeight` --- Wie viel Wert darauf gelegt wird, dass in einer Probe möglichst zusammenhängende Szenen geprobt werden.
+- `minimumRepeatsWeight` --- Wie viel Wert darauf gelegt wird, dass die am seltensten geprobte Szene trotzdem oft geprobt wird.
+- `medianRepeatsWeight` --- Wie oben, auf für den Median.
+- `overSizeWeight` --- Wie viel Wert darauf gelegt wird, dass Szenen nicht deutlich länger als die `averageRehearsalLength` sind.
+- `numberOfRolesWeight` --- Wie viel Wert darauf gelegt wird, dass nicht so viele Rollen pro Probe dran sind. **Hinweis**: Momentan zählt das Programm nur die Rollen, nicht die Schauspielenden. Wenn eine Schauspielerin also mehrere Rollen hat, kann das an dieser Stelle gerade nicht berücksichtigt werden. Das wird sich in Zukunft verbessern. **Anderer Hinweis**: Momentan werden Proben mit 4 oder weniger Rollen als "ideal" angesehen, unterhalb davon wird nicht unterschieden.
 
 ## Fehler:
 Das Programm ist noch in einem ziemlich unfertigen Stadium. Man kann es zwar benutzen, aber es gibt bestimmt noch viele Situationen, in denen eine leicht unerwartete Bedienung zum Absturz führt. Bitte schreibt mir solche Fehler (inklusive Fehlermeldungen, und was ihr gemacht habt), damit ich sie fixen kann! `clear-data` ist aber nützlich, um alte, möglicherweise fehlerhafte Daten wieder zu entfernen.
