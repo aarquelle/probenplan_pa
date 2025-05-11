@@ -21,6 +21,7 @@ import org.aarquelle.probenplan_pa.dto.ParamsDTO;
 import org.aarquelle.probenplan_pa.dto.PlanDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.ui.LoadingBar;
 import org.aarquelle.probenplan_pa.util.Pair;
 
 import java.util.ArrayList;
@@ -152,7 +153,7 @@ public class Generator {
         }
     }
 
-    public static PlanDTO generateBestPlan(ParamsDTO params, Consumer<Integer> consumer) {
+    public static PlanDTO generateBestPlan(ParamsDTO params, LoadingBar loadingBar) {
         maxPlan = null;
         maxResult = 0;
         Analyzer.runAnalysis();
@@ -164,7 +165,7 @@ public class Generator {
         for (int i = 0; i < cores; i++) {
             int finalI = i;
             threads[i] = new Thread(() -> generatePlans(seed + (long) finalI * (iterations / cores),
-                    iterations / cores, params, finalI == 0 ? consumer : null));
+                    iterations / cores, params, loadingBar, finalI == 0, cores));
         }
         for (Thread thread : threads) {
             thread.start();
@@ -187,23 +188,24 @@ public class Generator {
     }
 
 
-    private static void generatePlans(long seed, int iterations, ParamsDTO params, Consumer<Integer> consumer) {
-        double localMax = 0;
-        PlanDTO localMaxPlan = null;
+    private static void generatePlans(long seed, int iterations, ParamsDTO params, LoadingBar loadingBar,
+                                      boolean updateLoadingBar, int cores) {
         for (long i = seed; i < seed + iterations; i++) {
             Generator generator = new Generator(i, params);
             PlanDTO plan = generator.generatePlan();
             double result = new Evaluator(plan, params).evaluate();
-            if (consumer != null) {
-                consumer.accept((int) (i - seed));
+            if (updateLoadingBar) {
+                loadingBar.setFullness((int) (i - seed));
             }
-            if (result > localMax) {
-                localMax = result;
-                localMaxPlan = plan;
+            if (result > maxResult) {
+                updateMax(result, plan);
+                loadingBar.alert("Plan mit Wert " + result + " bei Schritt " + (i - seed) * cores + " gefunden");
+                //localMax = result;
+                //localMaxPlan = plan;
                 //System.out.println("New maximum: " + result + " reached at step " + i);
             }
         }
 
-        updateMax(localMax, localMaxPlan);
+        //updateMax(localMax, localMaxPlan);
     }
 }

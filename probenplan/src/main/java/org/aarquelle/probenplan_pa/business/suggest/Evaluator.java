@@ -62,19 +62,22 @@ public class Evaluator {
         double minimumRepeats = getMinimumRepeats();
         double medianRepeats = getMedianRepeats();
         double overSize = overSize();
+        double roleNumberScore = getRoleNumberScore();
 
-        plan.setTestResults(
-                new TestResults(totalCompleteness, dlpCompleteness, completenessBeforeDLP,
-                        lumpiness, minimumRepeats, medianRepeats, overSize, expectedNumberOfRepeats));
-        return (totalCompleteness * params.getCompletenessWeight()
+        double totalScore = (totalCompleteness * params.getCompletenessWeight()
                 + dlpCompleteness * params.getDlpCompletenessWeight()
                 + completenessBeforeDLP * params.getCompletenessBeforeDLPWeight()
                 + lumpiness * params.getLumpinessWeight()
                 + minimumRepeats * params.getMinimumRepeatsWeight()
                 + medianRepeats * params.getMedianRepeatsWeight()
                 + overSize * params.getOverSizeWeight()
-                + getRoleNumberScore() * params.getNumberOfRolesWeight())
+                + roleNumberScore * params.getNumberOfRolesWeight())
                 / params.getTotalWeight();
+
+        plan.setTestResults(
+                new TestResults(totalScore, totalCompleteness, dlpCompleteness, completenessBeforeDLP,
+                        lumpiness, minimumRepeats, medianRepeats, overSize, expectedNumberOfRepeats, roleNumberScore));
+        return totalScore;
     }
 
     boolean allScenesBeforeDurchlaufprobe() {

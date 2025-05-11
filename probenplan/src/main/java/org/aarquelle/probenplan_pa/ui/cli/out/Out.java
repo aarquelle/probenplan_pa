@@ -99,7 +99,9 @@ public class Out {
             Out.infoPr(": ");
             plan.get(r).forEach(s -> {
                 Out.prScene(s);
-                Out.infoPr("(" + Analyzer.completenessScore(r, s) + ")");
+                Out.infoPr("(");
+                System.out.printf("%.2f", Analyzer.completenessScore(r, s));
+                infoPr(")");
                 Out.infoPr(", ");
             });
             Out.line("");
@@ -117,6 +119,13 @@ public class Out {
         }
         int per = (int) (value * 100);
         pr(per + "%" + ANSI_RESET);
+    }
+
+    public static void hideCursor() {
+        System.out.print("\033[?25l");
+    }
+    public static void showCursor() {
+        System.out.print("\033[?25h");
     }
 
 

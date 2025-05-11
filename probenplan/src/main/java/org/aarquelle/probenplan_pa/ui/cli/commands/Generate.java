@@ -53,8 +53,10 @@ public class Generate extends AbstractCommand {
         }
 
         ProgressBar progressBar = new ProgressBar(params.getNumberOfIterations() / Main.NUMBER_OF_CORES);
-        PlanDTO plan = Generator.generateBestPlan(params, progressBar::update);
+        Out.hideCursor();
+        PlanDTO plan = Generator.generateBestPlan(params, progressBar);
         progressBar.finish();
+        Out.showCursor();
         Out.info("Generierter Plan:");
         Out.plan(plan);
 

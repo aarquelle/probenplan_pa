@@ -17,26 +17,49 @@
 package org.aarquelle.probenplan_pa.ui.cli.out;
 
 
-public class ProgressBar extends Out {
+import org.aarquelle.probenplan_pa.ui.LoadingBar;
+
+public class ProgressBar extends Out implements LoadingBar {
     int width = getTerminalWidth() - 10;
     int max;
     int currentProgress = 0;
+
+    boolean busy = false;
+
     public ProgressBar(int max) {
         this.max = max;
         line("");
-        pr("["+" ".repeat(Math.max(0, width)) + "]\u001b[2G");
+        pr("[" + " ".repeat(Math.max(0, width)) + "]\u001b[2G");
     }
 
-    public void update(int value) {
-        int progress = (int)((double)value / max * width);
-        if (progress > currentProgress) {
-            currentProgress = progress;
-            pr("=");
+    @Override
+    public void setFullness(int value) {
+        if (!busy) {
+            int progress = (int) ((double) value / max * width);
+            if (progress > currentProgress) {
+                currentProgress = progress;
+                pr("\u001b[1G");
+                StringBuilder sb = new StringBuilder("[");
+                for (int i = 0; i < width; i++) {
+                    sb.append(i < currentProgress ? "=" : " ");
+                }
+                sb.append("]");
+                pr(sb.toString());
+            }
         }
     }
 
+    @Override
+    public synchronized void alert(String message) {
+        busy = true;
+        pr("\n");
+        pr(message);
+        pr("\u001b[1A");
+        busy = false;
+    }
+
     public void finish() {
-        pr("=]\n");
+        pr("\n\n\n");
         try {
             System.out.flush();
         } catch (Exception e) {
