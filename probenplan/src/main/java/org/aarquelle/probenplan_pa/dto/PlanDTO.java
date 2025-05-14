@@ -20,7 +20,7 @@ import org.aarquelle.probenplan_pa.util.Pair;
 
 import java.util.*;
 
-public class PlanDTO {
+public class PlanDTO implements Cloneable {
     private final Map<RehearsalDTO, List<SceneDTO>> plan = new HashMap<>();
     private TestResults testResults;
 
@@ -29,6 +29,15 @@ public class PlanDTO {
             plan.put(r, new ArrayList<>(List.of(s)));
         } else {
             plan.get(r).add(s);
+        }
+    }
+
+    public void remove(RehearsalDTO r, SceneDTO s) {
+        if (plan.containsKey(r)) {
+            plan.get(r).remove(s);
+            if (plan.get(r).isEmpty()) {
+                plan.remove(r);
+            }
         }
     }
 
@@ -107,5 +116,23 @@ public class PlanDTO {
 
     public void setTestResults(TestResults testResults) {
         this.testResults = testResults;
+    }
+
+    public boolean hasScene(RehearsalDTO rehearsal, SceneDTO scene) {
+        List<SceneDTO> scenes = get(rehearsal);
+        if (scenes == null) {
+            return false;
+        } else return scenes.contains(scene);
+    }
+
+    public PlanDTO copy() {
+        PlanDTO clone = new PlanDTO();
+        //clone.testResults = testResults; //TODO deep copy
+        for (Map.Entry<RehearsalDTO, List<SceneDTO>> entry : plan.entrySet()) {
+            RehearsalDTO rehearsal = entry.getKey();
+            List<SceneDTO> scenes = new ArrayList<>(entry.getValue());
+            clone.plan.put(rehearsal, scenes);
+        }
+        return clone;
     }
 }

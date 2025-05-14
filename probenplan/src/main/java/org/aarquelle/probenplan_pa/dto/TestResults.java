@@ -26,6 +26,7 @@ public record TestResults(
         double lumpiness,
         double minimumRepeats,
         double medianRepeats,
+        double averageRepeats,
         double overSize,
         double expectedNumberOfRepeats,
         double numberOfRoles) {
@@ -37,6 +38,7 @@ public record TestResults(
                 + "\nlumpiness: " + lumpiness
                 + "\nminimumRepeats: " + minimumRepeats
                 + "\nmedianRepeats: " + medianRepeats
+                + "\naverageRepeats: " + averageRepeats
                 + "\noverSize: " + overSize
                 + "\nexpectedNumberOfRepeats: " + expectedNumberOfRepeats
                 + "\nnumberOfRolesScore: " + numberOfRoles + "\n";
