@@ -16,8 +16,8 @@
 
 package org.aarquelle.probenplan_pa.ui.cli.commands;
 
-import org.aarquelle.probenplan_pa.Main;
 import org.aarquelle.probenplan_pa.business.BusinessException;
+import org.aarquelle.probenplan_pa.business.Params;
 
 import static org.aarquelle.probenplan_pa.ui.cli.out.Out.*;
 
@@ -34,7 +34,7 @@ public class SetParam extends AbstractCommand {
         String paramName = args[0];
         String value = args[1];
         try {
-            Main.params.setValueFromString(paramName, value);
+            Params.setPara(paramName, value);
             infoPr("Parameter " + paramName + " gesetzt auf " + value);
         } catch (NumberFormatException e) {
             throw new BusinessException("Ungültiger Wert: " + e.getMessage());

@@ -37,22 +37,9 @@ public class Generate extends AbstractCommand {
     public void execute(String[] args) throws BusinessException {
         Out.info("Generiere Testdaten... Das kann einen kurzen Moment dauern, bitte warten.");
         long startTime = System.currentTimeMillis();
-        Params params;
-        try {
-            params = Main.params.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
-        if (args != null && args.length > 0) {
-            params.setNumberOfIterations(Integer.parseInt(args[0]));
-            if (args.length > 1) {
-                params.setInitialSeed(Long.parseLong(args[1]));
-            } else {
-                params.setInitialSeed(System.currentTimeMillis());
-            }
-        }
 
-        Mutator mutator = new Mutator(System.currentTimeMillis(), params);
+
+        Mutator mutator = new Mutator(System.currentTimeMillis());
         mutator.mutate();
         Plan plan = mutator.getPlan();
 

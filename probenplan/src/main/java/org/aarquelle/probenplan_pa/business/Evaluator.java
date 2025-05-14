@@ -33,7 +33,6 @@ public class Evaluator {
 
     Rehearsal durchlaufprobe;
     Plan plan;
-    Params params;
     Set<Rehearsal> rehearsals;
     Set<Scene> scenes;
 
@@ -43,9 +42,10 @@ public class Evaluator {
 
     double totalLengthOfRehearsals;
 
-    public Evaluator(Plan plan, Params params) {
+    double averageRehearsalLength;
+
+    public Evaluator(Plan plan) {
         this.plan = plan;
-        this.params = params;
         this.rehearsals = BasicService.getRehearsals();
         this.scenes = BasicService.getScenes();
         this.totalLengthOfRehearsals = plan.totalLength();
@@ -67,16 +67,16 @@ public class Evaluator {
         double overSize = overSize();
         double roleNumberScore = getRoleNumberScore();
 
-        double totalScore = (totalCompleteness * params.getCompletenessWeight()
-                + dlpCompleteness * params.getDlpCompletenessWeight()
-                + completenessBeforeDLP * params.getCompletenessBeforeDLPWeight()
-                + lumpiness * params.getLumpinessWeight()
-                + minimumRepeats * params.getMinimumRepeatsWeight()
-                + medianRepeats * params.getMedianRepeatsWeight()
-                + averageRepeats * params.getAverageRepeatsWeight()
-                + overSize * params.getOverSizeWeight()
-                + roleNumberScore * params.getNumberOfRolesWeight())
-                / params.getTotalWeight();
+        double totalScore = (totalCompleteness * Params.getCompletenessWeight()
+                + dlpCompleteness * Params.getDlpCompletenessWeight()
+                + completenessBeforeDLP * Params.getCompletenessBeforeDLPWeight()
+                + lumpiness * Params.getLumpinessWeight()
+                + minimumRepeats * Params.getMinimumRepeatsWeight()
+                + medianRepeats * Params.getMedianRepeatsWeight()
+                + averageRepeats * Params.getAverageRepeatsWeight()
+                + overSize * Params.getOverSizeWeight()
+                + roleNumberScore * Params.getNumberOfRolesWeight())
+                / Params.getTotalWeight();
 
         plan.setTestResults(
                 new TestResults(totalScore, totalCompleteness, dlpCompleteness, completenessBeforeDLP,
@@ -148,7 +148,7 @@ public class Evaluator {
             result += Analyzer.completenessScore(pair.first(), pair.second())
                     * pair.second().getLength();
             planLength += pair.second().getLength();
-            //        (params.getAverageRehearsalLength() * (rehearsals.size() -1) + Analyzer.lengthOfPlay); //lengthOfPlay für DLP
+            //        (Params.getAverageRehearsalLength() * (rehearsals.size() -1) + Analyzer.lengthOfPlay); //lengthOfPlay für DLP
         }
 
         return result / planLength;
@@ -183,7 +183,7 @@ public class Evaluator {
             }
             double rehearsalLength = plan.getLengthOfRehearsal(r);
             double oversize = Math.max(0,
-                    (rehearsalLength - params.getAverageRehearsalLength()) / params.getAverageRehearsalLength());
+                    (rehearsalLength - Params.getAverageRehearsalLength()) / Params.getAverageRehearsalLength());
             result += Math.pow(oversize, 2);
         }
         return 1 - result / (rehearsals.size() - 1);
@@ -193,7 +193,7 @@ public class Evaluator {
         double lengthOfPlay = scenes.stream()
                 .mapToDouble(Scene::getLength)
                 .sum();
-        return ((rehearsals.size() - 1) * params.getAverageRehearsalLength()) / lengthOfPlay;
+        return ((rehearsals.size() - 1) * Params.getAverageRehearsalLength()) / lengthOfPlay;
     }
 
     double getMinimumRepeats() {

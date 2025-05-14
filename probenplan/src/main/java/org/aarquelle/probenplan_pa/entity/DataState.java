@@ -16,6 +16,8 @@
 
 package org.aarquelle.probenplan_pa.entity;
 
+import org.aarquelle.probenplan_pa.business.Params;
+
 import java.util.HashSet;
 import java.util.Set;
 

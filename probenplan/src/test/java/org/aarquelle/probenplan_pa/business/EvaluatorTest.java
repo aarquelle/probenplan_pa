@@ -64,10 +64,10 @@ class EvaluatorTest {
 
     @Test
     void testEvaluateAllScenesBeforeDLP() {
-        Evaluator evaluator = new Evaluator(plan1, new Params());
+        Evaluator evaluator = new Evaluator(plan1);
         assertTrue(evaluator.allScenesBeforeDurchlaufprobe());
 
-        assertFalse(new Evaluator(plan2, new Params()).allScenesBeforeDurchlaufprobe());
+        assertFalse(new Evaluator(plan2).allScenesBeforeDurchlaufprobe());
     }
 
     @Test
@@ -77,27 +77,27 @@ class EvaluatorTest {
 
     @Test
     void testDlpCompleteness() {
-        Evaluator evaluator = new Evaluator(plan1, new Params());
+        Evaluator evaluator = new Evaluator(plan1);
         assertDoubleEquals(0.793333, evaluator.dlpCompleteness());
     }
 
     @Test
     void testBeforeDlpCompleteness() {
-        Evaluator evaluator = new Evaluator(plan1, new Params());
+        Evaluator evaluator = new Evaluator(plan1);
         assertDoubleEquals(0.6466666666667, evaluator.completenessBeforeDLP());
     }
 
     @Test
     void testLumpiness() {
-        Evaluator evaluator = new Evaluator(plan1, new Params());
+        Evaluator evaluator = new Evaluator(plan1);
         assertDoubleEquals(1.0, evaluator.lumpiness());
-        evaluator = new Evaluator(plan2, new Params());
+        evaluator = new Evaluator(plan2);
         assertDoubleEquals(0.9, evaluator.lumpiness());
     }
 
     @Test
     void testNumberOfRepeats() {
-        Evaluator evaluator = new Evaluator(plan1, new Params());
+        Evaluator evaluator = new Evaluator(plan1);
         assertDoubleEquals(2.0, evaluator.numberOfRepeats.get(scene1));
         assertDoubleEquals(1.5, evaluator.numberOfRepeats.get(scene2));
         assertDoubleEquals(1.5, evaluator.numberOfRepeats.get(scene3));
@@ -109,7 +109,7 @@ class EvaluatorTest {
 
     @Test
     void testNumberOfRoles() {
-        Evaluator evaluator = new Evaluator(plan1, new Params());
+        Evaluator evaluator = new Evaluator(plan1);
         assertEquals(4, evaluator.getNumberOfRolesInRehearsal(rehearsal1));
         assertEquals(3, evaluator.getNumberOfRolesInRehearsal(rehearsal2));
         assertEquals(4, evaluator.getNumberOfRolesInRehearsal(rehearsal3));

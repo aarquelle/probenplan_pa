@@ -18,7 +18,11 @@ package org.aarquelle.probenplan_pa.ui.cli.commands;
 
 import org.aarquelle.probenplan_pa.Main;
 import org.aarquelle.probenplan_pa.business.BusinessException;
+import org.aarquelle.probenplan_pa.business.Para;
+import org.aarquelle.probenplan_pa.business.Params;
 import org.aarquelle.probenplan_pa.ui.cli.out.Out;
+
+import java.util.List;
 
 public class ShowParams extends AbstractCommand {
     public ShowParams() {
@@ -28,10 +32,10 @@ public class ShowParams extends AbstractCommand {
 
     @Override
     public void execute(String[] args) throws BusinessException {
-        String[] params = Main.params.getParamNames();
-        for (String s : params) {
-            Out.infoPr(s + "=");
-            Out.line(Main.params.getValueFromString(s));
+        List<Para<?>> params = Params.getAllParams();
+        for (Para<?> p : params) {
+            Out.infoPr(p.getName() + "=");
+            Out.line(p.getValue() + " (default: " + p.getDefaultValue() + ")");
         }
     }
 }

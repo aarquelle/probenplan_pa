@@ -30,10 +30,10 @@ public class Main {
     public static String URL = getDbFile().toString();
     public static Path directory;
     public static final int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
-    public static Params params = new Params();
     public static String os = System.getProperty("os.name").toLowerCase().contains("windows") ? "windows" : "unix";
 
     public static void main(String[] args) {
+        Params.init();
         new CommandLineUI().start();
     }
 

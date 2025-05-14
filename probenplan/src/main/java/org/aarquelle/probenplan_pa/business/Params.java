@@ -16,217 +16,188 @@
 
 package org.aarquelle.probenplan_pa.business;
 
-public class Params implements Cloneable {
-    private double earliestDurchlaufprobe = 0;
-    private double latestDurchlaufprobe = 1;
-    private double averageRehearsalLength = 1;
-    private int numberOfIterations = 100000;
-    private long initialSeed = 1;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-    //Evaluation weights
-    private double completenessWeight = 3;
-    private double dlpCompletenessWeight = 1;
-    private double completenessBeforeDLPWeight = 1;
-    private double lumpinessWeight = 1;
-    private double minimumRepeatsWeight = 3;
-    private double medianRepeatsWeight = 0.5;
-    private double averageRepeatsWeight = 3;
-    private double overSizeWeight = 2;
-    private double numberOfRolesWeight = 2;
+public class Params {
+    static Map<String, Para<?>> paraMap = new HashMap<>();
 
-    public double getEarliestDurchlaufprobe() {
-        return earliestDurchlaufprobe;
+    private Params() {}
+
+    public static void init() {
+        Para<Double> earliestDurchlaufprobe = new Para<>("earliestDurchlaufprobe", 0.0);
+        earliestDurchlaufprobe.minValue = 0.0;
+        earliestDurchlaufprobe.maxValue = 1.0;
+        addPara(earliestDurchlaufprobe);
+
+        Para<Double> latestDurchlaufprobe = new Para<>("latestDurchlaufprobe", 1.0);
+        latestDurchlaufprobe.minValue = 0.0;
+        latestDurchlaufprobe.maxValue = 1.0;
+        addPara(latestDurchlaufprobe);
+
+        Para<Double> averageRehearsalLength = new Para<>("averageRehearsalLength", 1.0);
+        averageRehearsalLength.minValue = 0.01;
+        averageRehearsalLength.maxValue = Double.MAX_VALUE;
+        addPara(averageRehearsalLength);
+
+        Para<Long> initialSeed = new Para<>("initialSeed", 0L);
+        addPara(initialSeed);
+
+        Para<Double> completenessWeight = new Para<>("completenessWeight", 3.0);
+        completenessWeight.minValue = 0.0;
+        completenessWeight.maxValue = Double.MAX_VALUE;
+        addPara(completenessWeight);
+
+        Para<Double> dlpCompletenessWeight = new Para<>("dlpCompletenessWeight", 1.0);
+        dlpCompletenessWeight.minValue = 0.0;
+        dlpCompletenessWeight.maxValue = Double.MAX_VALUE;
+        addPara(dlpCompletenessWeight);
+
+        Para<Double> completenessBeforeDLPWeight = new Para<>("completenessBeforeDLPWeight", 1.0);
+        completenessBeforeDLPWeight.minValue = 0.0;
+        completenessBeforeDLPWeight.maxValue = Double.MAX_VALUE;
+        addPara(completenessBeforeDLPWeight);
+
+        Para<Double> lumpinessWeight = new Para<>("lumpinessWeight", 1.0);
+        lumpinessWeight.minValue = 0.0;
+        lumpinessWeight.maxValue = Double.MAX_VALUE;
+        addPara(lumpinessWeight);
+
+        Para<Double> minimumRepeatsWeight = new Para<>("minimumRepeatsWeight", 3.0);
+        minimumRepeatsWeight.minValue = 0.0;
+        minimumRepeatsWeight.maxValue = Double.MAX_VALUE;
+        addPara(minimumRepeatsWeight);
+
+        Para<Double> medianRepeatsWeight = new Para<>("medianRepeatsWeight", 0.5);
+        medianRepeatsWeight.minValue = 0.0;
+        medianRepeatsWeight.maxValue = Double.MAX_VALUE;
+        addPara(medianRepeatsWeight);
+
+        Para<Double> averageRepeatsWeight = new Para<>("averageRepeatsWeight", 3.0);
+        averageRepeatsWeight.minValue = 0.0;
+        averageRepeatsWeight.maxValue = Double.MAX_VALUE;
+        addPara(averageRepeatsWeight);
+
+        Para<Double> overSizeWeight = new Para<>("overSizeWeight", 2.0);
+        overSizeWeight.minValue = 0.0;
+        overSizeWeight.maxValue = Double.MAX_VALUE;
+        addPara(overSizeWeight);
+
+        Para<Double> numberOfRolesWeight = new Para<>("numberOfRolesWeight", 2.0);
+        numberOfRolesWeight.minValue = 0.0;
+        numberOfRolesWeight.maxValue = Double.MAX_VALUE;
+        addPara(numberOfRolesWeight);
+
+        Para<Integer> deadline = new Para<>("deadline", 10000);
+        deadline.description = "How many unsuccessful mutations are allowed before the algorithm stops.";
+        deadline.minValue = 0;
+        deadline.maxValue = Integer.MAX_VALUE;
+        addPara(deadline);
+
     }
 
-    public void setEarliestDurchlaufprobe(double earliestDurchlaufprobe) {
-        this.earliestDurchlaufprobe = earliestDurchlaufprobe;
+    public static List<Para<?>> getAllParams() {
+        return paraMap.values().stream().sorted().toList();
     }
 
-    public double getLatestDurchlaufprobe() {
-        return latestDurchlaufprobe;
+    public static void reset() {
+        paraMap.values().forEach(Para::reset);
     }
 
-    public void setLatestDurchlaufprobe(double latestDurchlaufprobe) {
-        this.latestDurchlaufprobe = latestDurchlaufprobe;
-    }
-
-    public double getAverageRehearsalLength() {
-        return averageRehearsalLength;
-    }
-
-    public void setAverageRehearsalLength(double averageRehearsalLength) {
-        this.averageRehearsalLength = averageRehearsalLength;
-    }
-
-    public int getNumberOfIterations() {
-        return numberOfIterations;
-    }
-
-    public void setNumberOfIterations(int numberOfIterations) {
-        this.numberOfIterations = numberOfIterations;
-    }
-
-    public long getInitialSeed() {
-        return initialSeed;
-    }
-
-    public void setInitialSeed(long initialSeed) {
-        this.initialSeed = initialSeed;
-    }
-
-    public double getCompletenessWeight() {
-        return completenessWeight;
-    }
-
-    public void setCompletenessWeight(double completenessWeight) {
-        this.completenessWeight = completenessWeight;
-    }
-
-    public double getDlpCompletenessWeight() {
-        return dlpCompletenessWeight;
-    }
-
-    public void setDlpCompletenessWeight(double dlpCompletenessWeight) {
-        this.dlpCompletenessWeight = dlpCompletenessWeight;
-    }
-
-    public double getCompletenessBeforeDLPWeight() {
-        return completenessBeforeDLPWeight;
-    }
-
-    public void setCompletenessBeforeDLPWeight(double completenessBeforeDLPWeight) {
-        this.completenessBeforeDLPWeight = completenessBeforeDLPWeight;
-    }
-
-    public double getLumpinessWeight() {
-        return lumpinessWeight;
-    }
-
-    public void setLumpinessWeight(double lumpinessWeight) {
-        this.lumpinessWeight = lumpinessWeight;
-    }
-
-    public double getMinimumRepeatsWeight() {
-        return minimumRepeatsWeight;
-    }
-
-    public void setMinimumRepeatsWeight(double minimumRepeatsWeight) {
-        this.minimumRepeatsWeight = minimumRepeatsWeight;
-    }
-
-    public double getMedianRepeatsWeight() {
-        return medianRepeatsWeight;
-    }
-
-    public void setMedianRepeatsWeight(double medianRepeatsWeight) {
-        this.medianRepeatsWeight = medianRepeatsWeight;
-    }
-
-    public double getOverSizeWeight() {
-        return overSizeWeight;
-    }
-
-    public void setOverSizeWeight(double overSizeWeight) {
-        this.overSizeWeight = overSizeWeight;
-    }
-
-    public double getNumberOfRolesWeight() {
-        return numberOfRolesWeight;
-    }
-
-    public void setNumberOfRolesWeight(double numberOfRolesWeight) {
-        this.numberOfRolesWeight = numberOfRolesWeight;
-    }
-
-    public double getTotalWeight() {
-        return completenessWeight + dlpCompletenessWeight + completenessBeforeDLPWeight
-                + lumpinessWeight + minimumRepeatsWeight + medianRepeatsWeight + overSizeWeight + numberOfRolesWeight
-                + averageRepeatsWeight;
-    }
-
-    public String getValueFromString(String name) {
-        return switch (name) {
-            case "earliestDurchlaufprobe" -> String.valueOf(earliestDurchlaufprobe);
-            case "latestDurchlaufprobe" -> String.valueOf(latestDurchlaufprobe);
-            case "averageRehearsalLength" -> String.valueOf(averageRehearsalLength);
-            case "numberOfIterations" -> String.valueOf(numberOfIterations);
-            case "initialSeed" -> String.valueOf(initialSeed);
-            case "completenessWeight" -> String.valueOf(completenessWeight);
-            case "dlpCompletenessWeight" -> String.valueOf(dlpCompletenessWeight);
-            case "completenessBeforeDLPWeight" -> String.valueOf(completenessBeforeDLPWeight);
-            case "lumpinessWeight" -> String.valueOf(lumpinessWeight);
-            case "minimumRepeatsWeight" -> String.valueOf(minimumRepeatsWeight);
-            case "medianRepeatsWeight" -> String.valueOf(medianRepeatsWeight);
-            case "averageRepeatsWeight" -> String.valueOf(averageRepeatsWeight);
-            case "overSizeWeight" -> String.valueOf(overSizeWeight);
-            case "numberOfRolesWeight" -> String.valueOf(numberOfRolesWeight);
-            default -> throw new IllegalArgumentException("Invalid parameter name: " + name);
-        };
-    }
-
-    public void setValueFromString(String name, String value) {
-        switch (name) {
-            case "earliestDurchlaufprobe" -> earliestDurchlaufprobe = Double.parseDouble(value);
-            case "latestDurchlaufprobe" -> latestDurchlaufprobe = Double.parseDouble(value);
-            case "averageRehearsalLength" -> averageRehearsalLength = Double.parseDouble(value);
-            case "numberOfIterations" -> numberOfIterations = Integer.parseInt(value);
-            case "initialSeed" -> initialSeed = Long.parseLong(value);
-            case "completenessWeight" -> completenessWeight = Double.parseDouble(value);
-            case "dlpCompletenessWeight" -> dlpCompletenessWeight = Double.parseDouble(value);
-            case "completenessBeforeDLPWeight" -> completenessBeforeDLPWeight = Double.parseDouble(value);
-            case "lumpinessWeight" -> lumpinessWeight = Double.parseDouble(value);
-            case "minimumRepeatsWeight" -> minimumRepeatsWeight = Double.parseDouble(value);
-            case "medianRepeatsWeight" -> medianRepeatsWeight = Double.parseDouble(value);
-            case "averageRepeatsWeight" -> averageRepeatsWeight = Double.parseDouble(value);
-            case "overSizeWeight" -> overSizeWeight = Double.parseDouble(value);
-            case "numberOfRolesWeight" -> numberOfRolesWeight = Double.parseDouble(value);
-            default -> throw new IllegalArgumentException("Invalid parameter name: " + name);
+    private static void addPara(Para<?> para) {
+        if (para != null) {
+            paraMap.put(para.name, para);
+        } else {
+            throw new IllegalArgumentException("Parameter cannot be null");
         }
     }
 
-    public String[] getParamNames() {
-        return new String[]{
-                "earliestDurchlaufprobe",
-                "latestDurchlaufprobe",
-                "averageRehearsalLength",
-                "numberOfIterations",
-                "initialSeed",
-                "completenessWeight",
-                "dlpCompletenessWeight",
-                "completenessBeforeDLPWeight",
-                "lumpinessWeight",
-                "minimumRepeatsWeight",
-                "medianRepeatsWeight",
-                "averageRepeatsWeight",
-                "overSizeWeight",
-                "numberOfRolesWeight"
-        };
+    public static Para<?> getPara(String name) {
+        return paraMap.get(name);
     }
 
-    public Params clone() throws CloneNotSupportedException {
-        Params cloned = (Params) super.clone();
-        return cloned;
-        /*ParamsDTO clone = new ParamsDTO();
-        clone.earliestDurchlaufprobe = this.earliestDurchlaufprobe;
-        clone.latestDurchlaufprobe = this.latestDurchlaufprobe;
-        clone.averageRehearsalLength = this.averageRehearsalLength;
-        clone.numberOfIterations = this.numberOfIterations;
-        clone.initialSeed = this.initialSeed;
-        clone.completenessWeight = this.completenessWeight;
-        clone.dlpCompletenessWeight = this.dlpCompletenessWeight;
-        clone.completenessBeforeDLPWeight = this.completenessBeforeDLPWeight;
-        clone.lumpinessWeight = this.lumpinessWeight;
-        clone.minimumRepeatsWeight = this.minimumRepeatsWeight;
-        clone.medianRepeatsWeight = this.medianRepeatsWeight;
-        clone.overSizeWeight = this.overSizeWeight;
-        return clone;*/
+    public static Number getValue(String name) {
+        Para<?> para = getPara(name);
+        if (para != null) {
+            return para.value;
+        } else {
+            throw new IllegalArgumentException("Parameter " + name + " not found");
+        }
     }
 
-    public double getAverageRepeatsWeight() {
-        return averageRepeatsWeight;
+    public static void setPara(String name, String value) throws BusinessException {
+        Para<?> para = getPara(name);
+        if (para == null) {
+            throw new BusinessException("Parameter " + name + " not found");
+        }
+        para.setValue(value);
     }
 
-    public void setAverageRepeatsWeight(double averageRepeatsWeight) {
-        this.averageRepeatsWeight = averageRepeatsWeight;
+
+    public static double getEarliestDurchlaufprobe() {
+        return getValue("earliestDurchlaufprobe").doubleValue();
+    }
+
+    public static double getLatestDurchlaufprobe() {
+        return getValue("latestDurchlaufprobe").doubleValue();
+    }
+
+    public static double getAverageRehearsalLength() {
+        return getValue("averageRehearsalLength").doubleValue();
+    }
+
+    public static long getInitialSeed() {
+        return getValue("initialSeed").longValue();
+    }
+
+    public static double getCompletenessWeight() {
+        return getValue("completenessWeight").doubleValue();
+    }
+
+    public static double getDlpCompletenessWeight() {
+        return getValue("dlpCompletenessWeight").doubleValue();
+    }
+
+    public static double getCompletenessBeforeDLPWeight() {
+        return getValue("completenessBeforeDLPWeight").doubleValue();
+    }
+
+    public static double getLumpinessWeight() {
+        return getValue("lumpinessWeight").doubleValue();
+    }
+
+    public static double getMinimumRepeatsWeight() {
+        return getValue("minimumRepeatsWeight").doubleValue();
+    }
+
+    public static double getMedianRepeatsWeight() {
+        return getValue("medianRepeatsWeight").doubleValue();
+    }
+
+    public static double getOverSizeWeight() {
+        return getValue("overSizeWeight").doubleValue();
+    }
+
+    public static double getNumberOfRolesWeight() {
+        return getValue("numberOfRolesWeight").doubleValue();
+    }
+
+    public static double getTotalWeight() {
+        return getCompletenessWeight() + getDlpCompletenessWeight() + getCompletenessBeforeDLPWeight()
+                + getLumpinessWeight() + getMinimumRepeatsWeight() + getMedianRepeatsWeight() + getOverSizeWeight()
+                + getNumberOfRolesWeight() + getAverageRepeatsWeight();
+    }
+
+    public static String getValueFromString(String name) {
+        return String.valueOf(getPara(name).value);
+    }
+
+    public static List<Para<?>> getParamNames() {
+        return paraMap.values().stream().sorted().toList();
+    }
+
+    public static double getAverageRepeatsWeight() {
+        return getValue("averageRepeatsWeight").doubleValue();
     }
 }

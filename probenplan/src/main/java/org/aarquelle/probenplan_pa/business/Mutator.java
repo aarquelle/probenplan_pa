@@ -40,7 +40,7 @@ public class Mutator {
      */
     List<Rehearsal> freeRehearsals;
 
-    public Mutator(long seed, Params params) {
+    public Mutator(long seed) {
         rand = new Random(seed);
         this.params = params;
         this.plan = new Plan();
@@ -242,7 +242,7 @@ public class Mutator {
                 continue;
             }
 
-            double newEvaluation = new Evaluator(mutant, params).evaluate();
+            double newEvaluation = new Evaluator(mutant).evaluate();
             if (newEvaluation > evaluation) {
                 plan = mutant;
                 evaluation = newEvaluation;
