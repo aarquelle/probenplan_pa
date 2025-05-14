@@ -14,15 +14,13 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.business.suggest;
+package org.aarquelle.probenplan_pa.business;
 
-import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.dto.*;
+import org.aarquelle.probenplan_pa.entity.Scene;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.aarquelle.probenplan_pa.TestUtils.*;
@@ -37,23 +35,6 @@ class AnalyzerTest {
         createTestData();
     }
 
-    @Test
-    public void testNumberOfActors() {
-        Map<SceneDTO, Integer> allRoles = Analyzer.tableNumberOfRoles(false);
-        assertEquals(2, allRoles.get(scene1));
-        assertEquals(2, allRoles.get(scene2));
-        assertEquals(2, allRoles.get(scene3));
-        assertEquals(1, allRoles.get(scene4));
-        assertEquals(3, allRoles.get(scene5));
-
-        Map<SceneDTO, Integer> majorRoles = Analyzer.tableNumberOfRoles(true);
-        assertEquals(1, majorRoles.get(scene1));
-        assertEquals(2, majorRoles.get(scene2));
-        assertEquals(2, majorRoles.get(scene3));
-        assertEquals(1, majorRoles.get(scene4));
-        assertEquals(2, majorRoles.get(scene5));
-
-    }
 
     @Test
     public void testMissingActors() {
@@ -205,7 +186,7 @@ class AnalyzerTest {
 
     @Test
     void testGetAllScenes() {
-        List<SceneDTO> scenes = Analyzer.getAllScenes();
+        List<Scene> scenes = Analyzer.getAllScenes();
         assertEquals(5, scenes.size());
         assertEquals(scene1, scenes.get(0));
         assertEquals(scene2, scenes.get(1));

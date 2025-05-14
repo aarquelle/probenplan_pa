@@ -14,9 +14,7 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.dto.entity;
-
-import org.aarquelle.probenplan_pa.dto.PlanDTO;
+package org.aarquelle.probenplan_pa.entity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +26,7 @@ public class DataState {
     private final Set<Rehearsal> rehearsals = new HashSet<>();
     private final Set<Role> roles = new HashSet<>();
     private final Set<Scene> scenes = new HashSet<>();
-    private PlanDTO plan;
+    private Plan plan;
 
     private DataState() {
         // Private constructor to prevent instantiation
@@ -70,11 +68,11 @@ public class DataState {
         return scene;
     }
 
-    public void setPlan(PlanDTO plan) {
+    public void setPlan(Plan plan) {
         this.plan = plan;
     }
 
-    public PlanDTO getPlan() {
+    public Plan getPlan() {
         return plan;
     }
 

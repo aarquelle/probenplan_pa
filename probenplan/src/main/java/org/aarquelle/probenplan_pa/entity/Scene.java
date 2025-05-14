@@ -14,7 +14,7 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.dto.entity;
+package org.aarquelle.probenplan_pa.entity;
 
 import org.jetbrains.annotations.NotNull;
 

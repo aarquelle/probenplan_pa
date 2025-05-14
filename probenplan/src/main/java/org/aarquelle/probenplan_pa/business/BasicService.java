@@ -16,13 +16,13 @@
 
 package org.aarquelle.probenplan_pa.business;
 
-import org.aarquelle.probenplan_pa.dto.entity.*;
-import org.aarquelle.probenplan_pa.util.Pair;
+import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.DataState;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Role;
+import org.aarquelle.probenplan_pa.entity.Scene;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class BasicService {
@@ -44,16 +44,6 @@ public class BasicService {
         return ds.getRoles();
     }
 
-    public static List<Pair<Rehearsal, Scene>> getLockedScenes() {
-        List<Pair<Rehearsal, Scene>> lockedScenes = new ArrayList<>();
-        for (Rehearsal r : ds.getRehearsals()) {
-            for (Scene s : r.getLockedScenes()) {
-                lockedScenes.add(new Pair<>(r, s));
-            }
-        }
-        return lockedScenes;
-    }
-
     public static Role createRole() {
         return ds.createRole();
     }
@@ -68,42 +58,6 @@ public class BasicService {
 
     public static Scene createScene() {
         return ds.createScene();
-    }
-
-    public static boolean roleNameExists(String name) {
-        for (Role role : ds.getRoles()) {
-            if (role.getName().equals(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean actorNameExists(String name) {
-        for (Actor actor : ds.getActors()) {
-            if (actor.getName().equals(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean rehearsalDateExists(LocalDate date) {
-        for (Rehearsal rehearsal : ds.getRehearsals()) {
-            if (rehearsal.getDate().equals(date)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean sceneNameExists(String name) {
-        for (Scene scene : ds.getScenes()) {
-            if (scene.getName().equals(name)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static Role getRoleByName(String name) {
@@ -132,5 +86,9 @@ public class BasicService {
                 .filter(scene -> scene.getName().equals(name))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public static void clearData() {
+        ds.clear();
     }
 }

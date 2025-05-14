@@ -18,9 +18,9 @@ package org.aarquelle.probenplan_pa.ui.cli.commands;
 
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.dto.entity.Actor;
-import org.aarquelle.probenplan_pa.dto.entity.Role;
-import org.aarquelle.probenplan_pa.dto.entity.Scene;
+import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.Role;
+import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.util.CsvUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,7 +83,11 @@ public class ImportScenes extends AbstractCommand {
 
     private static @NotNull Scene getScene(String[] table, int position) throws BusinessException {
         Scene scene = BasicService.getSceneByName(table[0]);
-        scene.setName(table[0]);
+        if (scene == null) {
+            scene = BasicService.createScene();
+            scene.setName(table[0]);
+        }
+
         scene.setPosition(position);
         try {
             double length = Double.parseDouble(table[1].replace(",", "."));

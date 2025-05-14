@@ -14,10 +14,8 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.data.exception;
+package org.aarquelle.probenplan_pa.entity;
 
-public class DBNotAvailableException extends RuntimeException {
-    public DBNotAvailableException(Throwable e) {
-        super(e);
-    }
+public enum RoleSize {
+    NONE, SMALL, BIG;
 }

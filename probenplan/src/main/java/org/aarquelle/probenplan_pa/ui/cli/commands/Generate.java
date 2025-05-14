@@ -18,12 +18,10 @@ package org.aarquelle.probenplan_pa.ui.cli.commands;
 
 import org.aarquelle.probenplan_pa.Main;
 import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.business.suggest.Generator;
-import org.aarquelle.probenplan_pa.business.suggest.Mutator;
-import org.aarquelle.probenplan_pa.dto.ParamsDTO;
-import org.aarquelle.probenplan_pa.dto.PlanDTO;
+import org.aarquelle.probenplan_pa.business.Mutator;
+import org.aarquelle.probenplan_pa.business.Params;
+import org.aarquelle.probenplan_pa.entity.Plan;
 import org.aarquelle.probenplan_pa.ui.cli.out.Out;
-import org.aarquelle.probenplan_pa.ui.cli.out.ProgressBar;
 
 import java.text.DecimalFormat;
 
@@ -38,7 +36,7 @@ public class Generate extends AbstractCommand {
     public void execute(String[] args) throws BusinessException {
         Out.info("Generiere Testdaten... Das kann einen kurzen Moment dauern, bitte warten.");
         long startTime = System.currentTimeMillis();
-        ParamsDTO params;
+        Params params;
         try {
             params = Main.params.clone();
         } catch (CloneNotSupportedException e) {
@@ -55,7 +53,7 @@ public class Generate extends AbstractCommand {
 
         Mutator mutator = new Mutator(System.currentTimeMillis(), params);
         mutator.mutate();
-        PlanDTO plan = mutator.getPlan();
+        Plan plan = mutator.getPlan();
 
         /*ProgressBar progressBar = new ProgressBar(params.getNumberOfIterations() / Main.NUMBER_OF_CORES);
         Out.hideCursor();

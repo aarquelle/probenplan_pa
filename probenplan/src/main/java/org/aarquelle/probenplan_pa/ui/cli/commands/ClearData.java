@@ -16,8 +16,7 @@
 
 package org.aarquelle.probenplan_pa.ui.cli.commands;
 
-import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.business.create.Creator;
+import org.aarquelle.probenplan_pa.business.BasicService;
 
 public class ClearData extends AbstractCommand {
 
@@ -27,6 +26,6 @@ public class ClearData extends AbstractCommand {
 
     @Override
     public void execute(String[] args) {
-        Creator.clearDB();
+        BasicService.clearData();
     }
 }

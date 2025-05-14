@@ -19,16 +19,10 @@ package org.aarquelle.probenplan_pa.ui.cli.commands;
 import org.aarquelle.probenplan_pa.Main;
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.business.create.Creator;
-import org.aarquelle.probenplan_pa.dto.ActorDTO;
-import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
-import org.aarquelle.probenplan_pa.dto.entity.Actor;
-import org.aarquelle.probenplan_pa.dto.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.util.CsvUtils;
-import org.aarquelle.probenplan_pa.util.DateUtils;
-import org.aarquelle.probenplan_pa.util.Pair;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,17 +52,7 @@ public class ImportTimes extends AbstractCommand {
             actors.add(actor);
         }
 
-        List<Rehearsal> rehearsals = new ArrayList<>();
-        for (int i = 1; i < table.length; i++) {
-            LocalDate date = DateUtils.getLocalDate(table[i][0]);
-            Rehearsal rehearsal = BasicService.getRehearsalByDate(date);
-
-            if (rehearsal == null) {
-                rehearsal = BasicService.createRehearsal();
-                rehearsal.setDate(date);
-            }
-            rehearsals.add(rehearsal);
-        }
+        List<Rehearsal> rehearsals = CsvUtils.getRehearsalsFromTable(table);
 
 
         for (int i = 0; i < table.length - 1; i++) {

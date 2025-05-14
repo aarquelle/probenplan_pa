@@ -14,11 +14,9 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.business.suggest;
+package org.aarquelle.probenplan_pa.business;
 
-import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.dto.ParamsDTO;
-import org.aarquelle.probenplan_pa.dto.PlanDTO;
+import org.aarquelle.probenplan_pa.entity.Plan;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -27,15 +25,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EvaluatorTest {
 
-    static PlanDTO plan1;
-    static PlanDTO plan2;
+    static Plan plan1;
+    static Plan plan2;
 
     @BeforeAll
     static void setUp() throws BusinessException {
         createTestData();
         Analyzer.runAnalysis();
 
-        plan1 = new PlanDTO();
+        plan1 = new Plan();
         plan1.put(rehearsal1, scene1);
         plan1.put(rehearsal1, scene2);
         plan1.put(rehearsal1, scene3);
@@ -49,7 +47,7 @@ class EvaluatorTest {
         plan1.put(rehearsal4, scene1);
         plan1.put(rehearsal5, scene5);
 
-        plan2 = new PlanDTO();
+        plan2 = new Plan();
         plan2.put(rehearsal1, scene1);
         plan2.put(rehearsal1, scene3);
         plan2.put(rehearsal2, scene4);
@@ -66,10 +64,10 @@ class EvaluatorTest {
 
     @Test
     void testEvaluateAllScenesBeforeDLP() {
-        Evaluator evaluator = new Evaluator(plan1, new ParamsDTO());
+        Evaluator evaluator = new Evaluator(plan1, new Params());
         assertTrue(evaluator.allScenesBeforeDurchlaufprobe());
 
-        assertFalse(new Evaluator(plan2, new ParamsDTO()).allScenesBeforeDurchlaufprobe());
+        assertFalse(new Evaluator(plan2, new Params()).allScenesBeforeDurchlaufprobe());
     }
 
     @Test
@@ -79,27 +77,27 @@ class EvaluatorTest {
 
     @Test
     void testDlpCompleteness() {
-        Evaluator evaluator = new Evaluator(plan1, new ParamsDTO());
+        Evaluator evaluator = new Evaluator(plan1, new Params());
         assertDoubleEquals(0.793333, evaluator.dlpCompleteness());
     }
 
     @Test
     void testBeforeDlpCompleteness() {
-        Evaluator evaluator = new Evaluator(plan1, new ParamsDTO());
+        Evaluator evaluator = new Evaluator(plan1, new Params());
         assertDoubleEquals(0.6466666666667, evaluator.completenessBeforeDLP());
     }
 
     @Test
     void testLumpiness() {
-        Evaluator evaluator = new Evaluator(plan1, new ParamsDTO());
+        Evaluator evaluator = new Evaluator(plan1, new Params());
         assertDoubleEquals(1.0, evaluator.lumpiness());
-        evaluator = new Evaluator(plan2, new ParamsDTO());
+        evaluator = new Evaluator(plan2, new Params());
         assertDoubleEquals(0.9, evaluator.lumpiness());
     }
 
     @Test
     void testNumberOfRepeats() {
-        Evaluator evaluator = new Evaluator(plan1, new ParamsDTO());
+        Evaluator evaluator = new Evaluator(plan1, new Params());
         assertDoubleEquals(2.0, evaluator.numberOfRepeats.get(scene1));
         assertDoubleEquals(1.5, evaluator.numberOfRepeats.get(scene2));
         assertDoubleEquals(1.5, evaluator.numberOfRepeats.get(scene3));
@@ -111,7 +109,7 @@ class EvaluatorTest {
 
     @Test
     void testNumberOfRoles() {
-        Evaluator evaluator = new Evaluator(plan1, new ParamsDTO());
+        Evaluator evaluator = new Evaluator(plan1, new Params());
         assertEquals(4, evaluator.getNumberOfRolesInRehearsal(rehearsal1));
         assertEquals(3, evaluator.getNumberOfRolesInRehearsal(rehearsal2));
         assertEquals(4, evaluator.getNumberOfRolesInRehearsal(rehearsal3));

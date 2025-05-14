@@ -14,25 +14,28 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.dto;
+package org.aarquelle.probenplan_pa.business;
+
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Scene;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class RehearsalSceneTable <N> {
-    Map<RehearsalDTO, Map<SceneDTO, N>> map = new HashMap<>();
+    Map<Rehearsal, Map<Scene, N>> map = new HashMap<>();
 
-    public void set(RehearsalDTO rehearsal, SceneDTO scene, N count) {
+    public void set(Rehearsal rehearsal, Scene scene, N count) {
         if (map.containsKey(rehearsal)) {
             map.get(rehearsal).put(scene, count);
         } else {
-            Map<SceneDTO, N> sceneMap = new HashMap<>();
+            Map<Scene, N> sceneMap = new HashMap<>();
             sceneMap.put(scene, count);
             map.put(rehearsal, sceneMap);
         }
     }
 
-    public N get(RehearsalDTO rehearsal, SceneDTO scene) {
+    public N get(Rehearsal rehearsal, Scene scene) {
         if (map.containsKey(rehearsal)) {
             if (map.get(rehearsal).containsKey(scene)) {
                 return map.get(rehearsal).get(scene);

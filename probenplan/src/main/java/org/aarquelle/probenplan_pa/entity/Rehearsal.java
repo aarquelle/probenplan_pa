@@ -14,21 +14,21 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.dto.entity;
+package org.aarquelle.probenplan_pa.entity;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Rehearsal implements Comparable<Rehearsal> {
     LocalDate date;
     boolean fullLocked = false;
-    final List<Scene> lockedScenes = new ArrayList<>();
-    final List<Actor> missingActors = new ArrayList<>();
+    final Set<Scene> lockedScenes = new HashSet<>();
+    final Set<Actor> missingActors = new HashSet<>();
 
-    final List<Actor> maybeActors = new ArrayList<>();
+    final Set<Actor> maybeActors = new HashSet<>();
 
     Rehearsal(){}
 
@@ -82,15 +82,15 @@ public class Rehearsal implements Comparable<Rehearsal> {
         return date.compareTo(o.date);
     }
 
-    public List<Scene> getLockedScenes() {
+    public Set<Scene> getLockedScenes() {
         return lockedScenes;
     }
 
-    public List<Actor> getMissingActors() {
+    public Set<Actor> getMissingActors() {
         return missingActors;
     }
 
-    public List<Actor> getMaybeActors() {
+    public Set<Actor> getMaybeActors() {
         return maybeActors;
     }
 }

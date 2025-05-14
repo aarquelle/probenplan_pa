@@ -14,7 +14,7 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.dto;
+package org.aarquelle.probenplan_pa.business;
 
 import org.jetbrains.annotations.NotNull;
 

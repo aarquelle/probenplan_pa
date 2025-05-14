@@ -14,10 +14,12 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.business.suggest;
+package org.aarquelle.probenplan_pa.business;
 
-import org.aarquelle.probenplan_pa.business.BasicService;
-import org.aarquelle.probenplan_pa.dto.*;
+import org.aarquelle.probenplan_pa.entity.Plan;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Role;
+import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.util.Pair;
 
 import java.util.ArrayList;
@@ -29,19 +31,19 @@ import java.util.Set;
 
 public class Evaluator {
 
-    RehearsalDTO durchlaufprobe;
-    PlanDTO plan;
-    ParamsDTO params;
-    List<RehearsalDTO> rehearsals;
-    List<SceneDTO> scenes;
+    Rehearsal durchlaufprobe;
+    Plan plan;
+    Params params;
+    Set<Rehearsal> rehearsals;
+    Set<Scene> scenes;
 
     double expectedNumberOfRepeats;
-    Map<SceneDTO, Double> numberOfRepeats;
+    Map<Scene, Double> numberOfRepeats;
 
 
     double totalLengthOfRehearsals;
 
-    public Evaluator(PlanDTO plan, ParamsDTO params) {
+    public Evaluator(Plan plan, Params params) {
         this.plan = plan;
         this.params = params;
         this.rehearsals = BasicService.getRehearsals();
@@ -49,9 +51,9 @@ public class Evaluator {
         this.totalLengthOfRehearsals = plan.totalLength();
         this.expectedNumberOfRepeats = getExpectedNumberOfRepeats();
 
+        durchlaufprobe = findDurchlaufprobe();
         this.numberOfRepeats = getNumberOfRepeats();
 
-        durchlaufprobe = findDurchlaufprobe();
     }
 
     public double evaluate() {
@@ -84,8 +86,8 @@ public class Evaluator {
     }
 
     boolean allScenesBeforeDurchlaufprobe() {
-        Set<SceneDTO> allScenes = new HashSet<>(scenes);
-        for (RehearsalDTO rehearsal : rehearsals) {
+        Set<Scene> allScenes = new HashSet<>(scenes);
+        for (Rehearsal rehearsal : rehearsals) {
             if (rehearsal.equals(durchlaufprobe)) {
                 break;
             }
@@ -94,8 +96,8 @@ public class Evaluator {
         return allScenes.isEmpty();
     }
 
-    private RehearsalDTO findDurchlaufprobe() {
-        for (RehearsalDTO rehearsal : rehearsals) {
+    private Rehearsal findDurchlaufprobe() {
+        for (Rehearsal rehearsal : rehearsals) {
             if (plan.get(rehearsal).size() == scenes.size()) {
                 return rehearsal;
             }
@@ -105,19 +107,19 @@ public class Evaluator {
 
     double completenessBeforeDLP() {
         double result = 0;
-        List<Pair<RehearsalDTO, List<SceneDTO>>> rehearsalsBeforeDLP = new ArrayList<>();
-        for (RehearsalDTO rehearsalDTO : rehearsals) {
-            if (rehearsalDTO.equals(durchlaufprobe)) {
+        List<Pair<Rehearsal, List<Scene>>> rehearsalsBeforeDLP = new ArrayList<>();
+        for (Rehearsal r : rehearsals) {
+            if (r.equals(durchlaufprobe)) {
                 break;
             }
-            rehearsalsBeforeDLP.add(new Pair<>(rehearsalDTO, plan.get(rehearsalDTO)));
+            rehearsalsBeforeDLP.add(new Pair<>(r, plan.get(r)));
         }
 
-        Map<SceneDTO, Double> scenesBeforeDLP = new HashMap<>();
-        for (Pair<RehearsalDTO, List<SceneDTO>> pair : rehearsalsBeforeDLP) {
-            List<SceneDTO> scenes = pair.second();
-            RehearsalDTO rehearsal = pair.first();
-            for (SceneDTO scene : scenes) {
+        Map<Scene, Double> scenesBeforeDLP = new HashMap<>();
+        for (Pair<Rehearsal, List<Scene>> pair : rehearsalsBeforeDLP) {
+            List<Scene> scenes = pair.second();
+            Rehearsal rehearsal = pair.first();
+            for (Scene scene : scenes) {
                 double sceneResult = Analyzer.completenessScore(rehearsal, scene) * scene.getLength(); //TODO Schon ältere Analysen verwenden?
                 if (!scenesBeforeDLP.containsKey(scene)) {
                     scenesBeforeDLP.put(scene, sceneResult);
@@ -133,7 +135,7 @@ public class Evaluator {
 
     double dlpCompleteness() {
         double result = 0;
-        for (SceneDTO scene : plan.get(durchlaufprobe)) {
+        for (Scene scene : plan.get(durchlaufprobe)) {
             result += Analyzer.completenessScore(durchlaufprobe, scene) * scene.getLength() / Analyzer.lengthOfPlay;
         }
         return result;
@@ -142,7 +144,7 @@ public class Evaluator {
     double totalCompleteness() {
         double result = 0;
         double planLength = 0;
-        for (Pair<RehearsalDTO, SceneDTO> pair : plan.getAllPairs()) {
+        for (Pair<Rehearsal, Scene> pair : plan.getAllPairs()) {
             result += Analyzer.completenessScore(pair.first(), pair.second())
                     * pair.second().getLength();
             planLength += pair.second().getLength();
@@ -162,9 +164,9 @@ public class Evaluator {
     double lumpiness() {
         double result = 0;
 
-        for (RehearsalDTO rehearsalDTO : rehearsals) {
-            List<SceneDTO> scenes = new ArrayList<>(plan.get(rehearsalDTO));
-            int numberOfLumps = Analyzer.getNumberOfLumps(scenes.toArray(new SceneDTO[0]));
+        for (Rehearsal r : rehearsals) {
+            List<Scene> scenes = new ArrayList<>(plan.get(r));
+            int numberOfLumps = Analyzer.getNumberOfLumps(scenes.toArray(new Scene[0]));
             if (numberOfLumps <= 2) {
                 numberOfLumps = 1;
             }
@@ -175,7 +177,7 @@ public class Evaluator {
 
     double overSize() {
         double result = 0;
-        for (RehearsalDTO r : rehearsals) {
+        for (Rehearsal r : rehearsals) {
             if (r.equals(durchlaufprobe)) {
                 continue;
             }
@@ -188,14 +190,10 @@ public class Evaluator {
     }
 
     double getExpectedNumberOfRepeats() {
-        //return (double) plan.getAllPairs().size() / scenes.size();
         double lengthOfPlay = scenes.stream()
-                .mapToDouble(SceneDTO::getLength)
+                .mapToDouble(Scene::getLength)
                 .sum();
-        /*int amountOfAllScenes = (int)((params.getAverageRehearsalLength() * scenes.size() * rehearsals.size())
-                / lengthOfPlay);
-        return (double) (amountOfAllScenes + scenes.size()) / scenes.size(); //scenes.size() is added to reflect DLP*/
-        return (rehearsals.size() * params.getAverageRehearsalLength()) / lengthOfPlay;
+        return ((rehearsals.size() - 1) * params.getAverageRehearsalLength()) / lengthOfPlay;
     }
 
     double getMinimumRepeats() {
@@ -221,10 +219,16 @@ public class Evaluator {
                 .orElse(0) / expectedNumberOfRepeats);
     }
 
-    public Map<SceneDTO, Double> getNumberOfRepeats() {
+    public Map<Scene, Double> getNumberOfRepeats() {
         if (numberOfRepeats == null) {
             numberOfRepeats = new HashMap<>();
-            for (Pair<RehearsalDTO, SceneDTO> pair : plan.getAllPairs()) {
+            for (Scene s : scenes) {
+                numberOfRepeats.put(s, 0.0);
+            }
+            for (Pair<Rehearsal, Scene> pair : plan.getAllPairs()) {
+                if (pair.first().equals(durchlaufprobe)) {
+                    continue;
+                }
                 double completeness = Analyzer.completenessScore(pair.first(), pair.second());
                 numberOfRepeats.put(pair.second(),
                         numberOfRepeats.getOrDefault(pair.second(), 0.0)
@@ -234,24 +238,20 @@ public class Evaluator {
         return numberOfRepeats;
     }
 
-    int getNumberOfRolesInRehearsal(RehearsalDTO rehearsal) {
-        List<RoleDTO> roles = new ArrayList<>();
-        List<SceneDTO> scenes = plan.get(rehearsal);
-        for (SceneDTO scene : scenes) {
-            List<Pair<RoleDTO, Boolean>> sceneRoles = Analyzer.rolesForScene.get(scene);
-            for (Pair<RoleDTO, Boolean> role : sceneRoles) {
-                if (!roles.contains(role.first())) {
-                    roles.add(role.first());
-                }
-            }
+    int getNumberOfRolesInRehearsal(Rehearsal rehearsal) {
+        Set<Role> roles = new HashSet<>();
+        List<Scene> scenes = plan.get(rehearsal);
+        for (Scene scene : scenes) {
+            roles.addAll(scene.getBigRoles());
+            roles.addAll(scene.getSmallRoles());
         }
         return roles.size();
     }
 
     double getRoleNumberScore() {
         double result = 0;
-        for (RehearsalDTO rehearsalDTO : rehearsals) {
-            result += Math.max(0, getNumberOfRolesInRehearsal(rehearsalDTO) - 4);//TODO magic number 4
+        for (Rehearsal r : rehearsals) {
+            result += Math.max(0, getNumberOfRolesInRehearsal(r) - 4);//TODO magic number 4
         }
         result /= rehearsals.size();
         result /= Analyzer.numberOfRoles -  4; //TODO magic number 4

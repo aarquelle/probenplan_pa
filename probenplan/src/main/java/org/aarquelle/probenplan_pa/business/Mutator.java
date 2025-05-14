@@ -14,13 +14,11 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.business.suggest;
+package org.aarquelle.probenplan_pa.business;
 
-import org.aarquelle.probenplan_pa.business.BasicService;
-import org.aarquelle.probenplan_pa.dto.ParamsDTO;
-import org.aarquelle.probenplan_pa.dto.PlanDTO;
-import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
-import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.entity.Plan;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Scene;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,27 +26,27 @@ import java.util.Random;
 
 public class Mutator {
     Random rand;
-    ParamsDTO params;
-    PlanDTO plan;
-    RehearsalDTO dlp;
-    RehearsalDTO potentialDlp;
-    List<RehearsalDTO> allRehearsals;
-    List<SceneDTO> allScenes;
+    Params params;
+    Plan plan;
+    Rehearsal dlp;
+    Rehearsal potentialDlp;
+    List<Rehearsal> allRehearsals;
+    List<Scene> allScenes;
 
     double evaluation;
 
     /**
      * All rehearsals that are not the DLP.
      */
-    List<RehearsalDTO> freeRehearsals;
+    List<Rehearsal> freeRehearsals;
 
-    public Mutator(long seed, ParamsDTO params) {
+    public Mutator(long seed, Params params) {
         rand = new Random(seed);
         this.params = params;
-        this.plan = new PlanDTO();
+        this.plan = new Plan();
 
-        allRehearsals = BasicService.getRehearsals();
-        allScenes = BasicService.getScenes();
+        allRehearsals = BasicService.getRehearsals().stream().sorted().toList();
+        allScenes = BasicService.getScenes().stream().sorted().toList();
         freeRehearsals = new ArrayList<>(allRehearsals);
     }
 
@@ -57,13 +55,13 @@ public class Mutator {
      * Adds a new random scene to a random rehearsal.
      * @return The mutated plan, or null if there would be no change.
      */
-    public PlanDTO addScene() {
-        RehearsalDTO r = randomRehearsal();
-        SceneDTO s = randomScene();
+    public Plan addScene() {
+        Rehearsal r = randomRehearsal();
+        Scene s = randomScene();
         if (plan.hasScene(r, s)) {
             return null;
         } else {
-            PlanDTO mutant = plan.copy();
+            Plan mutant = plan.copy();
             mutant.put(r, s);
             return mutant;
         }
@@ -73,13 +71,13 @@ public class Mutator {
      * Removes a random scene from a random rehearsal.
      * @return The mutated plan, or null, if
      */
-    public PlanDTO removeScene() {
-        RehearsalDTO r = randomRehearsal();
-        SceneDTO s = randomSceneFromPlan(r);
+    public Plan removeScene() {
+        Rehearsal r = randomRehearsal();
+        Scene s = randomSceneFromPlan(r);
         if (s == null) {
             return null;
         } else {
-            PlanDTO mutant = plan.copy();
+            Plan mutant = plan.copy();
             mutant.remove(r, s);
             return mutant;
         }
@@ -89,17 +87,17 @@ public class Mutator {
      * Moves a random scene from one rehearsal to another.
      * @return The mutated plan.
      */
-    public PlanDTO moveScene() {
-        RehearsalDTO source = randomRehearsal();
-        RehearsalDTO target = randomRehearsal();
+    public Plan moveScene() {
+        Rehearsal source = randomRehearsal();
+        Rehearsal target = randomRehearsal();
         if (source.equals(target)) {
             return null;
         }
-        SceneDTO s = randomSceneFromPlan(source);
+        Scene s = randomSceneFromPlan(source);
         if (s == null || plan.hasScene(target, s)) {
             return null;
         }
-        PlanDTO mutant = plan.copy();
+        Plan mutant = plan.copy();
         mutant.remove(source, s);
         mutant.put(target, s);
         return mutant;
@@ -108,17 +106,17 @@ public class Mutator {
     /**
      * Exchanges a random scene in a random rehearsal with a new random scene.
      */
-    public PlanDTO exchangeScene() {
-        RehearsalDTO r = randomRehearsal();
-        SceneDTO remove = randomSceneFromPlan(r);
+    public Plan exchangeScene() {
+        Rehearsal r = randomRehearsal();
+        Scene remove = randomSceneFromPlan(r);
         if (remove == null) {
             return null;
         }
-        SceneDTO add = randomScene();
+        Scene add = randomScene();
         if (plan.hasScene(r, add) || remove.equals(add)) {
             return null;
         }
-        PlanDTO mutant = plan.copy();
+        Plan mutant = plan.copy();
         mutant.remove(r, remove);
         mutant.put(r, add);
         return mutant;
@@ -127,18 +125,18 @@ public class Mutator {
     /**
      * Swaps two randoms scenes from two random rehearsals.
      */
-    public PlanDTO swapScenes() {
-        RehearsalDTO r1 = randomRehearsal();
-        RehearsalDTO r2 = randomRehearsal();
+    public Plan swapScenes() {
+        Rehearsal r1 = randomRehearsal();
+        Rehearsal r2 = randomRehearsal();
         if (r1.equals(r2)) {
             return null;
         }
-        SceneDTO s1 = randomSceneFromPlan(r1);
-        SceneDTO s2 = randomSceneFromPlan(r2);
-        if (s1 == null || s2 == null || s1.equals(s2)) {
+        Scene s1 = randomSceneFromPlan(r1);
+        Scene s2 = randomSceneFromPlan(r2);
+        if (s1 == null || s2 == null || s1.equals(s2) || plan.hasScene(r1, s2) || plan.hasScene(r2, s1)) {
             return null;
         }
-        PlanDTO mutant = plan.copy();
+        Plan mutant = plan.copy();
         mutant.remove(r1, s1);
         mutant.remove(r2, s2);
         mutant.put(r1, s2);
@@ -150,16 +148,16 @@ public class Mutator {
      * Sets one rehearsal as Durchlaufprobe. All scenes from the existing DLP are removed. The scenes already present
      * in the new DLP are randomly scattered in other rehearsals. The dlp field is not changed.
      */
-    public PlanDTO setDLP() {
-        RehearsalDTO target = randomRehearsal();
+    public Plan setDLP() {
+        Rehearsal target = randomRehearsal();
         if (target == dlp) {
             return null;
         }
-        List<SceneDTO> oldScenes = new ArrayList<>(plan.get(target));
-        PlanDTO mutant = plan.copy();
+        List<Scene> oldScenes = new ArrayList<>(plan.get(target));
+        Plan mutant = plan.copy();
         addDLP(mutant, target);
-        for (SceneDTO s : oldScenes) {
-            RehearsalDTO rehearsal = randomRehearsal();
+        for (Scene s : oldScenes) {
+            Rehearsal rehearsal = randomRehearsal();
             int timeout = 0;
             while (timeout < 20) {
                 if (rehearsal.equals(target) || mutant.hasScene(rehearsal, s)) {
@@ -179,27 +177,27 @@ public class Mutator {
      * Sets the rehearsal as Durchlaufprobe. All scenes from the existing DLP are removed. The scenes already present
      * are ignored and not moved. The dlp field is not changed.
      */
-    public PlanDTO forceDLP() {
-        RehearsalDTO target = randomRehearsal();
+    public Plan forceDLP() {
+        Rehearsal target = randomRehearsal();
         if (target == dlp) {
             return null;
         }
-        PlanDTO mutant = plan.copy();
+        Plan mutant = plan.copy();
         addDLP(mutant, target);
         potentialDlp = target;
         return mutant;
     }
 
-    private RehearsalDTO randomRehearsal() {
+    private Rehearsal randomRehearsal() {
         return freeRehearsals.get(rand.nextInt(freeRehearsals.size()));
     }
 
-    private SceneDTO randomScene() {
+    private Scene randomScene() {
         return allScenes.get(rand.nextInt(allScenes.size()));
     }
 
-    private SceneDTO randomSceneFromPlan( RehearsalDTO rehearsal) {
-        List<SceneDTO> scenes = plan.get(rehearsal);
+    private Scene randomSceneFromPlan( Rehearsal rehearsal) {
+        List<Scene> scenes = plan.get(rehearsal);
         if (scenes.isEmpty()) {
             return null;
         } else {
@@ -207,10 +205,10 @@ public class Mutator {
         }
     }
 
-    private void addDLP(PlanDTO plan, RehearsalDTO target) {
+    private void addDLP(Plan plan, Rehearsal target) {
         plan.get(dlp).clear();
         plan.get(target).clear();
-        for (SceneDTO s : allScenes) {
+        for (Scene s : allScenes) {
             plan.put(target, s);
         }
     }
@@ -222,14 +220,14 @@ public class Mutator {
         //plan = forceDLP();
         //dlp = potentialDlp;
         //potentialDlp = null;
-        RehearsalDTO hardcodedDlp = allRehearsals.get(13);
+        Rehearsal hardcodedDlp = allRehearsals.get(13); //TODO: Hardcoded
         dlp = hardcodedDlp;
         addDLP(plan, hardcodedDlp);
         freeRehearsals.remove(dlp);
         while (deadline < limit) {
             deadline++;
             int choice = rand.nextInt(5);
-            PlanDTO mutant;
+            Plan mutant;
             switch (choice) {
                 case 0 -> mutant = addScene();
                 case 1 -> mutant = removeScene();
@@ -264,7 +262,7 @@ public class Mutator {
         }
     }
 
-    public PlanDTO getPlan() {
+    public Plan getPlan() {
         return plan;
     }
 

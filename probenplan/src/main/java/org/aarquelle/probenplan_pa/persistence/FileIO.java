@@ -14,13 +14,13 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.data.nodb;
+package org.aarquelle.probenplan_pa.persistence;
 
-import org.aarquelle.probenplan_pa.dto.entity.Actor;
-import org.aarquelle.probenplan_pa.dto.entity.DataState;
-import org.aarquelle.probenplan_pa.dto.entity.Rehearsal;
-import org.aarquelle.probenplan_pa.dto.entity.Role;
-import org.aarquelle.probenplan_pa.dto.entity.Scene;
+import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.DataState;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Role;
+import org.aarquelle.probenplan_pa.entity.Scene;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

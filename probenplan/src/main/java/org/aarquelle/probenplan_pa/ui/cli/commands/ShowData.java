@@ -18,19 +18,12 @@ package org.aarquelle.probenplan_pa.ui.cli.commands;
 
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.business.suggest.Analyzer;
-import org.aarquelle.probenplan_pa.dto.ActorDTO;
-import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
-import org.aarquelle.probenplan_pa.dto.RoleDTO;
-import org.aarquelle.probenplan_pa.dto.SceneDTO;
-import org.aarquelle.probenplan_pa.dto.entity.Actor;
-import org.aarquelle.probenplan_pa.dto.entity.Rehearsal;
-import org.aarquelle.probenplan_pa.dto.entity.Role;
-import org.aarquelle.probenplan_pa.dto.entity.Scene;
-import org.aarquelle.probenplan_pa.util.Pair;
+import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Role;
+import org.aarquelle.probenplan_pa.entity.Scene;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.aarquelle.probenplan_pa.ui.cli.out.Out.*;
 
@@ -42,7 +35,6 @@ public class ShowData extends AbstractCommand {
 
     @Override
     public void execute(String[] args) throws BusinessException {
-        //Analyzer.runAnalysis();
         List<Actor> actors = BasicService.getActors().stream().sorted().toList();
         List<Role> roles = BasicService.getRoles().stream().sorted().toList();
         List<Scene> scenes = BasicService.getScenes().stream().sorted().toList();
@@ -90,7 +82,7 @@ public class ShowData extends AbstractCommand {
         info("Proben:");
         for (Rehearsal rehearsal : rehearsals) {
             prRehearsal(rehearsal);
-            if (!rehearsal.getMaybeActors().isEmpty() && !rehearsal.getMissingActors().isEmpty()) {
+            if (!rehearsal.getMaybeActors().isEmpty() || !rehearsal.getMissingActors().isEmpty()) {
                 info(" mit fehlenden Schauspielenden: ");
                 for (Actor actor : rehearsal.getMissingActors()) {
                     pr("\t");
