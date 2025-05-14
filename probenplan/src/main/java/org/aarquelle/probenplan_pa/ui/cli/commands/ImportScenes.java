@@ -18,12 +18,10 @@ package org.aarquelle.probenplan_pa.ui.cli.commands;
 
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.business.create.Creator;
-import org.aarquelle.probenplan_pa.dto.ActorDTO;
-import org.aarquelle.probenplan_pa.dto.RoleDTO;
-import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.Role;
+import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.util.CsvUtils;
-import org.aarquelle.probenplan_pa.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -45,62 +43,36 @@ public class ImportScenes extends AbstractCommand {
     public void execute(String[] args) throws BusinessException {
         String[][] table = CsvUtils.importFromClipboard();
 
-        List<RoleDTO> roles = new ArrayList<>();
-        List<RoleDTO> existingRoles = BasicService.getRoles();
-        List<ActorDTO> existingActors = BasicService.getActors();
+        List<Role> roles = new ArrayList<>();
 
         for (int i = 2; i < table[0].length; i++) {
-            boolean roleExists = false;
-            for (RoleDTO r : existingRoles) {
-                if (r.getName().equals(table[0][i])) {
-                    roles.add(r);
-                    roleExists = true;
-                    break;
-                }
+            Role role = BasicService.getRoleByName(table[0][i]);
+            if (role == null) {
+                role = BasicService.createRole();
+                role.setName(table[0][i]);
             }
-            if (!roleExists) {
-                RoleDTO r = new RoleDTO();
-                r.setName(table[0][i]);
-                ActorDTO actor = new ActorDTO();
+            Actor actor = BasicService.getActorByName(table[1][i]);
+            if (actor == null) {
+                actor = BasicService.createActor();
                 actor.setName(table[1][i]);
-                boolean actorExists = false;
-                for (ActorDTO a : existingActors) {
-                    if (a.getName().equals(actor.getName())) {
-                        actor = a;
-                        actorExists = true;
-                        break;
-                    }
-                }
-                if (!actorExists) {
-                    Creator.createActor(actor);
-                    existingActors.add(actor);
-                }
-                r.setActor(actor);
-                Creator.createRole(r);
-                roles.add(r);
             }
+            role.setActor(actor);
+            roles.add(role);
         }
 
-        List<SceneDTO> existingScenes = BasicService.getScenes();
         for (int i = 2; i < table.length; i++) {
-            SceneDTO scene = createSceneDTO(table[i], i);
-            if (existingScenes.contains(scene)) {
-                scene = existingScenes.get(existingScenes.indexOf(scene));
-            } else {
-                Creator.createScene(scene);
-            }
+            Scene scene = getScene(table[i], i);
             for (int j = 2; j < table[i].length; j++) {
                 String cell = table[i][j];
                 if (cell != null && !cell.isEmpty()) {
-                    RoleDTO role = roles.get(j - 2);
-                    boolean small;
-                    switch (cell){
-                        case "x" -> small = false;
-                        case "?" -> small = true;
+                    Role role = roles.get(j - 2);
+                    cell = cell.toLowerCase();
+                    switch (cell) {
+                        case "x" -> scene.addBigRole(role);
+                        case "?" -> scene.addSmallRole(role);
                         default -> throw new BusinessException("Die Rolle \"" + role.getName() + "\" in der Szene \""
                                 + scene.getName() + "\" ist ungültig. Bitte gebe \"x\" oder \"?\" ein.");
                     }
-                    Creator.takesPart(scene, new Pair<>(role, small));
                 }
             }
         }
@@ -109,9 +81,13 @@ public class ImportScenes extends AbstractCommand {
         info(", ob alles korrekt importiert wurde.");
     }
 
-    private static @NotNull SceneDTO createSceneDTO(String[] table, int position) throws BusinessException {
-        SceneDTO scene = new SceneDTO();
-        scene.setName(table[0]);
+    private static @NotNull Scene getScene(String[] table, int position) throws BusinessException {
+        Scene scene = BasicService.getSceneByName(table[0]);
+        if (scene == null) {
+            scene = BasicService.createScene();
+            scene.setName(table[0]);
+        }
+
         scene.setPosition(position);
         try {
             double length = Double.parseDouble(table[1].replace(",", "."));

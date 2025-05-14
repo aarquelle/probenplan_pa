@@ -19,20 +19,18 @@ package org.aarquelle.probenplan_pa.ui.cli.commands;
 import org.aarquelle.probenplan_pa.Main;
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.business.suggest.Analyzer;
-import org.aarquelle.probenplan_pa.dto.ActorDTO;
-import org.aarquelle.probenplan_pa.dto.PlanDTO;
-import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
-import org.aarquelle.probenplan_pa.dto.RoleDTO;
-import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.entity.Plan;
+import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Role;
+import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.util.CsvUtils;
-import org.aarquelle.probenplan_pa.util.Pair;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ExportToClipboard extends AbstractCommand {
     public ExportToClipboard() {
@@ -42,8 +40,8 @@ public class ExportToClipboard extends AbstractCommand {
 
     @Override
     public void execute(String[] args) throws BusinessException {
-        List<RehearsalDTO> rehearsals = BasicService.getRehearsals();
-        PlanDTO plan = Main.plan;
+        List<Rehearsal> rehearsals = BasicService.getRehearsals().stream().sorted().toList();
+        Plan plan = Main.plan; //TODO Zu DataState ändern
         if (plan == null) {
             throw new BusinessException("Erstelle zuerst einen Plan mit generate");
         }
@@ -53,10 +51,10 @@ public class ExportToClipboard extends AbstractCommand {
             table = new String[rehearsals.size() + 1] [4];
             table[0] = new String[]{"Datum", "Szenen", "Schauspielende"};
             for (int i = 0; i < rehearsals.size(); i++) {
-                RehearsalDTO rehearsal = rehearsals.get(i);
+                Rehearsal rehearsal = rehearsals.get(i);
                 table[i + 1][0] = rehearsal.getDate().toString();
 
-                List<SceneDTO> scenes = plan.get(rehearsal);
+                List<Scene> scenes = plan.get(rehearsal);
                 StringBuilder scenesString = new StringBuilder();
                 scenes.forEach(scene -> {
                     if (!scenesString.isEmpty()) {
@@ -66,31 +64,25 @@ public class ExportToClipboard extends AbstractCommand {
                 });
                 table[i + 1][1] = scenesString.toString();
 
-                List<RoleDTO> fullRoles = BasicService.getRoles();
-                List<ActorDTO> allMissingActors = Analyzer.missingActorsForRehearsal.get(rehearsal).stream()
-                        .filter(p -> !p.second())
-                        .map(Pair::first)
-                        .toList();
                 StringBuilder actorsString = new StringBuilder();
-                Set<RoleDTO> roles = new HashSet<>();
-                for (SceneDTO s : scenes) {
-                    roles.addAll(Analyzer.getRolesForScene(s));
+                Set<Role> roles = new HashSet<>();
+                for (Scene s : scenes) {
+                    roles.addAll(s.getBigRoles());
+                    roles.addAll(s.getSmallRoles());
                 }
-                List<ActorDTO> presentActors = new ArrayList<>();
-                List<ActorDTO> missingActors = new ArrayList<>();
-                for (RoleDTO role : roles) {
-                    for (RoleDTO fullRole : fullRoles) { //Nötig, weil getRolesForScene keine Actors auffüllt.
-                        if (role.getId() == fullRole.getId()) {
-                            if (allMissingActors.contains(fullRole.getActor())
-                                    && !missingActors.contains(fullRole.getActor())) {
-                                missingActors.add(fullRole.getActor());
-                            } else if (!presentActors.contains(fullRole.getActor())) {
-                                presentActors.add(fullRole.getActor());
-                            }
-                        }
+                Set<Actor> neededActors = roles.stream().map(Role::getActor).collect(Collectors.toSet());
+                Set<Actor> presentActors = new HashSet<>();
+                Set<Actor> missingActors = new HashSet<>();
+
+                neededActors.forEach(actor -> {
+                    if (rehearsal.getMissingActors().contains(actor)) {
+                        missingActors.add(actor);
+                    } else {
+                        presentActors.add(actor);
                     }
-                }
-                for (ActorDTO actor : presentActors) {
+                });
+
+                for (Actor actor : presentActors) {
                     if (!actorsString.isEmpty()) {
                         actorsString.append(", ");
                     }
@@ -98,20 +90,20 @@ public class ExportToClipboard extends AbstractCommand {
                 }
                 if (!missingActors.isEmpty()) {
                     actorsString.append(". Falls doch möglich: ");
-                    for (ActorDTO actor : missingActors) {
+                    for (Actor actor : missingActors) {
                         actorsString.append(actor.getName()).append(", ");
                     }
                     actorsString.delete(actorsString.length() - 2, actorsString.length());
                 }
                 table[i + 1][2] = actorsString.toString();
                 double rehearsalLength = 0;
-                for (SceneDTO s : scenes) {
+                for (Scene s : scenes) {
                     rehearsalLength += s.getLength();
                 }
                 table[i + 1][3] = String.valueOf(rehearsalLength);
             }
         } else {
-            List<SceneDTO> scenes = BasicService.getScenes();
+            List<Scene> scenes = BasicService.getScenes().stream().sorted().toList();
             table = new String[rehearsals.size() + 1] [scenes.size() + 2];
             for (int i = 2; i < table[0].length; i++) {
                 table[0][i] = scenes.get(i - 2).getName();
@@ -129,6 +121,5 @@ public class ExportToClipboard extends AbstractCommand {
             }
         }
         CsvUtils.copyToClipboard(table);
-
     }
 }

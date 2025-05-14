@@ -14,10 +14,9 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.data.exception;
+package org.aarquelle.probenplan_pa.persistence;
 
-public class DuplicateException extends Exception {
-    public DuplicateException(String message, Throwable cause) {
-        super(message, cause);
-    }
+import static org.junit.jupiter.api.Assertions.*;
+class FileIOTest {
+  
 }

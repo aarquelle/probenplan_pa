@@ -16,9 +16,14 @@
 
 package org.aarquelle.probenplan_pa.util;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
 
 import java.awt.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -79,5 +84,19 @@ public class CsvUtils {
         } catch (UnsupportedFlavorException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<Rehearsal> getRehearsalsFromTable(String[][] table) throws BusinessException {
+        List<Rehearsal> rehearsals = new ArrayList<>();
+        for (int i = 1; i < table.length; i++) {
+            LocalDate date = DateUtils.getLocalDate(table[i][0]);
+            Rehearsal rehearsal = BasicService.getRehearsalByDate(date);
+            if (rehearsal == null) {
+                rehearsal = BasicService.createRehearsal();
+                rehearsal.setDate(date);
+            }
+            rehearsals.add(rehearsal);
+        }
+        return rehearsals;
     }
 }

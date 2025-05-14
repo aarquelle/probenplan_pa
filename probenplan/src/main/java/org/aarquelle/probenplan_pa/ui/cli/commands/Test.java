@@ -16,24 +16,9 @@
 
 package org.aarquelle.probenplan_pa.ui.cli.commands;
 
-import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.business.suggest.Analyzer;
-import org.aarquelle.probenplan_pa.business.suggest.Evaluator;
-import org.aarquelle.probenplan_pa.dto.ParamsDTO;
-import org.aarquelle.probenplan_pa.dto.PlanDTO;
-import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
-import org.aarquelle.probenplan_pa.dto.SceneDTO;
-import org.aarquelle.probenplan_pa.ui.cli.out.Out;
-
-import java.io.IOException;
-import java.util.List;
 
 public class Test extends AbstractCommand{
-    int rehearsalCount = 0;
-    PlanDTO plan;
-    List<SceneDTO> ss = BasicService.getScenes();
-    List<RehearsalDTO> rs = BasicService.getRehearsals();
 
     public Test() {
         super("test", "Test");
@@ -41,70 +26,6 @@ public class Test extends AbstractCommand{
 
     @Override
     public void execute(String[] args) throws BusinessException {
-        try {
-            ex();
-        } catch (BusinessException e) {
-            throw new RuntimeException("Runtime", e);
-        }
-    }
 
-    private void ex() throws BusinessException {
-        try {
-            io();
-        } catch (IOException e) {
-            throw new BusinessException("BusinessException", e);
-        }
-    }
-
-    private void io() throws IOException {
-        throw new IOException("IOException");
-    }
-
-    private void eval() {
-        rehearsalCount = 0;
-        plan = new PlanDTO();
-        Analyzer.runAnalysis();
-
-        put();
-        put();
-        put(0,1,2,5);
-        put(1,3,4);
-        put(3,4,5);
-        put(1);
-        put(0,1,2,3,4,5);
-        put(1,2,3);
-        put(0,2,5);
-        put(2);
-        put(4,5);
-
-        System.out.println(new Evaluator(plan, new ParamsDTO()).evaluate());
-        Out.plan(plan);
-
-        rehearsalCount = 0;
-        plan = new PlanDTO();
-        Analyzer.runAnalysis();
-
-        put(1,2);
-        put(0,4);
-        put(0,2,4,5);
-        put(1,3);
-        put(0,4,5);
-        put(4);
-        put(0,1,2,3,4,5);
-        put(0,1,2,5);
-        put();
-        put(2);
-        put(1,3);
-
-        Out.plan(plan);
-        System.out.println(new Evaluator(plan, new ParamsDTO()).evaluate());
-        System.out.println(plan.getTestResults());
-    }
-
-    private void put(int... scene) {
-        for (int s : scene) {
-            plan.put(rs.get(rehearsalCount), ss.get(s));
-        }
-        rehearsalCount++;
     }
 }

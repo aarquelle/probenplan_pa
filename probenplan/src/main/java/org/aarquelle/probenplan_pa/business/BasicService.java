@@ -16,44 +16,79 @@
 
 package org.aarquelle.probenplan_pa.business;
 
-import org.aarquelle.probenplan_pa.data.dao.Transaction;
-import org.aarquelle.probenplan_pa.dto.ActorDTO;
-import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
-import org.aarquelle.probenplan_pa.dto.RoleDTO;
-import org.aarquelle.probenplan_pa.dto.SceneDTO;
-import org.aarquelle.probenplan_pa.util.Pair;
+import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.DataState;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Role;
+import org.aarquelle.probenplan_pa.entity.Scene;
 
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.Set;
 
 public class BasicService {
-    public static List<RehearsalDTO> getRehearsals() {
-        try (Transaction t = new Transaction()) {
-            return t.getReadDAO().getRehearsals();
-        }
+    static DataState ds = DataState.getInstance();
+
+    public static Set<Rehearsal> getRehearsals() {
+        return ds.getRehearsals();
     }
 
-    public static List<SceneDTO> getScenes() {
-        try (Transaction t = new Transaction()) {
-            return t.getReadDAO().getScenes();
-        }
+    public static Set<Scene> getScenes() {
+        return ds.getScenes();
     }
 
-    public static List<ActorDTO> getActors() {
-        try (Transaction t = new Transaction()) {
-            return t.getReadDAO().getActors();
-        }
+    public static Set<Actor> getActors() {
+        return ds.getActors();
     }
 
-    public static List<RoleDTO> getRoles() {
-        try (Transaction t = new Transaction()) {
-            return t.getReadDAO().getRoles();
-        }
+    public static Set<Role> getRoles() {
+        return ds.getRoles();
     }
 
-    public static List<Pair<RehearsalDTO, SceneDTO>> getLockedScenes() {
-        try (Transaction t = new Transaction()) {
-            return t.getReadDAO().getLockedScenes();
-        }
+    public static Role createRole() {
+        return ds.createRole();
+    }
+
+    public static Actor createActor() {
+        return ds.createActor();
+    }
+
+    public static Rehearsal createRehearsal() {
+        return ds.createRehearsal();
+    }
+
+    public static Scene createScene() {
+        return ds.createScene();
+    }
+
+    public static Role getRoleByName(String name) {
+        return ds.getRoles().stream()
+                .filter(role -> role.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static Actor getActorByName(String name) {
+        return ds.getActors().stream()
+                .filter(actor -> actor.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static Rehearsal getRehearsalByDate(LocalDate date) {
+        return ds.getRehearsals().stream()
+                .filter(rehearsal -> rehearsal.getDate().equals(date))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static Scene getSceneByName(String name) {
+        return ds.getScenes().stream()
+                .filter(scene -> scene.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static void clearData() {
+        ds.clear();
     }
 }

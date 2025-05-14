@@ -17,12 +17,12 @@
 package org.aarquelle.probenplan_pa.ui.cli.out;
 
 import org.aarquelle.probenplan_pa.business.BasicService;
-import org.aarquelle.probenplan_pa.business.suggest.Analyzer;
-import org.aarquelle.probenplan_pa.dto.ActorDTO;
-import org.aarquelle.probenplan_pa.dto.PlanDTO;
-import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
-import org.aarquelle.probenplan_pa.dto.RoleDTO;
-import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.business.Analyzer;
+import org.aarquelle.probenplan_pa.entity.Plan;
+import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Role;
+import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.util.DateUtils;
 
 public class Out {
@@ -76,25 +76,25 @@ public class Out {
         return ANSI_MAGENTA + prompt + ANSI_RESET + "> ";
     }
 
-    public static void prActor(ActorDTO actor) {
+    public static void prActor(Actor actor) {
         print(ANSI_YELLOW + actor.getName() + ANSI_RESET);
     }
 
 
-    public static void prRole(RoleDTO role) {
+    public static void prRole(Role role) {
         print(ANSI_GREEN + role.getName() + ANSI_RESET);
     }
 
-    public static void prScene(SceneDTO scene) {
+    public static void prScene(Scene scene) {
         print(ANSI_BLUE + scene.getName() + ANSI_RESET);
     }
 
-    public static void prRehearsal(RehearsalDTO rehearsal) {
+    public static void prRehearsal(Rehearsal rehearsal) {
         print(ANSI_WHITE + DateUtils.getString(rehearsal.getDate()) + ANSI_RESET);
     }
 
-    public static void plan(PlanDTO plan) {
-        for (RehearsalDTO r : BasicService.getRehearsals()) {
+    public static void plan(Plan plan) {
+        for (Rehearsal r : BasicService.getRehearsals().stream().sorted().toList()) {
             Out.prRehearsal(r);
             Out.infoPr(": ");
             plan.get(r).forEach(s -> {

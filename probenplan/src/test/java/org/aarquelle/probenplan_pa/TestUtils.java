@@ -17,22 +17,21 @@
 package org.aarquelle.probenplan_pa;
 
 import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.business.create.Creator;
-import org.aarquelle.probenplan_pa.data.dao.Transaction;
-import org.aarquelle.probenplan_pa.dto.ActorDTO;
-import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
-import org.aarquelle.probenplan_pa.dto.RoleDTO;
-import org.aarquelle.probenplan_pa.dto.SceneDTO;
-import org.aarquelle.probenplan_pa.util.Pair;
+import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.DataState;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Role;
+import org.aarquelle.probenplan_pa.entity.Scene;
+import org.aarquelle.probenplan_pa.util.DateUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestUtils {
 
-    public static ActorDTO alice, charlie, bob;
-    public static RoleDTO hero, villain, messenger, shepherd;
-    public static SceneDTO scene1, scene2, scene3, scene4, scene5;
-    public static RehearsalDTO rehearsal1, rehearsal2, rehearsal3, rehearsal4, rehearsal5;
+    public static Actor alice, charlie, bob;
+    public static Role hero, villain, messenger, shepherd;
+    public static Scene scene1, scene2, scene3, scene4, scene5;
+    public static Rehearsal rehearsal1, rehearsal2, rehearsal3, rehearsal4, rehearsal5;
 
 
     /**
@@ -58,97 +57,95 @@ public class TestUtils {
     public static void createTestData() throws BusinessException {
 
         Main.TEST_MODE = true;
-        Transaction.onStartup();
-        try (Transaction t = new Transaction()) {
-            t.getDBManager().clearDB();
-            t.getDBManager().initDB();
-            t.commit();
-        }
+        DataState ds = DataState.getInstance();
+        
 
-        alice = new ActorDTO();
+        alice = ds.createActor();
         alice.setName("Alice");
 
-        charlie = new ActorDTO();
+        charlie = ds.createActor();
         charlie.setName("Charlie");
 
-        bob = new ActorDTO();
+        bob = ds.createActor();
         bob.setName("Bob");
 
-        Creator.createActor(alice, charlie, bob);
-
-        hero = new RoleDTO();
+        hero = ds.createRole();
         hero.setName("Held");
         hero.setActor(alice);
 
-        villain = new RoleDTO();
+        villain = ds.createRole();
         villain.setName("Bösewicht");
         villain.setActor(bob);
 
-        messenger = new RoleDTO();
+        messenger = ds.createRole();
         messenger.setName("Bote");
         messenger.setActor(charlie);
 
-        shepherd = new RoleDTO();
+        shepherd = ds.createRole();
         shepherd.setName("Hirte");
         shepherd.setActor(charlie);
 
-        Creator.createRole(hero, villain, messenger, shepherd);
-
-        scene1 = new SceneDTO();
+        scene1 = ds.createScene();
         scene1.setName("Hirtenszene");
         scene1.setPosition(1);
         scene1.setLength(1);
 
-        scene2 = new SceneDTO();
+        scene2 = ds.createScene();
         scene2.setName("Botenszene");
         scene2.setPosition(2);
         scene2.setLength(1);
 
-        scene3 = new SceneDTO();
+        scene3 = ds.createScene();
         scene3.setName("Herausforderung");
         scene3.setPosition(3);
         scene3.setLength(1);
 
-        scene4 = new SceneDTO();
+        scene4 = ds.createScene();
         scene4.setName("Monolog");
         scene4.setPosition(4);
         scene4.setLength(1);
 
-        scene5 = new SceneDTO();
+        scene5 = ds.createScene();
         scene5.setName("Kampf");
         scene5.setPosition(5);
         scene5.setLength(1);
 
-        Creator.createScene(scene5, scene2, scene3, scene4, scene1);
+        rehearsal1 = ds.createRehearsal();
+        rehearsal1.setDate(DateUtils.getLocalDate("01.01.2025"));
 
-        rehearsal1 = new RehearsalDTO();
-        rehearsal1.setDate(java.sql.Date.valueOf("2025-01-01"));
+        rehearsal2 = ds.createRehearsal();
+        rehearsal2.setDate(DateUtils.getLocalDate("01.02.2025"));
 
-        rehearsal2 = new RehearsalDTO();
-        rehearsal2.setDate(java.sql.Date.valueOf("2025-01-02"));
+        rehearsal3 = ds.createRehearsal();
+        rehearsal3.setDate(DateUtils.getLocalDate("01.03.2025"));
 
-        rehearsal3 = new RehearsalDTO();
-        rehearsal3.setDate(java.sql.Date.valueOf("2025-01-03"));
+        rehearsal4 = ds.createRehearsal();
+        rehearsal4.setDate(DateUtils.getLocalDate("01.04.2025"));
 
-        rehearsal4 = new RehearsalDTO();
-        rehearsal4.setDate(java.sql.Date.valueOf("2025-01-04"));
+        rehearsal5 = ds.createRehearsal();
+        rehearsal5.setDate(DateUtils.getLocalDate("01.05.2025"));
 
-        rehearsal5 = new RehearsalDTO();
-        rehearsal5.setDate(java.sql.Date.valueOf("2025-01-05"));
+        scene1.addSmallRole(shepherd);
+        scene1.addBigRole(hero);
 
-        Creator.createRehearsal(rehearsal1, rehearsal2, rehearsal3, rehearsal4, rehearsal5);
+        scene2.addBigRole(villain);
+        scene2.addBigRole(messenger);
 
-        Creator.takesPart(scene1, new Pair<>(hero, false), new Pair<>(shepherd, true));
-        Creator.takesPart(scene2, new Pair<>(villain, false), new Pair<>(messenger, false));
-        Creator.takesPart(scene3, new Pair<>(hero, false), new Pair<>(villain, false));
-        Creator.takesPart(scene4, new Pair<>(hero, false));
-        Creator.takesPart(scene5, new Pair<>(hero, false), new Pair<>(villain, false), new Pair<>(messenger, true));
+        scene3.addBigRole(hero);
+        scene3.addBigRole(villain);
 
-        Creator.hasNoTime(rehearsal1, new Pair<>(alice, false));
-        Creator.hasNoTime(rehearsal2, new Pair<>(bob, false), new Pair<>(charlie, false));
-        Creator.hasNoTime(rehearsal3, new Pair<>(charlie, false));
-        Creator.hasNoTime(rehearsal4, new Pair<>(bob, false));
-        Creator.hasNoTime(rehearsal5, new Pair<>(alice, true));
+        scene4.addBigRole(hero);
+
+        scene5.addBigRole(hero);
+        scene5.addBigRole(villain);
+        scene5.addSmallRole(messenger);
+
+        rehearsal1.addMissingActor(alice);
+        rehearsal2.addMissingActor(bob);
+        rehearsal2.addMissingActor(charlie);
+        rehearsal3.addMissingActor(charlie);
+        rehearsal4.addMissingActor(bob);
+        rehearsal5.addMaybeActor(alice);
     }
 
 

@@ -18,9 +18,9 @@ package org.aarquelle.probenplan_pa.ui.cli.commands;
 
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
-import org.aarquelle.probenplan_pa.business.suggest.Analyzer;
-import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
-import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.business.Analyzer;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Scene;
 
 import java.util.List;
 
@@ -33,14 +33,14 @@ public class Overview extends AbstractCommand {
 
     @Override
     public void execute(String[] args) throws BusinessException {
-        List<RehearsalDTO> rehearsals = BasicService.getRehearsals();
-        List<SceneDTO> scenes = BasicService.getScenes();
+        List<Rehearsal> rehearsals = BasicService.getRehearsals().stream().sorted().toList();
+        List<Scene> scenes = BasicService.getScenes().stream().sorted().toList();
         Analyzer.runAnalysis();
 
         info("Nach Proben sortiert: ");
-        for (RehearsalDTO r : rehearsals) {
+        for (Rehearsal r : rehearsals) {
             info("Probe am " + r.getDate() + ":");
-            for (SceneDTO s : scenes) {
+            for (Scene s : scenes) {
                 prScene(s);
                 infoPr("(");
                 percentage(Analyzer.completenessScore(r, s));
@@ -49,9 +49,9 @@ public class Overview extends AbstractCommand {
         }
 
         info("Nach Szenen sortiert: ");
-        for (SceneDTO s : scenes) {
+        for (Scene s : scenes) {
             info("Szene " + s.getName() + ":");
-            for (RehearsalDTO r : rehearsals) {
+            for (Rehearsal r : rehearsals) {
                 prRehearsal(r);
                 infoPr("(");
                 percentage(Analyzer.completenessScore(r, s));

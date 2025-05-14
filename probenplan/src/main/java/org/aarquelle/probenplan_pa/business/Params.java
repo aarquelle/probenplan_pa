@@ -14,12 +14,12 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.dto;
+package org.aarquelle.probenplan_pa.business;
 
-public class ParamsDTO implements Cloneable {
+public class Params implements Cloneable {
     private double earliestDurchlaufprobe = 0;
     private double latestDurchlaufprobe = 1;
-    private double averageRehearsalLength = 25;
+    private double averageRehearsalLength = 1;
     private int numberOfIterations = 100000;
     private long initialSeed = 1;
 
@@ -203,8 +203,8 @@ public class ParamsDTO implements Cloneable {
         };
     }
 
-    public ParamsDTO clone() throws CloneNotSupportedException {
-        ParamsDTO cloned = (ParamsDTO) super.clone();
+    public Params clone() throws CloneNotSupportedException {
+        Params cloned = (Params) super.clone();
         return cloned;
         /*ParamsDTO clone = new ParamsDTO();
         clone.earliestDurchlaufprobe = this.earliestDurchlaufprobe;
