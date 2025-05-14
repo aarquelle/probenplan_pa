@@ -61,6 +61,7 @@ public class Evaluator {
         double lumpiness = lumpiness();
         double minimumRepeats = getMinimumRepeats();
         double medianRepeats = getMedianRepeats();
+        double averageRepeats = getAverageRepeats();
         double overSize = overSize();
         double roleNumberScore = getRoleNumberScore();
 
@@ -70,13 +71,15 @@ public class Evaluator {
                 + lumpiness * params.getLumpinessWeight()
                 + minimumRepeats * params.getMinimumRepeatsWeight()
                 + medianRepeats * params.getMedianRepeatsWeight()
+                + averageRepeats * params.getAverageRepeatsWeight()
                 + overSize * params.getOverSizeWeight()
                 + roleNumberScore * params.getNumberOfRolesWeight())
                 / params.getTotalWeight();
 
         plan.setTestResults(
                 new TestResults(totalScore, totalCompleteness, dlpCompleteness, completenessBeforeDLP,
-                        lumpiness, minimumRepeats, medianRepeats, overSize, expectedNumberOfRepeats, roleNumberScore));
+                        lumpiness, minimumRepeats, medianRepeats, averageRepeats,
+                        overSize, expectedNumberOfRepeats, roleNumberScore));
         return totalScore;
     }
 
@@ -162,6 +165,9 @@ public class Evaluator {
         for (RehearsalDTO rehearsalDTO : rehearsals) {
             List<SceneDTO> scenes = new ArrayList<>(plan.get(rehearsalDTO));
             int numberOfLumps = Analyzer.getNumberOfLumps(scenes.toArray(new SceneDTO[0]));
+            if (numberOfLumps <= 2) {
+                numberOfLumps = 1;
+            }
             result += 1.0 / numberOfLumps;
         }
         return result / rehearsals.size();
@@ -186,25 +192,33 @@ public class Evaluator {
         double lengthOfPlay = scenes.stream()
                 .mapToDouble(SceneDTO::getLength)
                 .sum();
-        int amountOfAllScenes = (int)((params.getAverageRehearsalLength() * scenes.size() * rehearsals.size())
+        /*int amountOfAllScenes = (int)((params.getAverageRehearsalLength() * scenes.size() * rehearsals.size())
                 / lengthOfPlay);
-        return (double) (amountOfAllScenes + scenes.size()) / scenes.size(); //scenes.size() is added to reflect DLP
+        return (double) (amountOfAllScenes + scenes.size()) / scenes.size(); //scenes.size() is added to reflect DLP*/
+        return (rehearsals.size() * params.getAverageRehearsalLength()) / lengthOfPlay;
     }
 
     double getMinimumRepeats() {
-        return numberOfRepeats.values().stream()
+        return Math.min(1, numberOfRepeats.values().stream()
                 .mapToDouble(Double::doubleValue)
                 .min()
-                .orElse(0) / expectedNumberOfRepeats;
+                .orElse(0) / expectedNumberOfRepeats);
     }
 
     double getMedianRepeats() {
-        return numberOfRepeats.values().stream()
+        return Math.min(1, numberOfRepeats.values().stream()
                 .mapToDouble(Double::doubleValue)
                 .sorted()
                 .skip(numberOfRepeats.size() / 2)
                 .findFirst()
-                .orElse(0) / expectedNumberOfRepeats;
+                .orElse(0) / expectedNumberOfRepeats);
+    }
+
+    double getAverageRepeats() {
+        return Math.min(1, numberOfRepeats.values().stream()
+                .mapToDouble(Double::doubleValue)
+                .average()
+                .orElse(0) / expectedNumberOfRepeats);
     }
 
     public Map<SceneDTO, Double> getNumberOfRepeats() {

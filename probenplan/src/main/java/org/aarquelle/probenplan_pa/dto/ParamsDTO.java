@@ -19,19 +19,20 @@ package org.aarquelle.probenplan_pa.dto;
 public class ParamsDTO implements Cloneable {
     private double earliestDurchlaufprobe = 0;
     private double latestDurchlaufprobe = 1;
-    private double averageRehearsalLength = 1;
+    private double averageRehearsalLength = 25;
     private int numberOfIterations = 100000;
     private long initialSeed = 1;
 
     //Evaluation weights
-    private double completenessWeight = 4;
+    private double completenessWeight = 3;
     private double dlpCompletenessWeight = 1;
     private double completenessBeforeDLPWeight = 1;
     private double lumpinessWeight = 1;
-    private double minimumRepeatsWeight = 1;
+    private double minimumRepeatsWeight = 3;
     private double medianRepeatsWeight = 0.5;
+    private double averageRepeatsWeight = 3;
     private double overSizeWeight = 2;
-    private double numberOfRolesWeight = 3;
+    private double numberOfRolesWeight = 2;
 
     public double getEarliestDurchlaufprobe() {
         return earliestDurchlaufprobe;
@@ -139,7 +140,8 @@ public class ParamsDTO implements Cloneable {
 
     public double getTotalWeight() {
         return completenessWeight + dlpCompletenessWeight + completenessBeforeDLPWeight
-                + lumpinessWeight + minimumRepeatsWeight + medianRepeatsWeight + overSizeWeight + numberOfRolesWeight;
+                + lumpinessWeight + minimumRepeatsWeight + medianRepeatsWeight + overSizeWeight + numberOfRolesWeight
+                + averageRepeatsWeight;
     }
 
     public String getValueFromString(String name) {
@@ -155,6 +157,7 @@ public class ParamsDTO implements Cloneable {
             case "lumpinessWeight" -> String.valueOf(lumpinessWeight);
             case "minimumRepeatsWeight" -> String.valueOf(minimumRepeatsWeight);
             case "medianRepeatsWeight" -> String.valueOf(medianRepeatsWeight);
+            case "averageRepeatsWeight" -> String.valueOf(averageRepeatsWeight);
             case "overSizeWeight" -> String.valueOf(overSizeWeight);
             case "numberOfRolesWeight" -> String.valueOf(numberOfRolesWeight);
             default -> throw new IllegalArgumentException("Invalid parameter name: " + name);
@@ -174,6 +177,7 @@ public class ParamsDTO implements Cloneable {
             case "lumpinessWeight" -> lumpinessWeight = Double.parseDouble(value);
             case "minimumRepeatsWeight" -> minimumRepeatsWeight = Double.parseDouble(value);
             case "medianRepeatsWeight" -> medianRepeatsWeight = Double.parseDouble(value);
+            case "averageRepeatsWeight" -> averageRepeatsWeight = Double.parseDouble(value);
             case "overSizeWeight" -> overSizeWeight = Double.parseDouble(value);
             case "numberOfRolesWeight" -> numberOfRolesWeight = Double.parseDouble(value);
             default -> throw new IllegalArgumentException("Invalid parameter name: " + name);
@@ -193,6 +197,7 @@ public class ParamsDTO implements Cloneable {
                 "lumpinessWeight",
                 "minimumRepeatsWeight",
                 "medianRepeatsWeight",
+                "averageRepeatsWeight",
                 "overSizeWeight",
                 "numberOfRolesWeight"
         };
@@ -215,5 +220,13 @@ public class ParamsDTO implements Cloneable {
         clone.medianRepeatsWeight = this.medianRepeatsWeight;
         clone.overSizeWeight = this.overSizeWeight;
         return clone;*/
+    }
+
+    public double getAverageRepeatsWeight() {
+        return averageRepeatsWeight;
+    }
+
+    public void setAverageRepeatsWeight(double averageRepeatsWeight) {
+        this.averageRepeatsWeight = averageRepeatsWeight;
     }
 }
