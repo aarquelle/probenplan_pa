@@ -16,6 +16,7 @@
 
 package org.aarquelle.probenplan_pa.dto;
 
+import org.aarquelle.probenplan_pa.dto.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.util.Pair;
 
 import java.util.*;
@@ -40,6 +41,11 @@ public class PlanDTO {
             scenes.sort(Comparator.comparing(SceneDTO::getPosition));
             return scenes;
         }
+    }
+
+    public List<SceneDTO> get(Rehearsal r) {
+        //TODO DUMMY!
+        return null;
     }
 
     public double totalLength() {

@@ -22,10 +22,13 @@ import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.business.create.Creator;
 import org.aarquelle.probenplan_pa.dto.ActorDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
+import org.aarquelle.probenplan_pa.dto.entity.Actor;
+import org.aarquelle.probenplan_pa.dto.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.util.CsvUtils;
 import org.aarquelle.probenplan_pa.util.DateUtils;
 import org.aarquelle.probenplan_pa.util.Pair;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,32 +48,26 @@ public class ImportTimes extends AbstractCommand {
             error("Die Tabelle ist leer.");
             return;
         }
-        List<ActorDTO> actors = new ArrayList<>();
+        List<Actor> actors = new ArrayList<>();
         for (int i = 1; i < table[0].length; i++) {
-            ActorDTO actor = new ActorDTO();
-            actor.setName(table[0][i]);
+            Actor actor = BasicService.getActorByName(table[0][i]);
+            if (actor == null) {
+                actor = BasicService.createActor();
+                actor.setName(table[0][i]);
+            }
             actors.add(actor);
         }
 
-        List<ActorDTO> existingActors = BasicService.getActors();
-
-        for (ActorDTO a : actors) {
-            if (!existingActors.contains(a)) {
-                throw new BusinessException("\"" + a.getName() + "\" ist nicht in der Datenbank vorhanden. "
-                        + "Bitte erstelle sie zuerst, z.B. mit dem Befehl 'import-scenes'.");
-            }
-        }
-
-        List<RehearsalDTO> existingRehearsals = BasicService.getRehearsals();
-
-        List<RehearsalDTO> rehearsalDates = new ArrayList<>();
+        List<Rehearsal> rehearsals = new ArrayList<>();
         for (int i = 1; i < table.length; i++) {
-            RehearsalDTO rehearsal = new RehearsalDTO();
-            rehearsal.setDate(DateUtils.getDate(table[i][0]));
-            rehearsalDates.add(rehearsal);
-            if (!existingRehearsals.contains(rehearsal)) {
-                Creator.createRehearsal(rehearsal);
+            LocalDate date = DateUtils.getLocalDate(table[i][0]);
+            Rehearsal rehearsal = BasicService.getRehearsalByDate(date);
+
+            if (rehearsal == null) {
+                rehearsal = BasicService.createRehearsal();
+                rehearsal.setDate(date);
             }
+            rehearsals.add(rehearsal);
         }
 
 
@@ -78,10 +75,13 @@ public class ImportTimes extends AbstractCommand {
             for (int j = 0; j < table[i + 1].length - 1; j++) {
                 String content = table[i + 1][j + 1].toLowerCase();
                 if (content.equals("x") || content.equals("?")) {
-                    boolean maybe = content.equals("?");
-                    ActorDTO actor = actors.get(j);
-                    RehearsalDTO rehearsalDate = rehearsalDates.get(i);
-                    Creator.hasNoTime(rehearsalDate, new Pair<>(actor, maybe));
+                    Actor actor = actors.get(j);
+                    Rehearsal rehearsalDate = rehearsals.get(i);
+                    if (content.equals("?")) {
+                        rehearsalDate.addMaybeActor(actor);
+                    } else {
+                        rehearsalDate.addMissingActor(actor);
+                    }
                 }
             }
         }

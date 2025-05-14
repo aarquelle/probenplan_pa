@@ -21,6 +21,8 @@ import org.aarquelle.probenplan_pa.dto.ParamsDTO;
 import org.aarquelle.probenplan_pa.dto.PlanDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.dto.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.dto.entity.Scene;
 import org.aarquelle.probenplan_pa.ui.LoadingBar;
 import org.aarquelle.probenplan_pa.util.Pair;
 
@@ -77,8 +79,8 @@ public class Generator {
         PlanDTO result = new PlanDTO();
 
         double lengthOfPlan = 0;
-        List<Pair<RehearsalDTO, SceneDTO>> lockedScenes = BasicService.getLockedScenes();
-        for (Pair<RehearsalDTO, SceneDTO> pair : lockedScenes) {
+        List<Pair<Rehearsal, Scene>> lockedScenes = BasicService.getLockedScenes();
+        for (Pair<Rehearsal, Scene> pair : lockedScenes) {
             result.put(pair.first(), pair.second());
             lengthOfPlan += pair.second().getLength();
         }

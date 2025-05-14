@@ -23,6 +23,10 @@ import org.aarquelle.probenplan_pa.dto.PlanDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.RoleDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.dto.entity.Actor;
+import org.aarquelle.probenplan_pa.dto.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.dto.entity.Role;
+import org.aarquelle.probenplan_pa.dto.entity.Scene;
 import org.aarquelle.probenplan_pa.util.DateUtils;
 
 public class Out {
@@ -76,20 +80,20 @@ public class Out {
         return ANSI_MAGENTA + prompt + ANSI_RESET + "> ";
     }
 
-    public static void prActor(ActorDTO actor) {
+    public static void prActor(Actor actor) {
         print(ANSI_YELLOW + actor.getName() + ANSI_RESET);
     }
 
 
-    public static void prRole(RoleDTO role) {
+    public static void prRole(Role role) {
         print(ANSI_GREEN + role.getName() + ANSI_RESET);
     }
 
-    public static void prScene(SceneDTO scene) {
+    public static void prScene(Scene scene) {
         print(ANSI_BLUE + scene.getName() + ANSI_RESET);
     }
 
-    public static void prRehearsal(RehearsalDTO rehearsal) {
+    public static void prRehearsal(Rehearsal rehearsal) {
         print(ANSI_WHITE + DateUtils.getString(rehearsal.getDate()) + ANSI_RESET);
     }
 

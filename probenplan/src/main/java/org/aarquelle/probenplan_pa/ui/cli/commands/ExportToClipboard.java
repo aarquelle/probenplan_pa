@@ -25,6 +25,8 @@ import org.aarquelle.probenplan_pa.dto.PlanDTO;
 import org.aarquelle.probenplan_pa.dto.RehearsalDTO;
 import org.aarquelle.probenplan_pa.dto.RoleDTO;
 import org.aarquelle.probenplan_pa.dto.SceneDTO;
+import org.aarquelle.probenplan_pa.dto.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.dto.entity.Role;
 import org.aarquelle.probenplan_pa.util.CsvUtils;
 import org.aarquelle.probenplan_pa.util.Pair;
 
@@ -42,8 +44,8 @@ public class ExportToClipboard extends AbstractCommand {
 
     @Override
     public void execute(String[] args) throws BusinessException {
-        List<RehearsalDTO> rehearsals = BasicService.getRehearsals();
-        PlanDTO plan = Main.plan;
+        /*List<Rehearsal> rehearsals = BasicService.getRehearsals().stream().sorted().toList();
+        PlanDTO plan = Main.plan; //TODO Zu DataState ändern
         if (plan == null) {
             throw new BusinessException("Erstelle zuerst einen Plan mit generate");
         }
@@ -53,7 +55,7 @@ public class ExportToClipboard extends AbstractCommand {
             table = new String[rehearsals.size() + 1] [4];
             table[0] = new String[]{"Datum", "Szenen", "Schauspielende"};
             for (int i = 0; i < rehearsals.size(); i++) {
-                RehearsalDTO rehearsal = rehearsals.get(i);
+                Rehearsal rehearsal = rehearsals.get(i);
                 table[i + 1][0] = rehearsal.getDate().toString();
 
                 List<SceneDTO> scenes = plan.get(rehearsal);
@@ -66,7 +68,7 @@ public class ExportToClipboard extends AbstractCommand {
                 });
                 table[i + 1][1] = scenesString.toString();
 
-                List<RoleDTO> fullRoles = BasicService.getRoles();
+                List<Role> fullRoles = BasicService.getRoles().stream().sorted().toList();
                 List<ActorDTO> allMissingActors = Analyzer.missingActorsForRehearsal.get(rehearsal).stream()
                         .filter(p -> !p.second())
                         .map(Pair::first)
@@ -129,6 +131,6 @@ public class ExportToClipboard extends AbstractCommand {
             }
         }
         CsvUtils.copyToClipboard(table);
-
+*/
     }
 }
