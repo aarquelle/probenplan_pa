@@ -17,6 +17,7 @@
 package org.aarquelle.probenplan_pa.ui.cli.commands;
 
 import org.aarquelle.probenplan_pa.Main;
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.business.Mutator;
 import org.aarquelle.probenplan_pa.business.Params;
@@ -67,6 +68,6 @@ public class Generate extends AbstractCommand {
         String time = df.format((double)(System.currentTimeMillis() - startTime) / 1000);
         Out.success("Found plan in " + time + " seconds.");
 
-        Main.plan = plan;
+        BasicService.setPlan(plan);
     }
 }

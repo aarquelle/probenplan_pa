@@ -51,6 +51,8 @@ public class CommandLineUI {
         putCommand(ExportToClipboard.class);
         putCommand(ShowParams.class);
         putCommand(SetParam.class);
+        putCommand(SaveToFile.class);
+        putCommand(LoadFromFile.class);
 
 
     }

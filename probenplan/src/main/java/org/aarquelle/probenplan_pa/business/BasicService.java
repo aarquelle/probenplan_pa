@@ -18,6 +18,7 @@ package org.aarquelle.probenplan_pa.business;
 
 import org.aarquelle.probenplan_pa.entity.Actor;
 import org.aarquelle.probenplan_pa.entity.DataState;
+import org.aarquelle.probenplan_pa.entity.Plan;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
@@ -90,5 +91,13 @@ public class BasicService {
 
     public static void clearData() {
         ds.clear();
+    }
+
+    public static void setPlan(Plan plan) {
+        ds.setPlan(plan);
+    }
+
+    public static Plan getPlan() {
+        return ds.getPlan();
     }
 }

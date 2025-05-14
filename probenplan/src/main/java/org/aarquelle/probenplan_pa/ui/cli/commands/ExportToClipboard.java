@@ -41,7 +41,7 @@ public class ExportToClipboard extends AbstractCommand {
     @Override
     public void execute(String[] args) throws BusinessException {
         List<Rehearsal> rehearsals = BasicService.getRehearsals().stream().sorted().toList();
-        Plan plan = Main.plan; //TODO Zu DataState ändern
+        Plan plan = BasicService.getPlan();
         if (plan == null) {
             throw new BusinessException("Erstelle zuerst einen Plan mit generate");
         }
