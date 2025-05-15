@@ -38,9 +38,23 @@ public class Generate extends AbstractCommand {
         Out.info("Generiere Testdaten... Das kann einen kurzen Moment dauern, bitte warten.");
         long startTime = System.currentTimeMillis();
 
+        long seed = Params.getInitialSeed();
+        int deadline;
 
-        Mutator mutator = new Mutator(System.currentTimeMillis());
-        mutator.mutate();
+        if (args.length > 0) {
+            deadline = Integer.parseInt(args[0]);
+            if (args.length > 1) {
+                seed = Long.parseLong(args[1]);
+            }
+        } else {
+            seed = Params.getInitialSeed();
+            deadline = Params.getDeadline();
+        }
+        if (seed == 0) {
+            seed = System.currentTimeMillis();
+        }
+        Mutator mutator = new Mutator(seed);
+        mutator.mutate(deadline);
         Plan plan = mutator.getPlan();
 
         /*ProgressBar progressBar = new ProgressBar(params.getNumberOfIterations() / Main.NUMBER_OF_CORES);

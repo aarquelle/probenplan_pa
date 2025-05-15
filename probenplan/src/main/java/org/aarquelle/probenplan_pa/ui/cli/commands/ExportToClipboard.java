@@ -16,7 +16,6 @@
 
 package org.aarquelle.probenplan_pa.ui.cli.commands;
 
-import org.aarquelle.probenplan_pa.Main;
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.entity.Plan;
@@ -54,7 +53,7 @@ public class ExportToClipboard extends AbstractCommand {
                 Rehearsal rehearsal = rehearsals.get(i);
                 table[i + 1][0] = rehearsal.getDate().toString();
 
-                List<Scene> scenes = plan.get(rehearsal);
+                List<Scene> scenes = plan.get(rehearsal).stream().sorted().toList();
                 StringBuilder scenesString = new StringBuilder();
                 scenes.forEach(scene -> {
                     if (!scenesString.isEmpty()) {

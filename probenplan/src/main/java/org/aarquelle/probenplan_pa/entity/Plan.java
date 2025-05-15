@@ -20,20 +20,15 @@ import org.aarquelle.probenplan_pa.business.TestResults;
 import org.aarquelle.probenplan_pa.util.Pair;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Plan {
-    private final Map<Rehearsal, List<Scene>> plan = new HashMap<>();
+    private final Map<Rehearsal, Set<Scene>> plan = new HashMap<>();
     private TestResults testResults;
 
     public void put(Rehearsal r, Scene s) {
         if (!plan.containsKey(r)) {
-            plan.put(r, new ArrayList<>(List.of(s)));
+            plan.put(r, new HashSet<>(List.of(s)));
         } else {
-            //TODO entfernen
-            if (plan.get(r).contains(s)) {
-                System.out.println("BÖÖÖÖSEEE!!!");
-            }
             plan.get(r).add(s);
         }
     }
@@ -47,19 +42,15 @@ public class Plan {
         }
     }
 
-    public List<Scene> get(Rehearsal r) {
-        List<Scene> scenes = plan.get(r);
-        if (scenes == null) {
-            return Collections.emptyList();
-        } else {
-            return scenes.stream().sorted().collect(Collectors.toList()); //TODO Nur einmal sortieren? Beim Einfügen sortieren?
-        }
+    public Set<Scene> get(Rehearsal r) {
+        Set<Scene> scenes = plan.get(r);
+        return Objects.requireNonNullElse(scenes, Collections.emptySet());
     }
 
     public double totalLength() {
         double length = 0;
         for (Rehearsal r : plan.keySet()) {
-            List<Scene> sceneList = plan.get(r);
+            Set<Scene> sceneList = plan.get(r);
             for (Scene scene : sceneList) {
                 length += scene.getLength();
             }
@@ -67,21 +58,8 @@ public class Plan {
         return length;
     }
 
-    public List<Rehearsal> getRehearsals() {
-        return plan.keySet().stream().sorted().toList();
-        /*List<Rehearsal> rehearsals = new ArrayList<>(plan.keySet());
-        rehearsals.sort(Comparator.comparing(Rehearsal::getDate)); //TODO Nur beim einsortieren auf Reihenfolge achten
-        return rehearsals;*/
-    }
-
-    public List<Scene> getScenes() {
-        Set<Scene> scenes = new HashSet<>();
-        for (List<Scene> sceneList : plan.values()) {
-            scenes.addAll(sceneList);
-        }
-        List<Scene> l = new ArrayList<>(scenes);
-        l.sort(Comparator.comparing(Scene::getPosition)); //TODO Beim einfügen sortieren
-        return l;
+    public Set<Rehearsal> getRehearsals() {
+        return plan.keySet();
     }
 
     public List<Pair<Rehearsal, Scene>> getAllPairs() {
@@ -92,7 +70,7 @@ public class Plan {
 
     public double getLengthOfRehearsal(Rehearsal rehearsal) {
         double length = 0;
-        List<Scene> scenes = get(rehearsal);
+        Set<Scene> scenes = get(rehearsal);
         for (Scene scene : scenes) {
             length += scene.getLength();
         }
@@ -108,7 +86,7 @@ public class Plan {
     }
 
     public boolean hasScene(Rehearsal rehearsal, Scene scene) {
-        List<Scene> scenes = get(rehearsal);
+        Set<Scene> scenes = get(rehearsal);
         if (scenes == null) {
             return false;
         } else return scenes.contains(scene);
@@ -116,10 +94,9 @@ public class Plan {
 
     public Plan copy() {
         Plan clone = new Plan();
-        //clone.testResults = testResults; //TODO deep copy
-        for (Map.Entry<Rehearsal, List<Scene>> entry : plan.entrySet()) {
+        for (Map.Entry<Rehearsal, Set<Scene>> entry : plan.entrySet()) {
             Rehearsal rehearsal = entry.getKey();
-            List<Scene> scenes = new ArrayList<>(entry.getValue());
+            Set<Scene> scenes = new HashSet<>(entry.getValue());
             clone.plan.put(rehearsal, scenes);
         }
         return clone;

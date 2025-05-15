@@ -23,6 +23,7 @@ import org.aarquelle.probenplan_pa.entity.Scene;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class Mutator {
     Random rand;
@@ -205,12 +206,19 @@ public class Mutator {
     }
 
     private Scene randomSceneFromPlan(Rehearsal rehearsal) {
-        List<Scene> scenes = plan.get(rehearsal);
+        Set<Scene> scenes = plan.get(rehearsal);
         if (scenes.isEmpty()) {
             return null;
         } else {
-            return scenes.get(rand.nextInt(scenes.size()));
+            int i = rand.nextInt(scenes.size());
+            for (Scene s : scenes) {
+                if (i == 0) {
+                    return s;
+                }
+                i--;
+            }
         }
+        throw new IllegalStateException("This should have returned earlier.");
     }
 
     private void findDlpCandidates() {
@@ -251,22 +259,18 @@ public class Mutator {
         }
     }
 
-    public void mutate() {
+    public void mutate(int limit) {
         int deadline = 0;
-        int limit = 10000;
         Analyzer.runAnalysis();
         findDlpCandidates();
         plan = forceDLP();
         buildLocks();
         dlp = potentialDlp;
         potentialDlp = null;
-        //Rehearsal hardcodedDlp = allRehearsals.get(13); //TODO: Hardcoded
-        //dlp = hardcodedDlp;
-        //addDLP(plan, hardcodedDlp);
         freeRehearsals.remove(dlp);
         while (deadline < limit) {
             deadline++;
-            int choice = rand.nextInt(5);
+            int choice = rand.nextInt(7);
             Plan mutant;
             switch (choice) {
                 case 0 -> mutant = addScene();

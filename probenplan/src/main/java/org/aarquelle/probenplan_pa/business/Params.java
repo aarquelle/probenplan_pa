@@ -183,6 +183,10 @@ public class Params {
         return getValue("numberOfRolesWeight").doubleValue();
     }
 
+    public static int getDeadline() {
+        return getValue("deadline").intValue();
+    }
+
     public static double getTotalWeight() {
         return getCompletenessWeight() + getDlpCompletenessWeight() + getCompletenessBeforeDLPWeight()
                 + getLumpinessWeight() + getMinimumRepeatsWeight() + getMedianRepeatsWeight() + getOverSizeWeight()

@@ -105,7 +105,7 @@ public class Evaluator {
 
     double completenessBeforeDLP() {
         double result = 0;
-        List<Pair<Rehearsal, List<Scene>>> rehearsalsBeforeDLP = new ArrayList<>();
+        List<Pair<Rehearsal, Set<Scene>>> rehearsalsBeforeDLP = new ArrayList<>();
         for (Rehearsal r : rehearsals) {
             if (r.equals(durchlaufprobe)) {
                 break;
@@ -114,8 +114,8 @@ public class Evaluator {
         }
 
         Map<Scene, Double> scenesBeforeDLP = new HashMap<>();
-        for (Pair<Rehearsal, List<Scene>> pair : rehearsalsBeforeDLP) {
-            List<Scene> scenes = pair.second();
+        for (Pair<Rehearsal, Set<Scene>> pair : rehearsalsBeforeDLP) {
+            Set<Scene> scenes = pair.second();
             Rehearsal rehearsal = pair.first();
             for (Scene scene : scenes) {
                 double sceneResult = Analyzer.completenessScore(rehearsal, scene) * scene.getLength(); //TODO Schon ältere Analysen verwenden?
@@ -238,7 +238,7 @@ public class Evaluator {
 
     int getNumberOfRolesInRehearsal(Rehearsal rehearsal) {
         Set<Role> roles = new HashSet<>();
-        List<Scene> scenes = plan.get(rehearsal);
+        Set<Scene> scenes = plan.get(rehearsal);
         for (Scene scene : scenes) {
             roles.addAll(scene.getBigRoles());
             roles.addAll(scene.getSmallRoles());
