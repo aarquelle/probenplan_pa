@@ -39,6 +39,7 @@ public class Mutator {
      * All rehearsals that are not the DLP.
      */
     List<Rehearsal> freeRehearsals;
+    List<Rehearsal> dlpCandidates;
 
     public Mutator(long seed) {
         rand = new Random(seed);
@@ -149,7 +150,7 @@ public class Mutator {
      * in the new DLP are randomly scattered in other rehearsals. The dlp field is not changed.
      */
     public Plan setDLP() {
-        Rehearsal target = randomRehearsal();
+        Rehearsal target = randomDlpCandidate();
         if (target == dlp) {
             return null;
         }
@@ -178,7 +179,7 @@ public class Mutator {
      * are ignored and not moved. The dlp field is not changed.
      */
     public Plan forceDLP() {
-        Rehearsal target = randomRehearsal();
+        Rehearsal target = randomDlpCandidate();
         if (target == dlp) {
             return null;
         }
@@ -190,6 +191,10 @@ public class Mutator {
 
     private Rehearsal randomRehearsal() {
         return freeRehearsals.get(rand.nextInt(freeRehearsals.size()));
+    }
+
+    private Rehearsal randomDlpCandidate() {
+        return dlpCandidates.get(rand.nextInt(dlpCandidates.size()));
     }
 
     private Scene randomScene() {
@@ -205,6 +210,26 @@ public class Mutator {
         }
     }
 
+    private void findDlpCandidates() {
+        dlpCandidates = new ArrayList<>();
+        double[] evals = new double[allRehearsals.size()];
+        double maxEval = Double.NEGATIVE_INFINITY;
+        for (int i = 0; i < allRehearsals.size(); i++) {
+            Plan mutant = plan.copy();
+            addDLP(mutant, allRehearsals.get(i));
+            evals[i] = new Evaluator(mutant).evaluate();
+            if (evals[i] > maxEval) {
+                maxEval = evals[i];
+            }
+        }
+
+        for (int i = 0; i < evals.length; i++) {
+            if (evals[i] == maxEval) {
+                dlpCandidates.add(allRehearsals.get(i));
+            }
+        }
+    }
+
     private void addDLP(Plan plan, Rehearsal target) {
         plan.get(dlp).clear();
         plan.get(target).clear();
@@ -217,12 +242,13 @@ public class Mutator {
         int deadline = 0;
         int limit = 10000;
         Analyzer.runAnalysis();
-        //plan = forceDLP();
-        //dlp = potentialDlp;
-        //potentialDlp = null;
-        Rehearsal hardcodedDlp = allRehearsals.get(13); //TODO: Hardcoded
-        dlp = hardcodedDlp;
-        addDLP(plan, hardcodedDlp);
+        findDlpCandidates();
+        plan = forceDLP();
+        dlp = potentialDlp;
+        potentialDlp = null;
+        //Rehearsal hardcodedDlp = allRehearsals.get(13); //TODO: Hardcoded
+        //dlp = hardcodedDlp;
+        //addDLP(plan, hardcodedDlp);
         freeRehearsals.remove(dlp);
         while (deadline < limit) {
             deadline++;
