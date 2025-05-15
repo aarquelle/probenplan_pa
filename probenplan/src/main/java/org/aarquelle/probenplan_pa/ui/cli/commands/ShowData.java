@@ -82,6 +82,9 @@ public class ShowData extends AbstractCommand {
         info("Proben:");
         for (Rehearsal rehearsal : rehearsals) {
             prRehearsal(rehearsal);
+            if (rehearsal.isFullLocked()) {
+                info(" (voll festgelegt)");
+            }
             if (!rehearsal.getMaybeActors().isEmpty() || !rehearsal.getMissingActors().isEmpty()) {
                 info(" mit fehlenden Schauspielenden: ");
                 for (Actor actor : rehearsal.getMissingActors()) {
@@ -95,7 +98,18 @@ public class ShowData extends AbstractCommand {
                     pr(" (vielleicht)");
                     line("");
                 }
-            } else {
+            }
+            if (!rehearsal.getLockedScenes().isEmpty()) {
+                info(" mit festgelegten Szenen: ");
+                for (Scene scene : rehearsal.getLockedScenes()) {
+                    pr("\t");
+                    prScene(scene);
+                    line("");
+                }
+            }
+            if (rehearsal.getLockedScenes().isEmpty()
+                    && rehearsal.getMaybeActors().isEmpty()
+                    && rehearsal.getMissingActors().isEmpty()) {
                 line("");
             }
         }

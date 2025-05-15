@@ -26,14 +26,13 @@ import java.util.Random;
 
 public class Mutator {
     Random rand;
-    Params params;
     Plan plan;
     Rehearsal dlp;
     Rehearsal potentialDlp;
     List<Rehearsal> allRehearsals;
     List<Scene> allScenes;
 
-    double evaluation;
+    double evaluation = Double.NEGATIVE_INFINITY;
 
     /**
      * All rehearsals that are not the DLP.
@@ -43,17 +42,18 @@ public class Mutator {
 
     public Mutator(long seed) {
         rand = new Random(seed);
-        this.params = params;
         this.plan = new Plan();
 
         allRehearsals = BasicService.getRehearsals().stream().sorted().toList();
         allScenes = BasicService.getScenes().stream().sorted().toList();
-        freeRehearsals = new ArrayList<>(allRehearsals);
+        freeRehearsals = new ArrayList<>();
+        freeRehearsals.addAll(allRehearsals.stream().filter(r -> !r.isFullLocked()).toList());
     }
 
 
     /**
      * Adds a new random scene to a random rehearsal.
+     *
      * @return The mutated plan, or null if there would be no change.
      */
     public Plan addScene() {
@@ -70,12 +70,13 @@ public class Mutator {
 
     /**
      * Removes a random scene from a random rehearsal.
+     *
      * @return The mutated plan, or null, if
      */
     public Plan removeScene() {
         Rehearsal r = randomRehearsal();
         Scene s = randomSceneFromPlan(r);
-        if (s == null) {
+        if (s == null || r.getLockedScenes().contains(s)) {
             return null;
         } else {
             Plan mutant = plan.copy();
@@ -86,6 +87,7 @@ public class Mutator {
 
     /**
      * Moves a random scene from one rehearsal to another.
+     *
      * @return The mutated plan.
      */
     public Plan moveScene() {
@@ -95,7 +97,7 @@ public class Mutator {
             return null;
         }
         Scene s = randomSceneFromPlan(source);
-        if (s == null || plan.hasScene(target, s)) {
+        if (s == null || plan.hasScene(target, s) || source.getLockedScenes().contains(s)) {
             return null;
         }
         Plan mutant = plan.copy();
@@ -110,7 +112,7 @@ public class Mutator {
     public Plan exchangeScene() {
         Rehearsal r = randomRehearsal();
         Scene remove = randomSceneFromPlan(r);
-        if (remove == null) {
+        if (remove == null || r.getLockedScenes().contains(remove)) {
             return null;
         }
         Scene add = randomScene();
@@ -134,7 +136,8 @@ public class Mutator {
         }
         Scene s1 = randomSceneFromPlan(r1);
         Scene s2 = randomSceneFromPlan(r2);
-        if (s1 == null || s2 == null || s1.equals(s2) || plan.hasScene(r1, s2) || plan.hasScene(r2, s1)) {
+        if (s1 == null || s2 == null || s1.equals(s2) || plan.hasScene(r1, s2) || plan.hasScene(r2, s1)
+                || r1.getLockedScenes().contains(s1) || r2.getLockedScenes().contains(s2)) {
             return null;
         }
         Plan mutant = plan.copy();
@@ -201,7 +204,7 @@ public class Mutator {
         return allScenes.get(rand.nextInt(allScenes.size()));
     }
 
-    private Scene randomSceneFromPlan( Rehearsal rehearsal) {
+    private Scene randomSceneFromPlan(Rehearsal rehearsal) {
         List<Scene> scenes = plan.get(rehearsal);
         if (scenes.isEmpty()) {
             return null;
@@ -212,11 +215,11 @@ public class Mutator {
 
     private void findDlpCandidates() {
         dlpCandidates = new ArrayList<>();
-        double[] evals = new double[allRehearsals.size()];
+        double[] evals = new double[freeRehearsals.size()];
         double maxEval = Double.NEGATIVE_INFINITY;
-        for (int i = 0; i < allRehearsals.size(); i++) {
+        for (int i = 0; i < freeRehearsals.size(); i++) {
             Plan mutant = plan.copy();
-            addDLP(mutant, allRehearsals.get(i));
+            addDLP(mutant, freeRehearsals.get(i));
             evals[i] = new Evaluator(mutant).evaluate();
             if (evals[i] > maxEval) {
                 maxEval = evals[i];
@@ -225,13 +228,23 @@ public class Mutator {
 
         for (int i = 0; i < evals.length; i++) {
             if (evals[i] == maxEval) {
-                dlpCandidates.add(allRehearsals.get(i));
+                dlpCandidates.add(freeRehearsals.get(i));
+            }
+        }
+    }
+
+    private void buildLocks() {
+        for (Rehearsal r : allRehearsals) {
+            for (Scene s : r.getLockedScenes()) {
+                plan.put(r, s);
             }
         }
     }
 
     private void addDLP(Plan plan, Rehearsal target) {
-        plan.get(dlp).clear();
+        if (dlp != null) {
+            plan.get(dlp).retainAll(dlp.getLockedScenes());
+        }
         plan.get(target).clear();
         for (Scene s : allScenes) {
             plan.put(target, s);
@@ -244,6 +257,7 @@ public class Mutator {
         Analyzer.runAnalysis();
         findDlpCandidates();
         plan = forceDLP();
+        buildLocks();
         dlp = potentialDlp;
         potentialDlp = null;
         //Rehearsal hardcodedDlp = allRehearsals.get(13); //TODO: Hardcoded

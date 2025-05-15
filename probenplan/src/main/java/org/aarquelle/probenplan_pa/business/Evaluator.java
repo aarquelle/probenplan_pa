@@ -42,8 +42,6 @@ public class Evaluator {
 
     double totalLengthOfRehearsals;
 
-    double averageRehearsalLength;
-
     public Evaluator(Plan plan) {
         this.plan = plan;
         this.rehearsals = BasicService.getRehearsals();
