@@ -56,8 +56,10 @@ Beispiel: ![Bild einer Tabelle](beispielcsvs/locks.png)
 - `clear-data` --- Löscht alle Daten.
 - `show-data` --- Zeigt den aktuellen Stand der Daten, die du eingegeben hast.
 - `possible-overview` --- Zeigt eine Liste aller Szenen und Probentermine an, und wie vollständig sie geprobt werden könnten.
-- `generate [iterations] [initial_seed]` --- Generiert einen Probenplan basierend auf den Parametern. Je mehr `iterations` gewählt werden, desto länger dauert die Generierung, aber desto höher ist auch die Chance auf einen besseren Plan. Bei leergelassenem Feld ist der Standardwert 50.000. `initial_seed` bestimmt den Zufallsgenerator, bei gleichem seed kommt immer auch das gleiche Ergebnis raus. Wird das Feld leergelassen, wird ein zufälliger seed gewählt. **Hinweis:** Das kann wirklich eine Weile dauern, auf meinem Laptop mit Daten vom "Revisor" braucht der für 50.000 Durchläufe etwa 5 Minuten. Also nicht wundern, und einfach was anderes machen in der Zeit. Wenn der Fortschrittsbalken sich allerdings längere Zeit nicht bewegt, ist wahrscheinlich etwas falsch - bitte schreibt mir dann, damit ich mich um das Problem kümmern kann.
+- `generate [iterations] [initial_seed]` --- Generiert einen Probenplan basierend auf den Parametern. Je mehr `iterations` gewählt werden, desto länger dauert die Generierung, aber desto höher ist auch die Chance auf einen besseren Plan. Bei leergelassenem Feld ist der Standardwert 10.000. `initial_seed` bestimmt den Zufallsgenerator, bei gleichem seed kommt immer auch das gleiche Ergebnis raus. Wird das Feld leergelassen, wird ein zufälliger seed gewählt.
 - `export-to-clipboard [locks]` --- Generiert Tabellendaten aus dem generierten Probenplan, welche dann in ein Tabellenkalkulationsprogramm kopiert werden können. Wenn `locks` `1` ist, wird eine Tabelle generiert, die für `import-locks` genutzt werden könnte. Wenn `locks` fehlt oder einen anderen Wert hat, wird eine Tabelle generiert, die einen für Menschen gut lesbaren Probenplan enthält. Das heißt: Du generierst einen Probenplan mit `generate`, gibst `save-to-clipboard` ein, und drückst `Ctrl+V` (bzw. `Cmd+V` auf MacOS) oder `Rechtsklick→Einfügen` ein einem Tabellenkalkulationsprogramm wie Google Sheets, um diesen generierten Probenplan als Dokument für die Gruppe veröffentlichen zu können.
+- `save` --- Speichert die Daten inklusive des aktuell generierten Probenplans in eine Datei in ~/Documents/Probenplan_PA/probenplan.binary ab.
+- `load` --- Lädt die Daten aus der Speicherdatei.
 
 <!--
 ### Für kleinere Änderungen während des Probenprozesses:
@@ -87,14 +89,15 @@ Beispiel: ![Bild einer Tabelle](beispielcsvs/locks.png)
 - `earliestDurchlaufprobe` --- Legt den frühesten Termin fest, an dem eine Durchlaufprobe stattfinden darf. `0` ist dabei die erste Probe, `1` die letzte.
 - `latestDurchlaufprobe` --- Pendant zu oben, für den spätesten möglichen Termin.
 - `averageRehearsalLength` --- Legt fest, wie lang eine Probe sein soll - gemessen als Summe der Längen der einzelnen Szenen.
-- `numberOfIterations` --- Legt die Standardzahl von generierten Probenplänen fest, wenn bei `generate` kein entsprechendes Argument mitgeliefert wird.
-- `initialSeed` --- Legt den ersten Zufallsseed fest, wenn bei `generate` kein entsprechendes Argument mitgeliefert wird. Bei gleichem Seed kommen immer die gleichen Ergebnisse raus. **Hinweis**: Wenn bspw. `initialSeed` 1 ist und `numberOfIterations` 100000, dann werden alle Probenpläne nach den seeds von 1 bis 100001 generiert. Den seed auf 10 zu ändern, macht also kaum einen Unterschied, da dann die Probenpläne nach den seeds von 10 bis 100010 generiert würden (also größtenteils die gleichen Pläne).
+- `deadline` --- Legt fest, nach wie vielen erfolglosen Verbesserungsversuchen das Programm den generierten Plan akzeptiert.
+- `initialSeed` --- Legt den ersten Zufallsseed fest, wenn bei `generate` kein entsprechendes Argument mitgeliefert wird. Bei gleichem Seed kommen immer die gleichen Ergebnisse raus.
 - `completenessWeight` --- Wie viel Wert darauf gelegt wird, dass die einzelnen Szenen möglichst vollständig sind, also dass möglichst wenige Schauspielende fehlen und eingesprochen werden müssen.
 - `dlpCompletenessWeight` --- Wie viel Wert darauf gelegt wird, dass die Durchlaufprobe möglichst vollständig gespielt werden kann.
 - `completenessBeforeDLPWeight` --- Wie viel Wert darauf gelegt wird, dass vor der Durchlaufprobe möglichst jede Szene schon vollständig gespielt werden konnte.
-- `lumpinessWeight` --- Wie viel Wert darauf gelegt wird, dass in einer Probe möglichst zusammenhängende Szenen geprobt werden.
+- `lumpinessWeight` --- Wie viel Wert darauf gelegt wird, dass in einer Probe möglichst zusammenhängende Szenen geprobt werden. **Hinweis:**  Erst ab 3 verschiedenen "Blöcken" hat das einen negativen Einfluss auf das Ergebnis.
 - `minimumRepeatsWeight` --- Wie viel Wert darauf gelegt wird, dass die am seltensten geprobte Szene trotzdem oft geprobt wird.
 - `medianRepeatsWeight` --- Wie oben, auf für den Median.
+- `averageRepeatsWeight` --- Wie oben, nur für den Durchschnitt.
 - `overSizeWeight` --- Wie viel Wert darauf gelegt wird, dass Szenen nicht deutlich länger als die `averageRehearsalLength` sind.
 - `numberOfRolesWeight` --- Wie viel Wert darauf gelegt wird, dass nicht so viele Rollen pro Probe dran sind. **Hinweis**: Momentan zählt das Programm nur die Rollen, nicht die Schauspielenden. Wenn eine Schauspielerin also mehrere Rollen hat, kann das an dieser Stelle gerade nicht berücksichtigt werden. Das wird sich in Zukunft verbessern. **Anderer Hinweis**: Momentan werden Proben mit 4 oder weniger Rollen als "ideal" angesehen, unterhalb davon wird nicht unterschieden.
 
@@ -104,6 +107,4 @@ Das Programm ist noch in einem ziemlich unfertigen Stadium. Man kann es zwar ben
 Momentan führt die mehrfache Eingabe von Daten häufig zu Abstürzen und unerwartetem Verhalten, es ist gerade am Besten, die Daten mit `clear-data` zu löschen und dann komplett neu anzulegen, wenn man Änderungen vornehmen möchte.
 
 ## Weiteres:
-Die gespeicherten Daten befinden sich in einer Datenbankdatei in `Documents/Probenplan_PA/probenplan.db`.
-Der Ansatz ist relativ primitiv: Es werden viele tausend zufällige Probenpläne generiert, nach einem Bewertungsschema bewertet, und der Beste wird ausgewählt.
-Wenn du Ideen hast, wie man das Programm noch verbessern kann: Teil es mir gerne mit! Genauso, wenn du selber gerne mitarbeiten möchtest, der Quellcode ist ja hier auf Github. 
+Wenn Probleme hast oder Ideen, wie man das Programm noch verbessern kann: Teil es mir gerne mit! Per Mail an prott@fim.uni-passau.de, oder am Besten direkt hier auf Github (indem du ein Issue erstellst). Genauso, wenn du selber gerne mitarbeiten möchtest, der Quellcode ist ja hier auf Github. 
