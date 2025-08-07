@@ -58,6 +58,10 @@ public class Analyzer {
         return allScenes;
     }
 
+    public static Set<Scene> getEnforcedScenes() {
+        return BasicService.getEnforcedScenes();
+    }
+
     public static double calculateLengthOfPlay() {
         double result = 0;
         for (Scene scene : allScenes) {

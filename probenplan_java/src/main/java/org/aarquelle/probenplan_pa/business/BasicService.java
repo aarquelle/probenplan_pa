@@ -45,6 +45,10 @@ public class BasicService {
         return ds.getRoles();
     }
 
+    public static Set<Scene> getEnforcedScenes() {
+        return ds.getEnforcedScenes();
+    }
+
     public static Role createRole() {
         return ds.createRole();
     }

@@ -92,6 +92,19 @@ public class Plan {
         } else return scenes.contains(scene);
     }
 
+    public boolean hasSceneAnywhere(Scene s, Rehearsal excluding) {
+        for (Rehearsal r : plan.keySet()) {
+            if (r == excluding) {
+                continue;
+            }
+            Set<Scene> set = plan.get(r);
+            if (set.contains(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Plan copy() {
         Plan clone = new Plan();
         for (Map.Entry<Rehearsal, Set<Scene>> entry : plan.entrySet()) {

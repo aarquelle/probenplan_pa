@@ -53,6 +53,7 @@ public class CommandLineUI {
         putCommand(SetParam.class);
         putCommand(SaveToFile.class);
         putCommand(LoadFromFile.class);
+        putCommand(EnforceScene.class);
 
 
     }

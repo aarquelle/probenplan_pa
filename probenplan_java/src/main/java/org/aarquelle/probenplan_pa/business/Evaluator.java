@@ -64,6 +64,7 @@ public class Evaluator {
         double averageRepeats = getAverageRepeats();
         double overSize = overSize();
         double roleNumberScore = getRoleNumberScore();
+        double enforcedScenesScore = getEnforcedScenesScore();
 
         double totalScore = (totalCompleteness * Params.getCompletenessWeight()
                 + dlpCompleteness * Params.getDlpCompletenessWeight()
@@ -74,12 +75,13 @@ public class Evaluator {
                 + averageRepeats * Params.getAverageRepeatsWeight()
                 + overSize * Params.getOverSizeWeight()
                 + roleNumberScore * Params.getNumberOfRolesWeight())
+                + enforcedScenesScore
                 / Params.getTotalWeight();
 
         plan.setTestResults(
                 new TestResults(totalScore, totalCompleteness, dlpCompleteness, completenessBeforeDLP,
                         lumpiness, minimumRepeats, medianRepeats, averageRepeats,
-                        overSize, expectedNumberOfRepeats, roleNumberScore));
+                        overSize, expectedNumberOfRepeats, roleNumberScore, enforcedScenesScore));
         return totalScore;
     }
 
@@ -254,5 +256,15 @@ public class Evaluator {
         result /= rehearsals.size();
         result /= Analyzer.numberOfRoles -  4; //TODO magic number 4
         return 1 - result;
+    }
+
+    double getEnforcedScenesScore() {
+        double result = 0;
+        for (Scene s : Analyzer.getEnforcedScenes()) {
+            if (!plan.hasSceneAnywhere(s, durchlaufprobe)) {
+                result -= 10000;
+            }
+        }
+        return result;
     }
 }

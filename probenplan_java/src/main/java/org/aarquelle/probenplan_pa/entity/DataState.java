@@ -30,6 +30,8 @@ public class DataState {
     private final Set<Scene> scenes = new HashSet<>();
     private Plan plan;
 
+    private final Set<Scene> enforcedScenes = new HashSet<>();
+
     private DataState() {
         // Private constructor to prevent instantiation
     }
@@ -92,5 +94,13 @@ public class DataState {
 
     public Set<Scene> getScenes() {
         return scenes;
+    }
+
+    public void enforceScene(Scene s) {
+        enforcedScenes.add(s);
+    }
+
+    public Set<Scene> getEnforcedScenes() {
+        return enforcedScenes;
     }
 }

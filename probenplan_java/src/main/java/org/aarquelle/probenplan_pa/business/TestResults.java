@@ -29,7 +29,8 @@ public record TestResults(
         double averageRepeats,
         double overSize,
         double expectedNumberOfRepeats,
-        double numberOfRoles) {
+        double numberOfRoles,
+        double enforcedScenes) {
     public @NotNull String toString() {
         return  "totalScore: " + totalScore
                 + "\ntotalCompleteness: " + totalCompleteness
@@ -41,6 +42,8 @@ public record TestResults(
                 + "\naverageRepeats: " + averageRepeats
                 + "\noverSize: " + overSize
                 + "\nexpectedNumberOfRepeats: " + expectedNumberOfRepeats
-                + "\nnumberOfRolesScore: " + numberOfRoles + "\n";
+                + "\nnumberOfRolesScore: " + numberOfRoles
+                + "\nenforcedScenes: " + enforcedScenes
+                + "\n";
     }
 }
