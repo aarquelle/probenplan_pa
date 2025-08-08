@@ -16,6 +16,8 @@
 
 package org.aarquelle.probenplan_pa.persistence;
 
+import org.aarquelle.probenplan_pa.business.BusinessException;
+import org.aarquelle.probenplan_pa.business.Params;
 import org.aarquelle.probenplan_pa.entity.Actor;
 import org.aarquelle.probenplan_pa.entity.DataState;
 import org.aarquelle.probenplan_pa.entity.Plan;
@@ -81,6 +83,7 @@ public class Load {
         actors();
         roles();
         plan();
+        params();
     }
 
     private void scenes() {
@@ -241,8 +244,28 @@ public class Load {
         }
     }
 
+    public void params() {
+        while(bool()) {
+            String name = str();
+            Number v = Params.getValue(name);
+            try {
+                if (v instanceof Float || v instanceof Double) {
+                    Params.setPara(name, String.valueOf(f()));
+                } else if (v instanceof Integer) {
+                    Params.setPara(name, String.valueOf(i()));
+                } else if (v instanceof Long l) {
+                    Params.setPara(name, String.valueOf(l()));
+                } else {
+                    throw new RuntimeException("Unknown parameter type: " + v.getClass());
+                }
+            } catch (BusinessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     private int uByte() {
-        return input[pointer++] & 0x000F;
+        return input[pointer++] & 0xFF;
     }
 
     private byte b() {

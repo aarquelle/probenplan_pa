@@ -20,27 +20,4 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class FileUtils {
-    static byte[] shortToTwoByte(short s) {
-        byte[] bytes = new byte[2];
-        bytes[0] = (byte) (s >> 8);
-        bytes[1] = (byte) s;
-        return bytes;
-    }
-
-    static byte[] intToFourBytes(int i) {
-        byte[] bytes = new byte[4];
-        bytes[0] = (byte) (i >> 24);
-        bytes[1] = (byte) (i >> 16);
-        bytes[2] = (byte) (i >> 8);
-        bytes[3] = (byte) i;
-        return bytes;
-    }
-
-
-
-
-
-
-
-
 }

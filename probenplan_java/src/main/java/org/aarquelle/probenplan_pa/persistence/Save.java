@@ -163,6 +163,10 @@ public class Save {
         f((float) d);
     }
 
+    private void f(Double d) {
+        f(d.floatValue());
+    }
+
     private void str(String s) {
         s((short) s.getBytes().length);
         for (byte b : s.getBytes()) {
@@ -250,9 +254,12 @@ public class Save {
     private void params() {
         for (Para<?> p : Params.getAllParams()) {
             if (!p.getValue().equals(p.getDefaultValue())) {
+                b(1);
                 str(p.getName());
-                if (p.getValue() instanceof Float || p.getValue() instanceof Double) {
-                    f((float)p.getValue());
+                if (p.getValue() instanceof Float f) {
+                    f(f);
+                }else if (p.getValue() instanceof Double d) {
+                    f(d);
                 } else if (p.getValue() instanceof Integer i) {
                     i(i);
                 } else if (p.getValue() instanceof Long l) {
