@@ -95,6 +95,12 @@ public class Params {
         deadline.maxValue = Integer.MAX_VALUE;
         addPara(deadline);
 
+        Para<Integer> optimalNumberOfActors = new Para<>("optimalNumberOfActors", 4);
+        optimalNumberOfActors.description = "The program will try not have more actors in a rehearsal than this.";
+        optimalNumberOfActors.minValue = 1;
+        optimalNumberOfActors.maxValue = Integer.MAX_VALUE;
+        addPara(optimalNumberOfActors);
+
     }
 
     public static List<Para<?>> getAllParams() {
@@ -203,5 +209,9 @@ public class Params {
 
     public static double getAverageRepeatsWeight() {
         return getValue("averageRepeatsWeight").doubleValue();
+    }
+
+    public static int getOptimalNumberOfActors() {
+        return getValue("optimalNumberOfActors").intValue();
     }
 }

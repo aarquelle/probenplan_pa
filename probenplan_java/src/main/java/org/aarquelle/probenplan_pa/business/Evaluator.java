@@ -251,10 +251,10 @@ public class Evaluator {
     double getRoleNumberScore() {
         double result = 0;
         for (Rehearsal r : rehearsals) {
-            result += Math.max(0, getNumberOfRolesInRehearsal(r) - 4);//TODO magic number 4
+            result += Math.max(0, getNumberOfRolesInRehearsal(r) - Params.getOptimalNumberOfActors());
         }
         result /= rehearsals.size();
-        result /= Analyzer.numberOfRoles -  4; //TODO magic number 4
+        result /= Analyzer.numberOfRoles -  Params.getOptimalNumberOfActors();
         return 1 - result;
     }
 
