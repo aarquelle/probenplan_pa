@@ -25,152 +25,270 @@ import org.aarquelle.probenplan_pa.entity.Scene;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.aarquelle.probenplan_pa.persistence.FileUtils.*;
-
 public class Load {
     private final String filename;
-    private int fileVersionNumber;
 
     private final Map<Integer, Scene> scenes = new HashMap<>();
     private final Map<Integer, Rehearsal> rehearsals = new HashMap<>();
     private final Map<Integer, Actor> actors = new HashMap<>();
     private final Map<Integer, Role> roles = new HashMap<>();
 
+    private DataState ds;
+    int fileVersionNumber;
+
+    byte[] input;
+    int pointer;
+
     public Load(String filename) {
         this.filename = filename;
     }
 
     public void load(DataState ds) {
+        this.ds = ds;
         ds.clear();
+
+        Path path = Paths.get(filename);
+        long size;
+        try {
+            size = Files.size(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (size > Integer.MAX_VALUE) {
+            throw new IllegalStateException("File is too large!");
+        }
+        input = new byte[(int) size];
+        pointer = 0;
+
         try (FileInputStream x = new FileInputStream(filename)) {
-            fileVersionNumber = b(x);
-            int l1 = b(x);
-            while(l1 > 0) {
-                Scene scene = ds.createScene();
-                int sceneId = l1;
-                scenes.put(sceneId, scene);
-
-                scene.setName(str(x));
-                scene.setLength(f(x));
-                scene.setPosition(f(x));
-                l1 = b(x);
-            }
-            l1 = b(x);
-            while(l1 > 0) {
-                Rehearsal rehearsal = ds.createRehearsal();
-                int rehearsalId = l1;
-                rehearsals.put(rehearsalId, rehearsal);
-
-                int year = i(x);
-                int month = b(x);
-                int day = b(x);
-                rehearsal.setDate(LocalDate.of(year, month, day));
-
-                rehearsal.setFullLocked(b(x) == 1);
-
-                int l2 = b(x);
-                while(l2 > 0) {
-                    int sceneId = l2;
-                    Scene scene = scenes.get(sceneId);
-                    if (scene != null) {
-                        rehearsal.addLockedScene(scene);
-                        l2 = b(x);
-                    } else throw new RuntimeException("Scene not found: " + sceneId);
-                }
-                l1 = b(x);
-            }
-
-            l1 = b(x);
-            while (l1 > 0) {
-                Actor actor = ds.createActor();
-                int actorId = l1;
-                actors.put(actorId, actor);
-                actor.setName(str(x));
-
-                int l2 = b(x);
-                while (l2 > 0) {
-                    int rehearsalId = l2;
-                    Rehearsal rehearsal = rehearsals.get(rehearsalId);
-                    if (rehearsal != null) {
-                        actor.addMissingRehearsal(rehearsal);
-                        l2 = b(x);
-                    } else throw new RuntimeException("Rehearsal not found: " + rehearsalId);
-                }
-
-                l2 = b(x);
-                while (l2 > 0) {
-                    int rehearsalId = l2;
-                    Rehearsal rehearsal = rehearsals.get(rehearsalId);
-                    if (rehearsal != null) {
-                        actor.addMaybeRehearsal(rehearsal);
-                        l2 = b(x);
-                    } else throw new RuntimeException("Rehearsal not found: " + rehearsalId);
-                }
-                l1 = b(x);
-            }
-
-            l1 = b(x);
-            while (l1 > 0) {
-                Role role = ds.createRole();
-                int roleId = l1;
-                roles.put(roleId, role);
-                role.setName(str(x));
-                int actorId = b(x);
-                Actor actor = actors.get(actorId);
-                if (actor != null) {
-                    role.setActor(actor);
-                } else throw new RuntimeException("Actor not found: " + actorId);
-                int l2 = b(x);
-                while (l2 > 0) {
-                    int sceneId = l2;
-                    Scene scene = scenes.get(sceneId);
-                    if (scene != null) {
-                        role.addBigScene(scene);
-                        l2 = b(x);
-                    } else throw new RuntimeException("Scene not found: " + sceneId);
-                }
-                l2 = b(x);
-                while (l2 > 0) {
-                    int sceneId = l2;
-                    Scene scene = scenes.get(sceneId);
-                    if (scene != null) {
-                        role.addSmallScene(scene);
-                        l2 = b(x);
-                    } else throw new RuntimeException("Scene not found: " + sceneId);
-                }
-                l1 = b(x);
-            }
-
-            while (b(x) > 0) {
-                b(x);// Skip PlanID, we don't need it now.
-                Plan plan = new Plan();
-                ds.setPlan(plan);
-                int l2 = b(x);
-                while(l2 > 0) {
-                    int rehearsalId = l2;
-                    Rehearsal rehearsal = rehearsals.get(rehearsalId);
-                    if (rehearsal != null) {
-                        int l3 = b(x);
-                        while (l3 > 0) {
-                            int sceneId = l3;
-                            Scene scene = scenes.get(sceneId);
-                            if (scene != null) {
-                                plan.put(rehearsal, scene);
-                                l3 = b(x);
-                            } else throw new RuntimeException("Scene not found: " + sceneId);
-                        }
-                        l2 = b(x);
-                    } else {
-                        throw new RuntimeException("Rehearsal not found: " + rehearsalId);
-                    }
-                }
+            if (x.read(input) == -1) {
+                throw new RuntimeException("Unexpected end of file.");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        fileVersionNumber = b();
+        scenes();
+        rehearsals();
+        actors();
+        roles();
+        plan();
+    }
+
+    private void scenes() {
+        while (true) {
+            int id = uByte();
+            if (id == 0) {
+                break;
+            }
+            Scene scene = ds.createScene();
+            scenes.put(id, scene);
+            scene.setName(str());
+            scene.setLength(f());
+            scene.setPosition(f());
+        }
+    }
+
+    private void rehearsals() {
+        while (true) {
+            int id = uByte();
+            if (id == 0) {
+                break;
+            }
+            Rehearsal rehearsal = ds.createRehearsal();
+            rehearsals.put(id, rehearsal);
+            int year = i();
+            byte month = b();
+            byte day = b();
+            rehearsal.setDate(LocalDate.of(year, month, day));
+            rehearsal.setFullLocked(bool());
+            while (true) {
+                int lockId = uByte();
+                if (lockId == 0) {
+                    break;
+                } else {
+                    Scene scene = scenes.get(lockId);
+                    if (scene != null) {
+                        rehearsal.addLockedScene(scene);
+                    } else {
+                        throw new RuntimeException("Scene with id " + lockId + " not found as lock" +
+                                " for rehearsal " + rehearsal.getDate());
+                    }
+                }
+            }
+        }
+    }
+
+    private void actors() {
+        while (true) {
+            int id = uByte();
+            if (id == 0) {
+                break;
+            }
+            Actor actor = ds.createActor();
+            actors.put(id, actor);
+            actor.setName(str());
+            while (true) {
+                int missingId = uByte();
+                if (missingId == 0) {
+                    break;
+                }
+                Rehearsal miss = rehearsals.get(missingId);
+                if (miss != null) {
+                    actor.addMissingRehearsal(miss);
+                } else {
+                    throw new RuntimeException("No missing rehearsal with id " + missingId
+                            + " for actor " + actor.getName());
+                }
+            }
+            while (true) {
+                int maybeId = uByte();
+                if (maybeId == 0) {
+                    break;
+                }
+                Rehearsal miss = rehearsals.get(maybeId);
+                if (miss != null) {
+                    actor.addMaybeRehearsal(miss);
+                } else {
+                    throw new RuntimeException("No maybe rehearsal with id " + maybeId
+                            + " for actor " + actor.getName());
+                }
+            }
+        }
+    }
+
+    public void roles() {
+        while (true) {
+            int id = uByte();
+            if (id == 0) {
+                break;
+            }
+            Role role = ds.createRole();
+            roles.put(id, role);
+            role.setName(str());
+            int actorId = uByte();
+            Actor actor = actors.get(actorId);
+            if (actor != null) {
+                role.setActor(actor);
+            } else {
+                throw new RuntimeException("No actor with id " + actorId + " for role " + role.getName());
+            }
+
+            while (true) {
+                int bigId = uByte();
+                if (bigId == 0) {
+                    break;
+                }
+                Scene big = scenes.get(bigId);
+                if (big != null) {
+                    role.addBigScene(big);
+                } else {
+                    throw new RuntimeException("No big scene with id " + bigId
+                            + " for role " + role.getName());
+                }
+            }
+            while (true) {
+                int smallId = uByte();
+                if (smallId == 0) {
+                    break;
+                }
+                Scene small = scenes.get(smallId);
+                if (small != null) {
+                    role.addSmallScene(small);
+                } else {
+                    throw new RuntimeException("No small scene with id " + smallId
+                            + " for role " + role.getName());
+                }
+            }
+        }
+    }
+
+    private void plan() {
+        if (bool()) {
+            Plan plan = new Plan();
+            ds.setPlan(plan);
+            while (true) {
+                int rehearsalId = uByte();
+                if (rehearsalId == 0) {
+                    break;
+                }
+                Rehearsal rehearsal = rehearsals.get(rehearsalId);
+                if (rehearsal == null) {
+                    throw new RuntimeException("No rehearsal " + rehearsalId + " for plan.");
+                }
+                while (true) {
+                    int sceneId = uByte();
+                    if (sceneId == 0) {
+                        break;
+                    }
+                    Scene scene = scenes.get(sceneId);
+                    if (scene == null) {
+                        throw new RuntimeException("No scene " + sceneId + " for rehearsal "
+                                + rehearsal + " in plan.");
+                    }
+                    plan.put(rehearsal, scene);
+                }
+            }
+            pointer++; //Ignoring the trailing 0
+        }
+    }
+
+    private int uByte() {
+        return input[pointer++] & 0x000F;
+    }
+
+    private byte b() {
+        return input[pointer++];
+    }
+
+    private short s() {
+        int a = uByte() << 8;
+        int b = uByte();
+        return (short) (a | b);
+    }
+
+    private int i() {
+        int a = uByte() << 24;
+        int b = uByte() << 16;
+        int c = uByte() << 8;
+        int d = uByte();
+        return a | b | c | d;
+    }
+
+    private long l() {
+        long a = (long) uByte() << 56;
+        long b = (long) uByte() << 48;
+        long c = (long) uByte() << 40;
+        long d = (long) uByte() << 32;
+        int e = uByte() << 24;
+        int f = uByte() << 16;
+        int g = uByte() << 8;
+        int h = uByte();
+        return a | b | c | d | e | f | g | h;
+    }
+
+    private float f() {
+        return Float.intBitsToFloat(i());
+    }
+
+    private String str() {
+        short length = s();
+        byte[] bytes = new byte[length];
+        for (int i = 0; i < length; i++) {
+            bytes[i] = b();
+        }
+        return new String(bytes);
+    }
+
+    private boolean bool() {
+        return b() != 0;
     }
 }

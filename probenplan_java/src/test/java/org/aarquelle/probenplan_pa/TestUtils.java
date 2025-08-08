@@ -16,6 +16,7 @@
 
 package org.aarquelle.probenplan_pa;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.entity.Actor;
 import org.aarquelle.probenplan_pa.entity.DataState;
@@ -58,6 +59,7 @@ public class TestUtils {
 
         Main.TEST_MODE = true;
         DataState ds = DataState.getInstance();
+        BasicService.clearData();
         
 
         alice = ds.createActor();

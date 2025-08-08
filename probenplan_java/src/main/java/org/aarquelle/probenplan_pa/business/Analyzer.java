@@ -38,6 +38,20 @@ public class Analyzer {
     static int numberOfRoles;
     static double lengthOfPlay;
 
+    /**
+     * Important for Unit Tests
+     */
+    public static void reset() {
+        allMissing = null;
+        majorMissing = null;
+        allUncertain = null;
+        majorUncertain = null;
+        scoreTable = null;
+        allScenes = null;
+        numberOfRoles = 0;
+        lengthOfPlay = 0;
+    }
+
 
     public static void runAnalysis() {
         allScenes = getAllScenes();

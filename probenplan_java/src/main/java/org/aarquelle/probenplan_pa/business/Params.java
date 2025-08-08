@@ -108,7 +108,8 @@ public class Params {
     }
 
     public static void reset() {
-        paraMap.values().forEach(Para::reset);
+        paraMap.clear();
+        init();
     }
 
     private static void addPara(Para<?> para) {

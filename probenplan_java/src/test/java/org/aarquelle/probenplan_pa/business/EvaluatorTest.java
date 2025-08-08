@@ -30,6 +30,8 @@ class EvaluatorTest {
 
     @BeforeAll
     static void setUp() throws BusinessException {
+        Params.reset();
+        Analyzer.reset();
         createTestData();
         Analyzer.runAnalysis();
 
@@ -92,18 +94,18 @@ class EvaluatorTest {
         Evaluator evaluator = new Evaluator(plan1);
         assertDoubleEquals(1.0, evaluator.lumpiness());
         evaluator = new Evaluator(plan2);
-        assertDoubleEquals(0.9, evaluator.lumpiness());
+        assertDoubleEquals(1.0, evaluator.lumpiness());
     }
 
     @Test
     void testNumberOfRepeats() {
         Evaluator evaluator = new Evaluator(plan1);
-        assertDoubleEquals(2.0, evaluator.numberOfRepeats.get(scene1));
-        assertDoubleEquals(1.5, evaluator.numberOfRepeats.get(scene2));
-        assertDoubleEquals(1.5, evaluator.numberOfRepeats.get(scene3));
-        assertDoubleEquals(2, evaluator.numberOfRepeats.get(scene4));
-        assertDoubleEquals(1.2+1-1.0/6*4.0/5, evaluator.numberOfRepeats.get(scene5));
-        assertDoubleEquals(1.5/2, evaluator.getMinimumRepeats());
+        assertDoubleEquals(1.3333333, evaluator.numberOfRepeats.get(scene1));
+        assertDoubleEquals(1, evaluator.numberOfRepeats.get(scene2));
+        assertDoubleEquals(0.5, evaluator.numberOfRepeats.get(scene3));
+        assertDoubleEquals(1, evaluator.numberOfRepeats.get(scene4));
+        assertDoubleEquals(1.2666666, evaluator.numberOfRepeats.get(scene5));
+        assertDoubleEquals(0.625, evaluator.getMinimumRepeats());
         assertDoubleEquals(2.0/2, evaluator.getMedianRepeats());
     }
 

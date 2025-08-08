@@ -18,6 +18,7 @@ package org.aarquelle.probenplan_pa.business;
 
 import org.aarquelle.probenplan_pa.entity.Scene;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -32,6 +33,8 @@ class AnalyzerTest {
 
     @BeforeAll
     static void setUp() throws BusinessException {
+        Params.reset();
+        Analyzer.reset();
         createTestData();
     }
 

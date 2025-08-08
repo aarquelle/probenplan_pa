@@ -36,54 +36,11 @@ public class FileUtils {
         return bytes;
     }
 
-    static byte[] floatToFourBytes(float f) {
-        int intBits = Float.floatToIntBits(f);
-        return intToFourBytes(intBits);
-    }
 
-    static byte[] doubleToEightBytes(double d) {
-        long longBits = Double.doubleToLongBits(d);
-        byte[] bytes = new byte[8];
-        bytes[0] = (byte) (longBits >> 56);
-        bytes[1] = (byte) (longBits >> 48);
-        bytes[2] = (byte) (longBits >> 40);
-        bytes[3] = (byte) (longBits >> 32);
-        bytes[4] = (byte) (longBits >> 24);
-        bytes[5] = (byte) (longBits >> 16);
-        bytes[6] = (byte) (longBits >> 8);
-        bytes[7] = (byte) longBits;
-        return bytes;
-    }
 
-    /**
-     * Reads a single byte from the file.
-     */
-    static int b(FileInputStream fis) throws IOException {
-        return fis.read();
-    }
 
-    static int s(FileInputStream fis) throws IOException {
-        return (b(fis) << 8) | b(fis);
-    }
 
-    static int i(FileInputStream fis) throws IOException {
-        return (b(fis) << 24) | (b(fis) << 16) | (b(fis) << 8) | b(fis);
-    }
 
-    static float f(FileInputStream fis) throws IOException {
-        int bits = i(fis);
-        return Float.intBitsToFloat(bits);
-    }
 
-    /**
-     * Reads a string from the file. The length of the string is determined by the first two bytes.
-     */
-    static String str(FileInputStream fis) throws IOException {
-        int length = s(fis);
-        byte[] bytes = new byte[length];
-        if (fis.read(bytes) == -1) {
-            throw new IOException("Unexpectedly reached end of file");
-        }
-        return new String(bytes);
-    }
+
 }

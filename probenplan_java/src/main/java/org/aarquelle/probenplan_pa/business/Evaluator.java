@@ -88,10 +88,9 @@ public class Evaluator {
     boolean allScenesBeforeDurchlaufprobe() {
         Set<Scene> allScenes = new HashSet<>(scenes);
         for (Rehearsal rehearsal : rehearsals) {
-            if (rehearsal.equals(durchlaufprobe)) {
-                break;
+            if (rehearsal.getDate().isBefore(durchlaufprobe.getDate())) {
+                plan.get(rehearsal).forEach(allScenes::remove);
             }
-            plan.get(rehearsal).forEach(allScenes::remove);
         }
         return allScenes.isEmpty();
     }
@@ -109,10 +108,9 @@ public class Evaluator {
         double result = 0;
         List<Pair<Rehearsal, Set<Scene>>> rehearsalsBeforeDLP = new ArrayList<>();
         for (Rehearsal r : rehearsals) {
-            if (r.equals(durchlaufprobe)) {
-                break;
+            if (r.getDate().isBefore(durchlaufprobe.getDate())) {
+                rehearsalsBeforeDLP.add(new Pair<>(r, plan.get(r)));
             }
-            rehearsalsBeforeDLP.add(new Pair<>(r, plan.get(r)));
         }
 
         Map<Scene, Double> scenesBeforeDLP = new HashMap<>();
