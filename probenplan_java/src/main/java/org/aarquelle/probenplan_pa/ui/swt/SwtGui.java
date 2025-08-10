@@ -38,7 +38,7 @@ public class SwtGui {
     public static void main(String[] args) {
         Display display = new Display();
         Shell shell = new Shell(display);
-        shell.setText("TEST");
+        shell.setText("Probenplan");
         //shell.setSize(400, 300);
         shell.setLayout(new FillLayout());
 

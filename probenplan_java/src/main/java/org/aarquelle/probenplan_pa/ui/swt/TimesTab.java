@@ -39,9 +39,6 @@ import java.util.List;
 public class TimesTab extends Composite {
     List<String> actorNames;
     List<String> rehearsalNames;
-    Color evenColumns;
-    Color oddColumns;
-    int columnWidth = 150;
 
     public TimesTab(Composite parent, List<String> actorNames, List<String> rehearsalNames) {
         super(parent, SWT.NONE);
@@ -49,10 +46,12 @@ public class TimesTab extends Composite {
         this.rehearsalNames = rehearsalNames;
         setLayout(new GridLayout());
         Display d = Display.getCurrent();
-        evenColumns = d.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-        oddColumns = d.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW);
         Group timesImportGroup = createImportRow();
-        Composite tableComp = createTableComp();
+        Composite tableComp = new OptionTable(this, actorNames, rehearsalNames, null,
+                null,
+                d.getSystemColor(SWT.COLOR_YELLOW),
+                d.getSystemColor(SWT.COLOR_RED));
+        addListener(SWT.Resize, e -> tableComp.pack());
     }
 
     private Group createImportRow() {
@@ -80,51 +79,5 @@ public class TimesTab extends Composite {
         return importGroup;
     }
 
-    private Table createTableComp() {
 
-        Table table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
-        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);
-        table.addListener(SWT.MeasureItem, event -> {
-            event.height = 30; // gewünschte Zeilenhöhe
-        });
-
-
-        List<TableColumn> columns = new ArrayList<>();
-        TableColumn rehearsalCol = new TableColumn(table, SWT.NONE);
-        rehearsalCol.setText("Date:");
-        rehearsalCol.setWidth(columnWidth + 100);
-        for (int i = 0; i < actorNames.size(); i++) {
-            TableColumn c = new TableColumn(table, SWT.NONE);
-            c.setText(actorNames.get(i));
-            c.setWidth(columnWidth);
-            columns.add(c);
-        }
-
-        // Beispielzeilen hinzufügen
-        for (int i = 0; i < rehearsalNames.size(); i++) {
-            TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(0, rehearsalNames.get(i));
-
-            for (int j = 0; j < actorNames.size(); j++) {
-                TableEditor editor = new TableEditor(table);
-                Composite cellComposite = new Composite(table, SWT.BORDER);
-                GridLayout cellLayout = new GridLayout(3, true);
-                cellLayout.horizontalSpacing = 0;
-                cellComposite.setLayout(cellLayout);
-                Button hasTimeButton = new Button(cellComposite, SWT.RADIO | SWT.INHERIT_FORCE);
-                Button maybeButton = new Button(cellComposite, SWT.RADIO);
-                Button noTimeButton = new Button(cellComposite, SWT.RADIO);
-                //cellComposite.setTr
-                editor.grabHorizontal = true;
-                editor.setEditor(cellComposite, item, j + 1);
-
-            }
-
-
-        }
-
-        return table;
-    }
 }
