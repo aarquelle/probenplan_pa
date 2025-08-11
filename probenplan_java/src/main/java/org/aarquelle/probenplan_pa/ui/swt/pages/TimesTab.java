@@ -14,26 +14,19 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.ui.swt;
+package org.aarquelle.probenplan_pa.ui.swt.pages;
 
+import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomGroups;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.OptionTable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TimesTab extends Composite {
@@ -46,38 +39,14 @@ public class TimesTab extends Composite {
         this.rehearsalNames = rehearsalNames;
         setLayout(new GridLayout());
         Display d = Display.getCurrent();
-        Group timesImportGroup = createImportRow();
+        Group timesImportGroup = CustomGroups.createImportRow(this, "Import times",
+                List.of("From Clipboard", "From URL", "From File"),
+                List.of(false, true, false));
         Composite tableComp = new OptionTable(this, actorNames, rehearsalNames, null,
-                null,
+                List.of("Hat Zeit", "Hat vielleicht Zeit", "Hat keine Zeit"),
+                d.getSystemColor(SWT.COLOR_GREEN),
                 d.getSystemColor(SWT.COLOR_YELLOW),
                 d.getSystemColor(SWT.COLOR_RED));
         addListener(SWT.Resize, e -> tableComp.pack());
     }
-
-    private Group createImportRow() {
-        Group importGroup = new Group(this, SWT.BORDER);
-        importGroup.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
-        importGroup.setLayout(new GridLayout(4, true));
-        importGroup.setText("Import times");
-
-        Button clipboardButton = new Button(importGroup, SWT.PUSH);
-        clipboardButton.setText("From Clipboard");
-
-        Composite urlComp = new Composite(importGroup, SWT.BORDER);
-        urlComp.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false, 2, 1));
-        GridLayout urlLayout = new GridLayout(2, false);
-        urlComp.setLayout(urlLayout);
-        Text urlText = new Text(urlComp, SWT.BORDER);
-        urlText.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
-        Button urlButton = new Button(urlComp, SWT.PUSH);
-        urlButton.setText("From URL");
-
-        Button importFileButton = new Button(importGroup, SWT.PUSH);
-        importFileButton.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
-        importFileButton.setText("From file");
-
-        return importGroup;
-    }
-
-
 }
