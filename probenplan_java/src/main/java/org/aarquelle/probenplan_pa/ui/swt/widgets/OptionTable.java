@@ -35,24 +35,38 @@ import org.eclipse.swt.widgets.Composite;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class OptionTable extends ScrolledComposite {
 
     int columnWidth = 100;
     int rowHeight = 30;
 
+    private final Function<Void, List<String>> colNameFunction;
+    private final Function<Void, List<String>> rowNameFunction;
+    private final BiFunction<Integer, Integer, Integer> cellValueFunction;
+
     private List<String> colNames;
     private List<String> rowNames;
 
+    private final String[] tooltips;
+    private final Color[] colors;
+
     private final List<List<TableCell>> tableCells = new ArrayList<>();
 
-    public OptionTable(Composite parent, List<String> colNames, List<String> rowNames, List<String> secondaryCols,
-                       List<String> tooltips,
-                       Color... colors) {
+    public OptionTable(Composite parent, Function<Void, List<String>> colNameFunction,
+                       Function<Void, List<String>> rowNameFunction,
+                       BiFunction<Integer, Integer, Integer> cellValueFunction, List<String> tooltips, Color... colors) {
         super(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 
-        this.colNames = colNames;
-        this.rowNames = rowNames;
+        this.colNameFunction = colNameFunction;
+        this.rowNameFunction = rowNameFunction;
+        this.cellValueFunction = cellValueFunction;
+        this.tooltips = tooltips.toArray(new String[]{});
+        this.colors = colors;
+
+        updateData();
 
         setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         Point virtualSize = new Point(columnWidth * (colNames.size() + 1), rowHeight * (rowNames.size() + 1));
@@ -60,22 +74,7 @@ public class OptionTable extends ScrolledComposite {
         setExpandHorizontal(true);
         setExpandVertical(true);
 
-        for (int i = 0; i < rowNames.size() + 1; i++) {
-            List<TableCell> row = new ArrayList<>(colNames.size());
-            tableCells.add(row);
-            for (int j = 0; j < colNames.size() + 1; j++) {
-                if (j > 0 && i > 0) {
-                    String common = rowNames.get(i - 1) + "\n" + colNames.get(j - 1) + "\n";
-                    String[] combinedTooltips = new String[tooltips.size()];
-                    for (int k = 0; k < tooltips.size(); k++) {
-                        combinedTooltips[k] = common + tooltips.get(k);
-                    }
-                    row.add(new TableCell(combinedTooltips, colors));
-                } else {
-                    row.add(new TableCell(null, (Color) null));
-                }
-            }
-        }
+
 
         Canvas canvas = new Canvas(this, SWT.NONE);
 
@@ -167,5 +166,29 @@ public class OptionTable extends ScrolledComposite {
 
     private TableCell getCell(int x, int y) {
         return tableCells.get(y).get(x);
+    }
+
+    private void updateData() {
+        colNames = colNameFunction.apply(null);
+        rowNames = rowNameFunction.apply(null);
+        tableCells.clear();
+        for (int i = 0; i < rowNames.size() + 1; i++) {
+            List<TableCell> row = new ArrayList<>(colNames.size());
+            tableCells.add(row);
+            for (int j = 0; j < colNames.size() + 1; j++) {
+                if (j > 0 && i > 0) {
+                    String common = rowNames.get(i - 1) + "\n" + colNames.get(j - 1) + "\n";
+                    String[] combinedTooltips = new String[tooltips.length];
+                    for (int k = 0; k < tooltips.length; k++) {
+                        combinedTooltips[k] = common + tooltips[k];
+                    }
+                    TableCell cell = new TableCell(combinedTooltips, colors);
+                    cell.setState(cellValueFunction.apply(j-1, i-1));
+                    row.add(cell);
+                } else {
+                    row.add(new TableCell(null, (Color) null));
+                }
+            }
+        }
     }
 }

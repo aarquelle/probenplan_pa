@@ -76,4 +76,12 @@ public class Actor implements Comparable<Actor> {
     public int compareTo(Actor other) {
         return this.name.compareTo(other.name);
     }
+
+    public HasTime hasTimeOnRehearsal(Rehearsal r) {
+        if (missingRehearsals.contains(r)) {
+            return HasTime.NO;
+        } else if (maybeRehearsals.contains(r)) {
+            return HasTime.MAYBE;
+        } else return HasTime.YES;
+    }
 }

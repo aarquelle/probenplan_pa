@@ -16,16 +16,14 @@
 
 package org.aarquelle.probenplan_pa.ui.swt.pages;
 
+import org.aarquelle.probenplan_pa.ui.API;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomGroups;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.OptionTable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Text;
 
 import java.util.List;
 
@@ -41,8 +39,10 @@ public class TimesTab extends Composite {
         Display d = Display.getCurrent();
         Group timesImportGroup = CustomGroups.createImportRow(this, "Import times",
                 List.of("From Clipboard", "From URL", "From File"),
-                List.of(false, true, false));
-        Composite tableComp = new OptionTable(this, actorNames, rehearsalNames, null,
+                List.of(false, true, false),
+                List.of(() -> System.out.println("Clippy"), () -> System.out.println("NOT IMPLEMENTED"), () -> System.out.println("NOT IMPLEMENTED")));
+        Composite tableComp = new OptionTable(this, x -> API.getActorNames(), x -> API.getRehearsalNames(),
+                (col, row) -> API.hasTime(col, row),
                 List.of("Hat Zeit", "Hat vielleicht Zeit", "Hat keine Zeit"),
                 d.getSystemColor(SWT.COLOR_GREEN),
                 d.getSystemColor(SWT.COLOR_YELLOW),

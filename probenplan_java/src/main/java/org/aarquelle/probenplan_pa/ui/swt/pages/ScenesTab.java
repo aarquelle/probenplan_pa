@@ -16,6 +16,7 @@
 
 package org.aarquelle.probenplan_pa.ui.swt.pages;
 
+import org.aarquelle.probenplan_pa.ui.API;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomGroups;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.OptionTable;
 import org.eclipse.swt.SWT;
@@ -30,22 +31,19 @@ import org.eclipse.swt.widgets.Text;
 import java.util.List;
 
 public class ScenesTab extends Composite {
-    List<String> roleNames;
-    List<String> sceneNames;
-    List<String> actorNames;
 
-    public ScenesTab(Composite parent, List<String> roleNames, List<String> sceneNames, List<String> actorNames) {
+    public ScenesTab(Composite parent) {
         super(parent, SWT.NONE);
-        this.roleNames = roleNames;
-        this.sceneNames = sceneNames;
-        this.actorNames = actorNames;
 
         setLayout(new GridLayout());
         Display d = Display.getCurrent();
 
         Group importRow = CustomGroups.createImportRow(this, "Import scenes",
-                List.of("From Clipboard", "From File"), List.of(false, false));
-        OptionTable table = new OptionTable(this, roleNames, sceneNames, actorNames,
+                List.of("From Clipboard", "From File"),
+                List.of(false, false),
+                List.of(() -> System.out.println("Clipboard"), () -> System.out.println("file")));
+        OptionTable table = new OptionTable(this, x -> API.getRoleNames(), x -> API.getSceneNames(),
+                (row, col) -> API.getRoleSize(row, col),
                 List.of("Kommt nicht vor.", "Kleine Rolle", "Große Rolle"),
                 null, d.getSystemColor(SWT.COLOR_YELLOW), d.getSystemColor(SWT.COLOR_GREEN));
         //addListener(SWT.Resize, e -> pack());

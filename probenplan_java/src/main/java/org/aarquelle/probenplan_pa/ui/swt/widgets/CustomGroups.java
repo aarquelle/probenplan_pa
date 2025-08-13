@@ -17,6 +17,8 @@
 package org.aarquelle.probenplan_pa.ui.swt.widgets;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -27,9 +29,12 @@ import org.eclipse.swt.widgets.Text;
 import java.util.List;
 
 public class CustomGroups {
-    public static Group createImportRow(Composite parent, String title, List<String> buttonNames, List<Boolean> withText) {
-        if (buttonNames.size() != withText.size()) {
-            throw new IllegalArgumentException("Wrong number of arguments in List: " + buttonNames + "; " + withText);
+    public static Group createImportRow(Composite parent, String title, List<String> buttonNames,
+                                        List<Boolean> withText,
+                                        List<Runnable> functions) {
+        if (buttonNames.size() != withText.size() || buttonNames.size() != functions.size()) {
+            throw new IllegalArgumentException("Wrong number of arguments in List: "
+                    + buttonNames + "; " + withText + "; " + functions.size());
         }
         Group g = new Group(parent, SWT.BORDER);
         g.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
@@ -43,6 +48,7 @@ public class CustomGroups {
         g.setText(title);
 
         for (int i = 0; i < buttonNames.size(); i++) {
+            Button button;
             if (withText.get(i)) {
                 Composite textComp = new Composite(g, SWT.BORDER);
                 textComp.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false, 2, 1));
@@ -50,14 +56,15 @@ public class CustomGroups {
                 textComp.setLayout(textLayout);
                 Text text = new Text(textComp, SWT.BORDER);
                 text.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
-                Button textButton = new Button(textComp, SWT.PUSH);
-                textButton.setText(buttonNames.get(i));
+                button = new Button(textComp, SWT.PUSH);
             } else {
-                Button button = new Button(g, SWT.PUSH);
+                button = new Button(g, SWT.PUSH);
                 button.setLayoutData(new GridData((i < buttonNames.size() - 1) ? SWT.BEGINNING : SWT.END, SWT.CENTER,
                         false, false));
-                button.setText(buttonNames.get(i));
             }
+            button.setText(buttonNames.get(i));
+            Runnable r = functions.get(i);
+            button.addListener(SWT.Selection, e -> r.run());
         }
         return g;
     }

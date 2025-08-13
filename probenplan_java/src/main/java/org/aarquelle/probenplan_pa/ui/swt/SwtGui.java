@@ -16,6 +16,9 @@
 
 package org.aarquelle.probenplan_pa.ui.swt;
 
+import org.aarquelle.probenplan_pa.Main;
+import org.aarquelle.probenplan_pa.entity.DataState;
+import org.aarquelle.probenplan_pa.persistence.Load;
 import org.aarquelle.probenplan_pa.ui.swt.pages.ScenesTab;
 import org.aarquelle.probenplan_pa.ui.swt.pages.TimesTab;
 import org.eclipse.swt.SWT;
@@ -30,6 +33,7 @@ import java.util.List;
 
 public class SwtGui {
     public static void main(String[] args) {
+        new Load(Main.URL).load(DataState.getInstance());
         Display display = new Display();
         Shell shell = new Shell(display);
         shell.setText("Probenplan");
@@ -53,7 +57,7 @@ public class SwtGui {
         List<String> sceneNames = List.of("1.1", "1.2", "1.3", "1.4", "2.1", "2.2", "2.3", "3.1", "Epilog");
         Composite timesComp = new TimesTab(tabFolder, actorNames, rehearsalNames);
         timesTabItem.setControl(timesComp);
-        Composite scenesComp = new ScenesTab(tabFolder, roleNames, sceneNames, actorNames);
+        Composite scenesComp = new ScenesTab(tabFolder);
         scenesTabItem.setControl(scenesComp);
 
         shell.pack();

@@ -16,9 +16,12 @@
 
 package org.aarquelle.probenplan_pa.entity;
 
+import org.aarquelle.probenplan_pa.business.Analyzer;
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.Params;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class DataState {
@@ -103,4 +106,5 @@ public class DataState {
     public Set<Scene> getEnforcedScenes() {
         return enforcedScenes;
     }
+
 }
