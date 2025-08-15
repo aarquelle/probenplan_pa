@@ -22,30 +22,31 @@ import org.aarquelle.probenplan_pa.entity.Plan;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
+import org.aarquelle.probenplan_pa.util.SortedUniqueList;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.SortedSet;
 
 public class BasicService {
     static DataState ds = DataState.getInstance();
 
-    public static Set<Rehearsal> getRehearsals() {
+    public static SortedUniqueList<Rehearsal> getRehearsals() {
         return ds.getRehearsals();
     }
 
-    public static Set<Scene> getScenes() {
+    public static SortedUniqueList<Scene> getScenes() {
         return ds.getScenes();
     }
 
-    public static Set<Actor> getActors() {
+    public static SortedUniqueList<Actor> getActors() {
         return ds.getActors();
     }
 
-    public static Set<Role> getRoles() {
+    public static SortedUniqueList<Role> getRoles() {
         return ds.getRoles();
     }
 
-    public static Set<Scene> getEnforcedScenes() {
+    public static SortedUniqueList<Scene> getEnforcedScenes() {
         return ds.getEnforcedScenes();
     }
 

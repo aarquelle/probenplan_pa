@@ -18,51 +18,54 @@ package org.aarquelle.probenplan_pa.ui;
 
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.Entity;
+import org.aarquelle.probenplan_pa.entity.Plan;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
-import org.aarquelle.probenplan_pa.util.DateUtils;
-
-import java.util.List;
 
 public class API {
-    public static Actor getActor(int i) {
-        return BasicService.getActors().stream().sorted().toList().get(i);
-    }
+    /**
+     * Returns a value that represents the relationship between two {@link Entity}s.
+     * Intended for graphical use, where such values can be mapped to different colors.
+     * The order should not matter.
+     * @throws IllegalArgumentException If no relationship is defined.
+     */
+    public static int relation(Entity a, Entity b) {
+        if (a instanceof Actor actor) {
+            if (b instanceof Role role) {
+                return role.getActor() == actor ? 1 : 0;
+            }
+            if (b instanceof Rehearsal rehearsal) {
+                return actor.hasTimeOnRehearsal(rehearsal).ordinal();
+            }
+        } else if (a instanceof Role role) {
+            if (b instanceof Actor) {
+                return relation(b, a);
+            }
+            if (b instanceof Scene scene) {
+                return role.sizeOfScene(scene).ordinal();
+            }
+        } else if (a instanceof Scene scene) {
+            if (b instanceof Role) {
+                return relation(b, a);
+            }
+            if (b instanceof Rehearsal rehearsal) {
+                Plan plan = BasicService.getPlan();
+                if (plan == null) {
+                    return 0;
+                } else {
+                    return plan.hasScene(rehearsal, scene) ? 1 : 0;
+                }
+            }
+        } else if (a instanceof Rehearsal) {
+            if (! (b instanceof Rehearsal)) {
+                return relation(b, a);
+            }
+        }
 
-    public static Scene getScene(int i) {
-        return BasicService.getScenes().stream().sorted().toList().get(i);
-    }
 
-    public static Rehearsal getRehearsal(int i) {
-        return BasicService.getRehearsals().stream().sorted().toList().get(i);
-    }
+        throw new IllegalArgumentException("Undefined relation between " + a + " and " + b);
 
-    public static Role getRole(int i) {
-        return BasicService.getRoles().stream().sorted().toList().get(i);
-    }
-
-    public static List<String> getActorNames() {
-        return BasicService.getActors().stream().map(Actor::getName).sorted().toList();
-    }
-
-    public static List<String> getRoleNames() {
-        return BasicService.getRoles().stream().map(Role::getName).sorted().toList();
-    }
-    public static List<String> getSceneNames() {
-        return BasicService.getScenes().stream().map(Scene::getName).sorted().toList();
-    }
-
-    public static List<String> getRehearsalNames() {
-        return BasicService.getRehearsals().stream().sorted().map(r -> DateUtils.getString(r.getDate())).toList();
-    }
-
-
-    public static int getRoleSize(int role, int scene) {
-        return getRole(role).sizeOfScene(getScene(scene)).ordinal();
-    }
-
-    public static int hasTime(int actor, int rehearsal) {
-        return getActor(actor).hasTimeOnRehearsal(getRehearsal(rehearsal)).ordinal();
     }
 }

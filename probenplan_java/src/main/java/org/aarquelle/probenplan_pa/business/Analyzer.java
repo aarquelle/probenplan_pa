@@ -20,6 +20,7 @@ import org.aarquelle.probenplan_pa.entity.Actor;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
+import org.aarquelle.probenplan_pa.util.SortedUniqueList;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -72,7 +73,7 @@ public class Analyzer {
         return allScenes;
     }
 
-    public static Set<Scene> getEnforcedScenes() {
+    public static SortedUniqueList<Scene> getEnforcedScenes() {
         return BasicService.getEnforcedScenes();
     }
 
@@ -200,8 +201,8 @@ public class Analyzer {
 
     private static <N> RehearsalSceneTable<N> mapFunctionToSceneTable(
             BiFunction<Rehearsal, Scene, N> function) {
-        Set<Scene> scenes = BasicService.getScenes();
-        Set<Rehearsal> rehearsals = BasicService.getRehearsals();
+        SortedUniqueList<Scene> scenes = BasicService.getScenes();
+        SortedUniqueList<Rehearsal> rehearsals = BasicService.getRehearsals();
 
         RehearsalSceneTable<N> table = new RehearsalSceneTable<>();
         for (Rehearsal rehearsal : rehearsals) {

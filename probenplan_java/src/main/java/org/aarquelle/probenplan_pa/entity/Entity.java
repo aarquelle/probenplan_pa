@@ -14,7 +14,14 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.util;
+package org.aarquelle.probenplan_pa.entity;
 
-public record Triplet<F,S,T> (F first, S second, T third) {
+/**
+ * All basic Data objects should implement this. This interface provides information that can be used by
+ * detail-agnostic UIs. More importantly, Entities can be compared with one another.
+ */
+public interface Entity {
+    String displayName();
+
+
 }

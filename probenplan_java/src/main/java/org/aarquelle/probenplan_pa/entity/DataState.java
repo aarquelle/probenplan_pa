@@ -16,24 +16,22 @@
 
 package org.aarquelle.probenplan_pa.entity;
 
-import org.aarquelle.probenplan_pa.business.Analyzer;
-import org.aarquelle.probenplan_pa.business.BasicService;
-import org.aarquelle.probenplan_pa.business.Params;
+import org.aarquelle.probenplan_pa.util.SortedUniqueList;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Collections;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class DataState {
     private static final DataState INSTANCE = new DataState();
 
-    private final Set<Actor> actors = new HashSet<>();
-    private final Set<Rehearsal> rehearsals = new HashSet<>();
-    private final Set<Role> roles = new HashSet<>();
-    private final Set<Scene> scenes = new HashSet<>();
+    private final SortedUniqueList<Actor> actors = new SortedUniqueList<>();
+    private final SortedUniqueList<Rehearsal> rehearsals = new SortedUniqueList<>();
+    private final SortedUniqueList<Role> roles = new SortedUniqueList<>();
+    private final SortedUniqueList<Scene> scenes = new SortedUniqueList<>();
     private Plan plan;
 
-    private final Set<Scene> enforcedScenes = new HashSet<>();
+    private final SortedUniqueList<Scene> enforcedScenes = new SortedUniqueList<>();
 
     private DataState() {
         // Private constructor to prevent instantiation
@@ -83,19 +81,19 @@ public class DataState {
         return plan;
     }
 
-    public Set<Actor> getActors() {
+    public SortedUniqueList<Actor> getActors() {
         return actors;
     }
 
-    public Set<Rehearsal> getRehearsals() {
+    public SortedUniqueList<Rehearsal> getRehearsals() {
         return rehearsals;
     }
 
-    public Set<Role> getRoles() {
+    public SortedUniqueList<Role> getRoles() {
         return roles;
     }
 
-    public Set<Scene> getScenes() {
+    public SortedUniqueList<Scene> getScenes() {
         return scenes;
     }
 
@@ -103,8 +101,15 @@ public class DataState {
         enforcedScenes.add(s);
     }
 
-    public Set<Scene> getEnforcedScenes() {
+    public SortedUniqueList<Scene> getEnforcedScenes() {
         return enforcedScenes;
+    }
+
+    public void sort() {
+        actors.sort();
+        roles.sort();
+        rehearsals.sort();
+        scenes.sort();
     }
 
 }

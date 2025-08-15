@@ -16,17 +16,17 @@
 
 package org.aarquelle.probenplan_pa.ui.swt.pages;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
+import org.aarquelle.probenplan_pa.entity.Role;
+import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.ui.API;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomGroups;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.OptionTable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Text;
 
 import java.util.List;
 
@@ -42,11 +42,10 @@ public class ScenesTab extends Composite {
                 List.of("From Clipboard", "From File"),
                 List.of(false, false),
                 List.of(() -> System.out.println("Clipboard"), () -> System.out.println("file")));
-        OptionTable table = new OptionTable(this, x -> API.getRoleNames(), x -> API.getSceneNames(),
-                (row, col) -> API.getRoleSize(row, col),
+        OptionTable<Scene, Role> table = new OptionTable<>(this,
+                BasicService.getRoles(),
+                BasicService.getScenes(),
                 List.of("Kommt nicht vor.", "Kleine Rolle", "Große Rolle"),
                 null, d.getSystemColor(SWT.COLOR_YELLOW), d.getSystemColor(SWT.COLOR_GREEN));
-        //addListener(SWT.Resize, e -> pack());
-
     }
 }

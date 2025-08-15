@@ -16,13 +16,14 @@
 
 package org.aarquelle.probenplan_pa.entity;
 
+import org.aarquelle.probenplan_pa.util.DateUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Rehearsal implements Comparable<Rehearsal> {
+public class Rehearsal implements Comparable<Rehearsal>, Entity {
     LocalDate date;
     boolean fullLocked = false;
     final Set<Scene> lockedScenes = new HashSet<>();
@@ -79,7 +80,13 @@ public class Rehearsal implements Comparable<Rehearsal> {
 
     @Override
     public int compareTo(@NotNull Rehearsal o) {
-        return date.compareTo(o.date);
+        if (date != null) {
+            return date.compareTo(o.date);
+        } else {
+            if (o.date == null) {
+                return 0;
+            } else return -1;
+        }
     }
 
     public Set<Scene> getLockedScenes() {
@@ -92,5 +99,10 @@ public class Rehearsal implements Comparable<Rehearsal> {
 
     public Set<Actor> getMaybeActors() {
         return maybeActors;
+    }
+
+    @Override
+    public String displayName() {
+        return DateUtils.getString(date);
     }
 }

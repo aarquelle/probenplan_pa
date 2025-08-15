@@ -21,6 +21,7 @@ import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.util.Pair;
+import org.aarquelle.probenplan_pa.util.SortedUniqueList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,8 +34,8 @@ public class Evaluator {
 
     Rehearsal durchlaufprobe;
     Plan plan;
-    Set<Rehearsal> rehearsals;
-    Set<Scene> scenes;
+    SortedUniqueList<Rehearsal> rehearsals;
+    SortedUniqueList<Scene> scenes;
 
     double expectedNumberOfRepeats;
     Map<Scene, Double> numberOfRepeats;
@@ -86,7 +87,7 @@ public class Evaluator {
     }
 
     boolean allScenesBeforeDurchlaufprobe() {
-        Set<Scene> allScenes = new HashSet<>(scenes);
+        Set<Scene> allScenes = scenes.toSet();
         for (Rehearsal rehearsal : rehearsals) {
             if (rehearsal.getDate().isBefore(durchlaufprobe.getDate())) {
                 plan.get(rehearsal).forEach(allScenes::remove);

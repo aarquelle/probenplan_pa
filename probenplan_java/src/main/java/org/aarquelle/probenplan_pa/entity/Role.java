@@ -16,10 +16,12 @@
 
 package org.aarquelle.probenplan_pa.entity;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashSet;
 import java.util.Set;
 
-public class Role implements Comparable<Role> {
+public class Role implements Comparable<Role>, Entity {
     String name;
     Actor actor;
 
@@ -84,7 +86,16 @@ public class Role implements Comparable<Role> {
     }
 
     @Override
-    public int compareTo(Role other) {
-        return this.name.compareTo(other.name);
+    public int compareTo(@NotNull Role other) {
+        if (name != null) {
+            return this.name.compareTo(other.name);
+        } else {
+            return other.name == null ? 0 : -1;
+        }
+    }
+
+    @Override
+    public String displayName() {
+        return name;
     }
 }

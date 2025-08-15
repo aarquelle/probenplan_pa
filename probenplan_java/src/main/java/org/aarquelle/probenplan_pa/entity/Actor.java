@@ -16,10 +16,12 @@
 
 package org.aarquelle.probenplan_pa.entity;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashSet;
 import java.util.Set;
 
-public class Actor implements Comparable<Actor> {
+public class Actor implements Comparable<Actor>, Entity {
     String name;
     final Set<Role> roles = new HashSet<>();
     final Set<Rehearsal> missingRehearsals = new HashSet<>();
@@ -73,8 +75,12 @@ public class Actor implements Comparable<Actor> {
     }
 
     @Override
-    public int compareTo(Actor other) {
-        return this.name.compareTo(other.name);
+    public int compareTo(@NotNull Actor other) {
+        if (name != null) {
+            return this.name.compareTo(other.name);
+        } else {
+            return other.name == null ? 0 : -1;
+        }
     }
 
     public HasTime hasTimeOnRehearsal(Rehearsal r) {
@@ -83,5 +89,10 @@ public class Actor implements Comparable<Actor> {
         } else if (maybeRehearsals.contains(r)) {
             return HasTime.MAYBE;
         } else return HasTime.YES;
+    }
+
+    @Override
+    public String displayName() {
+        return name;
     }
 }

@@ -16,6 +16,9 @@
 
 package org.aarquelle.probenplan_pa.ui.swt.pages;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
+import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.ui.API;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomGroups;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.OptionTable;
@@ -41,8 +44,9 @@ public class TimesTab extends Composite {
                 List.of("From Clipboard", "From URL", "From File"),
                 List.of(false, true, false),
                 List.of(() -> System.out.println("Clippy"), () -> System.out.println("NOT IMPLEMENTED"), () -> System.out.println("NOT IMPLEMENTED")));
-        Composite tableComp = new OptionTable(this, x -> API.getActorNames(), x -> API.getRehearsalNames(),
-                (col, row) -> API.hasTime(col, row),
+        OptionTable<Rehearsal, Actor> tableComp = new OptionTable<>(this,
+                BasicService.getActors(),
+                BasicService.getRehearsals(),
                 List.of("Hat Zeit", "Hat vielleicht Zeit", "Hat keine Zeit"),
                 d.getSystemColor(SWT.COLOR_GREEN),
                 d.getSystemColor(SWT.COLOR_YELLOW),

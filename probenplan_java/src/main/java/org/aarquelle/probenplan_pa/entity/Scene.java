@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Scene implements Comparable<Scene> {
+public class Scene implements Comparable<Scene>, Entity {
     String name;
     double length;
     double position;
@@ -111,5 +111,10 @@ public class Scene implements Comparable<Scene> {
     @Override
     public int compareTo(@NotNull Scene o) {
         return Double.compare(position, o.position);
+    }
+
+    @Override
+    public String displayName() {
+        return name;
     }
 }

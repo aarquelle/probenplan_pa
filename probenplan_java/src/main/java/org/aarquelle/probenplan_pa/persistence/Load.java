@@ -84,6 +84,8 @@ public class Load {
         roles();
         plan();
         params();
+
+        ds.sort();
     }
 
     private void scenes() {

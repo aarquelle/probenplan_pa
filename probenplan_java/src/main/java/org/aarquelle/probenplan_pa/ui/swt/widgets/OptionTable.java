@@ -16,6 +16,9 @@
 
 package org.aarquelle.probenplan_pa.ui.swt.widgets;
 
+import org.aarquelle.probenplan_pa.entity.Entity;
+import org.aarquelle.probenplan_pa.ui.API;
+import org.aarquelle.probenplan_pa.util.SortedUniqueList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
@@ -35,41 +38,40 @@ import org.eclipse.swt.widgets.Composite;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
-public class OptionTable extends ScrolledComposite {
+public class OptionTable<ROW extends Entity & Comparable<ROW>, COL extends Entity & Comparable<COL>> extends ScrolledComposite {
 
     int columnWidth = 100;
     int rowHeight = 30;
 
-    private final Function<Void, List<String>> colNameFunction;
-    private final Function<Void, List<String>> rowNameFunction;
-    private final BiFunction<Integer, Integer, Integer> cellValueFunction;
+    private final SortedUniqueList<COL> syncedColEntities;
+    private final SortedUniqueList<ROW> syncedRowEntities;
 
-    private List<String> colNames;
-    private List<String> rowNames;
+    /*
+      These lists are used for easy access by index, they do not remain synced to the data state.
+     */
+    private List<COL> colEntities;
+    private List<ROW> rowEntities;
 
     private final String[] tooltips;
     private final Color[] colors;
 
     private final List<List<TableCell>> tableCells = new ArrayList<>();
 
-    public OptionTable(Composite parent, Function<Void, List<String>> colNameFunction,
-                       Function<Void, List<String>> rowNameFunction,
-                       BiFunction<Integer, Integer, Integer> cellValueFunction, List<String> tooltips, Color... colors) {
+    public OptionTable(Composite parent, SortedUniqueList<COL> syncedColEntities,
+                       SortedUniqueList<ROW> syncedRowEntities,
+                       List<String> tooltips, Color... colors) {
         super(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 
-        this.colNameFunction = colNameFunction;
-        this.rowNameFunction = rowNameFunction;
-        this.cellValueFunction = cellValueFunction;
+        this.syncedColEntities = syncedColEntities;
+        this.syncedRowEntities = syncedRowEntities;
         this.tooltips = tooltips.toArray(new String[]{});
         this.colors = colors;
 
         updateData();
 
         setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        Point virtualSize = new Point(columnWidth * (colNames.size() + 1), rowHeight * (rowNames.size() + 1));
+        Point virtualSize = new Point(columnWidth * (syncedColEntities.size() + 1), rowHeight * (syncedRowEntities.size() + 1));
 
         setExpandHorizontal(true);
         setExpandVertical(true);
@@ -97,16 +99,16 @@ public class OptionTable extends ScrolledComposite {
                 GC gc = e.gc;
 
 
-                for (int i = 0; i < colNames.size(); i++) {
-                    drawString(gc, colNames.get(i), i + 1, 0);
+                for (int i = 0; i < colEntities.size(); i++) {
+                    drawString(gc, colEntities.get(i).displayName(), i + 1, 0);
                 }
 
-                for (int i = 0; i < rowNames.size(); i++) {
-                    drawString(gc, rowNames.get(i), 0, i + 1);
+                for (int i = 0; i < rowEntities.size(); i++) {
+                    drawString(gc, rowEntities.get(i).displayName(), 0, i + 1);
                 }
 
-                for (int i = 1; i < rowNames.size() + 1; i++) {
-                    for (int j = 1; j < colNames.size() + 1; j++) {
+                for (int i = 1; i < rowEntities.size() + 1; i++) {
+                    for (int j = 1; j < colEntities.size() + 1; j++) {
                         Color fillColor = getCell(j, i).getColor();
                         if (fillColor != null) {
                             gc.setBackground(fillColor);
@@ -115,11 +117,11 @@ public class OptionTable extends ScrolledComposite {
                     }
                 }
 
-                for (int i = 1; i < colNames.size() + 2; i++) {
+                for (int i = 1; i < colEntities.size() + 2; i++) {
                     gc.drawLine(i * columnWidth, 0, i * columnWidth, virtualSize.y);
                 }
 
-                for (int i = 1; i < rowNames.size() + 2; i++) {
+                for (int i = 1; i < rowEntities.size() + 2; i++) {
                     gc.drawLine(0, i * rowHeight, virtualSize.x, i * rowHeight);
                 }
             }
@@ -157,7 +159,7 @@ public class OptionTable extends ScrolledComposite {
     private Optional<TableCell> getCell(MouseEvent e) {
         int x = e.x / columnWidth;
         int y = e.y / rowHeight;
-        if (x >= 0 && y >= 0 && x <= colNames.size() && y <= rowNames.size()) {
+        if (x >= 0 && y >= 0 && x <= syncedColEntities.size() && y <= syncedRowEntities.size()) {
             return Optional.of(getCell(x, y));
         } else {
             return Optional.empty();
@@ -169,21 +171,28 @@ public class OptionTable extends ScrolledComposite {
     }
 
     private void updateData() {
-        colNames = colNameFunction.apply(null);
-        rowNames = rowNameFunction.apply(null);
         tableCells.clear();
-        for (int i = 0; i < rowNames.size() + 1; i++) {
-            List<TableCell> row = new ArrayList<>(colNames.size());
+
+        rowEntities = syncedRowEntities.stream().toList();
+        colEntities = syncedColEntities.stream().toList();
+
+        for (int i = 0; i < rowEntities.size() + 1; i++) {
+            List<TableCell> row = new ArrayList<>(colEntities.size());
             tableCells.add(row);
-            for (int j = 0; j < colNames.size() + 1; j++) {
+            Entity rowEntity = null;
+            if (i > 0) {
+                rowEntity = rowEntities.get(i - 1);
+            }
+            for (int j = 0; j < colEntities.size() + 1; j++) {
                 if (j > 0 && i > 0) {
-                    String common = rowNames.get(i - 1) + "\n" + colNames.get(j - 1) + "\n";
+                    Entity colEntity = colEntities.get(j - 1);
+                    String common = rowEntity.displayName() + "\n" + colEntity.displayName() + "\n";
                     String[] combinedTooltips = new String[tooltips.length];
                     for (int k = 0; k < tooltips.length; k++) {
                         combinedTooltips[k] = common + tooltips[k];
                     }
                     TableCell cell = new TableCell(combinedTooltips, colors);
-                    cell.setState(cellValueFunction.apply(j-1, i-1));
+                    cell.setState(API.relation(rowEntity, colEntity));
                     row.add(cell);
                 } else {
                     row.add(new TableCell(null, (Color) null));
