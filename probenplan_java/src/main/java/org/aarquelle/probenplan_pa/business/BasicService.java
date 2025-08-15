@@ -16,16 +16,18 @@
 
 package org.aarquelle.probenplan_pa.business;
 
+import org.aarquelle.probenplan_pa.Main;
 import org.aarquelle.probenplan_pa.entity.Actor;
 import org.aarquelle.probenplan_pa.entity.DataState;
 import org.aarquelle.probenplan_pa.entity.Plan;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
+import org.aarquelle.probenplan_pa.persistence.Load;
+import org.aarquelle.probenplan_pa.persistence.Save;
 import org.aarquelle.probenplan_pa.util.SortedUniqueList;
 
 import java.time.LocalDate;
-import java.util.SortedSet;
 
 public class BasicService {
     static DataState ds = DataState.getInstance();
@@ -104,5 +106,15 @@ public class BasicService {
 
     public static Plan getPlan() {
         return ds.getPlan();
+    }
+
+    public static void loadFromFile() {
+        Load l = new Load(Main.URL);
+        l.load(ds);
+    }
+
+    public static void saveToFile() {
+        Save s = new Save(ds, Main.URL);
+        s.saveFile();
     }
 }

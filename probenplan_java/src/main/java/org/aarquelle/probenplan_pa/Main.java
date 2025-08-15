@@ -19,6 +19,7 @@ package org.aarquelle.probenplan_pa;
 import org.aarquelle.probenplan_pa.business.Params;
 import org.aarquelle.probenplan_pa.entity.Plan;
 import org.aarquelle.probenplan_pa.ui.cli.CommandLineUI;
+import org.aarquelle.probenplan_pa.ui.swt.SwtGui;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,7 +35,11 @@ public class Main {
 
     public static void main(String[] args) {
         Params.init();
-        new CommandLineUI().start();
+        if (args.length > 0 && args[0].equals("--cli")) {
+            new CommandLineUI().start();
+        } else {
+            new SwtGui();
+        }
     }
 
     private static Path getDirectory() {

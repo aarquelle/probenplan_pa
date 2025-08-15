@@ -17,19 +17,25 @@
 package org.aarquelle.probenplan_pa.ui.swt.widgets;
 
 
+import org.aarquelle.probenplan_pa.entity.Entity;
+import org.aarquelle.probenplan_pa.ui.API;
 import org.eclipse.swt.graphics.Color;
 
 public class TableCell {
     private Color[] colors;
     private int state;
     private String[] tooltips;
-    public TableCell(String[] tooltips, Color... colors) {
+    private final Entity a, b;
+    public TableCell(Entity a, Entity b, String[] tooltips, Color... colors) {
+        this.a = a;
+        this.b = b;
         this.tooltips = tooltips;
         this.colors = colors;
     }
 
     public void click() {
         state = state < colors.length - 1 ? state + 1 : 0;
+        API.setRelation(a, b, state);
     }
 
     public Color getColor() {

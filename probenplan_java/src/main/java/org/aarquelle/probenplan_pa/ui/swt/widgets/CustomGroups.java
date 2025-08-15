@@ -45,7 +45,9 @@ public class CustomGroups {
         }
 
         g.setLayout(new GridLayout(numCols, true));
-        g.setText(title);
+        if (title != null) {
+            g.setText(title);
+        }
 
         for (int i = 0; i < buttonNames.size(); i++) {
             Button button;

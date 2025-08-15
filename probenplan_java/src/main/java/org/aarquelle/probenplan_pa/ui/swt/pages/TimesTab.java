@@ -31,26 +31,28 @@ import org.eclipse.swt.widgets.Group;
 import java.util.List;
 
 public class TimesTab extends Composite {
-    List<String> actorNames;
-    List<String> rehearsalNames;
 
-    public TimesTab(Composite parent, List<String> actorNames, List<String> rehearsalNames) {
+    OptionTable<Rehearsal, Actor> optionTable;
+
+    public TimesTab(Composite parent) {
         super(parent, SWT.NONE);
-        this.actorNames = actorNames;
-        this.rehearsalNames = rehearsalNames;
         setLayout(new GridLayout());
         Display d = Display.getCurrent();
         Group timesImportGroup = CustomGroups.createImportRow(this, "Import times",
                 List.of("From Clipboard", "From URL", "From File"),
                 List.of(false, true, false),
                 List.of(() -> System.out.println("Clippy"), () -> System.out.println("NOT IMPLEMENTED"), () -> System.out.println("NOT IMPLEMENTED")));
-        OptionTable<Rehearsal, Actor> tableComp = new OptionTable<>(this,
+        optionTable = new OptionTable<>(this,
                 BasicService.getActors(),
                 BasicService.getRehearsals(),
                 List.of("Hat Zeit", "Hat vielleicht Zeit", "Hat keine Zeit"),
                 d.getSystemColor(SWT.COLOR_GREEN),
                 d.getSystemColor(SWT.COLOR_YELLOW),
                 d.getSystemColor(SWT.COLOR_RED));
-        addListener(SWT.Resize, e -> tableComp.pack());
+        addListener(SWT.Resize, e -> optionTable.pack());
+    }
+
+    public void updateData() {
+        optionTable.updateData();
     }
 }

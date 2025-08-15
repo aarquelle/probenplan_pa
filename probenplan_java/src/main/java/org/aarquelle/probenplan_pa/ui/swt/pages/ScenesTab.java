@@ -32,6 +32,8 @@ import java.util.List;
 
 public class ScenesTab extends Composite {
 
+    OptionTable<Scene, Role> optionTable;
+
     public ScenesTab(Composite parent) {
         super(parent, SWT.NONE);
 
@@ -42,10 +44,14 @@ public class ScenesTab extends Composite {
                 List.of("From Clipboard", "From File"),
                 List.of(false, false),
                 List.of(() -> System.out.println("Clipboard"), () -> System.out.println("file")));
-        OptionTable<Scene, Role> table = new OptionTable<>(this,
+        optionTable = new OptionTable<>(this,
                 BasicService.getRoles(),
                 BasicService.getScenes(),
                 List.of("Kommt nicht vor.", "Kleine Rolle", "Große Rolle"),
                 null, d.getSystemColor(SWT.COLOR_YELLOW), d.getSystemColor(SWT.COLOR_GREEN));
+    }
+
+    public void updateData() {
+        optionTable.updateData();
     }
 }

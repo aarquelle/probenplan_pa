@@ -17,12 +17,15 @@
 package org.aarquelle.probenplan_pa.ui.swt;
 
 import org.aarquelle.probenplan_pa.Main;
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.entity.DataState;
 import org.aarquelle.probenplan_pa.persistence.Load;
 import org.aarquelle.probenplan_pa.ui.swt.pages.ScenesTab;
 import org.aarquelle.probenplan_pa.ui.swt.pages.TimesTab;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomGroups;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -32,16 +35,21 @@ import org.eclipse.swt.widgets.TabItem;
 import java.util.List;
 
 public class SwtGui {
-    public static void main(String[] args) {
-        new Load(Main.URL).load(DataState.getInstance());
+    Shell shell;
+    ScenesTab scenes;
+    TimesTab times;
+
+    public SwtGui() {
+        //new Load(Main.URL).load(DataState.getInstance());
         Display display = new Display();
-        Shell shell = new Shell(display);
+        shell = new Shell(display);
         shell.setText("Probenplan");
         //shell.setSize(400, 300);
-        shell.setLayout(new FillLayout());
+        shell.setLayout(new GridLayout());
 
         TabFolder tabFolder = new TabFolder(shell, SWT.TOP);
-        tabFolder.setLayout(new FillLayout());
+        GridData tabFolderData = new GridData(SWT.FILL, SWT.FILL, true, true);
+        tabFolder.setLayoutData(tabFolderData);
         TabItem timesTabItem = new TabItem(tabFolder, SWT.NONE);
         timesTabItem.setText("Termine");
         TabItem scenesTabItem = new TabItem(tabFolder, SWT.NONE);
@@ -49,16 +57,20 @@ public class SwtGui {
         TabItem planTabItem = new TabItem(tabFolder, SWT.NONE);
         planTabItem.setText("Plan");
 
+        times = new TimesTab(tabFolder);
+        timesTabItem.setControl(times);
+        scenes = new ScenesTab(tabFolder);
+        scenesTabItem.setControl(scenes);
 
-        //TODO demo values
-        List<String> actorNames = List.of("Antonius der Dritte Freiherr von Thurn und Taxis", "Berta", "Cedric", "Denise", "Emil", "Franzi");
-        List<String> rehearsalNames = List.of("1.1", "2.1", "3.1");
-        List<String> roleNames = List.of("König", "Hirte", "Held", "Bösewicht", "Bote", "Drache");
-        List<String> sceneNames = List.of("1.1", "1.2", "1.3", "1.4", "2.1", "2.2", "2.3", "3.1", "Epilog");
-        Composite timesComp = new TimesTab(tabFolder, actorNames, rehearsalNames);
-        timesTabItem.setControl(timesComp);
-        Composite scenesComp = new ScenesTab(tabFolder);
-        scenesTabItem.setControl(scenesComp);
+        Composite persistenceRow = CustomGroups.createImportRow(shell, null,
+                List.of("Load", "Save"), List.of(false, false), List.of(
+                        () -> {
+                            BasicService.loadFromFile();
+                            updateData();
+                        },
+
+                        BasicService::saveToFile
+                ));
 
         shell.pack();
         shell.open();
@@ -68,5 +80,13 @@ public class SwtGui {
             }
         }
         display.dispose();
+    }
+
+    private void updateData() {
+        scenes.updateData();
+        times.updateData();
+        shell.redraw();
+        shell.pack();
+
     }
 }

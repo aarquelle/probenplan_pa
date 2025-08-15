@@ -44,6 +44,8 @@ public class OptionTable<ROW extends Entity & Comparable<ROW>, COL extends Entit
     int columnWidth = 100;
     int rowHeight = 30;
 
+    Point virtualSize;
+
     private final SortedUniqueList<COL> syncedColEntities;
     private final SortedUniqueList<ROW> syncedRowEntities;
 
@@ -70,8 +72,8 @@ public class OptionTable<ROW extends Entity & Comparable<ROW>, COL extends Entit
 
         updateData();
 
-        setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        Point virtualSize = new Point(columnWidth * (syncedColEntities.size() + 1), rowHeight * (syncedRowEntities.size() + 1));
+        GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+        setLayoutData(gridData);
 
         setExpandHorizontal(true);
         setExpandVertical(true);
@@ -170,7 +172,7 @@ public class OptionTable<ROW extends Entity & Comparable<ROW>, COL extends Entit
         return tableCells.get(y).get(x);
     }
 
-    private void updateData() {
+    public void updateData() {
         tableCells.clear();
 
         rowEntities = syncedRowEntities.stream().toList();
@@ -191,13 +193,15 @@ public class OptionTable<ROW extends Entity & Comparable<ROW>, COL extends Entit
                     for (int k = 0; k < tooltips.length; k++) {
                         combinedTooltips[k] = common + tooltips[k];
                     }
-                    TableCell cell = new TableCell(combinedTooltips, colors);
-                    cell.setState(API.relation(rowEntity, colEntity));
+                    TableCell cell = new TableCell(rowEntity, colEntity, combinedTooltips, colors);
+                    cell.setState(API.getRelation(rowEntity, colEntity));
                     row.add(cell);
                 } else {
-                    row.add(new TableCell(null, (Color) null));
+                    row.add(new TableCell(null, null, null, (Color) null));
                 }
             }
         }
+        virtualSize = new Point(columnWidth * (syncedColEntities.size() + 1), rowHeight * (syncedRowEntities.size() + 1));
+        setMinSize(virtualSize);
     }
 }
