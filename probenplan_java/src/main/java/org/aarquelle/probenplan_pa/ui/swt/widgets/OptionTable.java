@@ -18,6 +18,7 @@ package org.aarquelle.probenplan_pa.ui.swt.widgets;
 
 import org.aarquelle.probenplan_pa.entity.Entity;
 import org.aarquelle.probenplan_pa.ui.API;
+import org.aarquelle.probenplan_pa.ui.swt.ResourceHandler;
 import org.aarquelle.probenplan_pa.util.SortedUniqueList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -41,6 +42,8 @@ import java.util.Optional;
 
 public class OptionTable<ROW extends Entity & Comparable<ROW>, COL extends Entity & Comparable<COL>> extends ScrolledComposite {
 
+    private final boolean secondary;
+
     int columnWidth = 100;
     int rowHeight = 30;
 
@@ -60,11 +63,15 @@ public class OptionTable<ROW extends Entity & Comparable<ROW>, COL extends Entit
 
     private final List<List<TableCell>> tableCells = new ArrayList<>();
 
+    private Canvas canvas;
+
     public OptionTable(Composite parent, SortedUniqueList<COL> syncedColEntities,
                        SortedUniqueList<ROW> syncedRowEntities,
+                       boolean secondary,
                        List<String> tooltips, Color... colors) {
         super(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 
+        this.secondary = secondary;
         this.syncedColEntities = syncedColEntities;
         this.syncedRowEntities = syncedRowEntities;
         this.tooltips = tooltips.toArray(new String[]{});
@@ -79,8 +86,7 @@ public class OptionTable<ROW extends Entity & Comparable<ROW>, COL extends Entit
         setExpandVertical(true);
 
 
-
-        Canvas canvas = new Canvas(this, SWT.NONE);
+        canvas = new Canvas(this, SWT.NONE);
 
         canvas.addPaintListener(new PaintListener() {
             private void drawString(GC gc, String s, int x, int y) {
@@ -111,14 +117,29 @@ public class OptionTable<ROW extends Entity & Comparable<ROW>, COL extends Entit
 
                 for (int i = 1; i < rowEntities.size() + 1; i++) {
                     for (int j = 1; j < colEntities.size() + 1; j++) {
-                        Color fillColor = getCell(j, i).getColor();
+                        Color fillColor;
+                        if (secondary) {
+                            fillColor = ResourceHandler.getColor(colors[0], colors[1], colors[2],
+                                    2 * API.getSecondaryRelation(rowEntities.get(i - 1), colEntities.get(j - 1)) - 1
+                            );
+                        } else {
+                            fillColor = getCell(j, i).getColor();
+                        }
                         if (fillColor != null) {
                             gc.setBackground(fillColor);
                             gc.fillRectangle(j * columnWidth, i * rowHeight, columnWidth, rowHeight);
                         }
+                        if (secondary && getCell(j, i).getState() == 1) {
+                            gc.setLineWidth(2);
+                            gc.drawRectangle(j * columnWidth, i * rowHeight, columnWidth, rowHeight);
+                            gc.drawLine(j * columnWidth, i * rowHeight,
+                                    (j + 1) * columnWidth, (i + 1) * rowHeight);
+                            gc.drawLine((j + 1) * columnWidth, i * rowHeight,
+                                    j * columnWidth, (i + 1) * rowHeight);
+                        }
                     }
                 }
-
+                gc.setLineWidth(1);
                 for (int i = 1; i < colEntities.size() + 2; i++) {
                     gc.drawLine(i * columnWidth, 0, i * columnWidth, virtualSize.y);
                 }
@@ -189,11 +210,14 @@ public class OptionTable<ROW extends Entity & Comparable<ROW>, COL extends Entit
                 if (j > 0 && i > 0) {
                     Entity colEntity = colEntities.get(j - 1);
                     String common = rowEntity.displayName() + "\n" + colEntity.displayName() + "\n";
+                    if (secondary) {
+                        common += String.format("Value: %.2f\n",API.getSecondaryRelation(colEntity, rowEntity));
+                    }
                     String[] combinedTooltips = new String[tooltips.length];
                     for (int k = 0; k < tooltips.length; k++) {
                         combinedTooltips[k] = common + tooltips[k];
                     }
-                    TableCell cell = new TableCell(rowEntity, colEntity, combinedTooltips, colors);
+                    TableCell cell = new TableCell(rowEntity, colEntity, combinedTooltips, secondary ? new Color[2] : colors);
                     cell.setState(API.getRelation(rowEntity, colEntity));
                     row.add(cell);
                 } else {
@@ -203,5 +227,9 @@ public class OptionTable<ROW extends Entity & Comparable<ROW>, COL extends Entit
         }
         virtualSize = new Point(columnWidth * (syncedColEntities.size() + 1), rowHeight * (syncedRowEntities.size() + 1));
         setMinSize(virtualSize);
+        if (canvas != null) {
+            canvas.redraw();
+            canvas.update();
+        }
     }
 }

@@ -16,7 +16,11 @@
 
 package org.aarquelle.probenplan_pa.ui.swt.pages;
 
+import org.aarquelle.probenplan_pa.business.Analyzer;
 import org.aarquelle.probenplan_pa.business.BasicService;
+import org.aarquelle.probenplan_pa.business.Mutator;
+import org.aarquelle.probenplan_pa.business.Params;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.ui.API;
@@ -30,29 +34,43 @@ import org.eclipse.swt.widgets.Group;
 
 import java.util.List;
 
-public class ScenesTab extends Composite {
+public class PlanTab extends Composite {
 
-    OptionTable<Scene, Role> optionTable;
+    OptionTable<Rehearsal, Scene> optionTable;
 
-    public ScenesTab(Composite parent) {
+    public PlanTab(Composite parent) {
         super(parent, SWT.NONE);
 
         setLayout(new GridLayout());
         Display d = Display.getCurrent();
 
-        Group importRow = CustomGroups.createImportRow(this, "Import scenes",
-                List.of("From Clipboard", "From File"),
+        Group importRow = CustomGroups.createImportRow(this, "",
+                List.of("Run analysis", "Generate"),
                 List.of(false, false),
-                List.of(() -> System.out.println("Clipboard"), () -> System.out.println("file")));
+                List.of(() -> {
+                    Analyzer.runAnalysis();
+                    updateData();
+                }, this::generate));
         optionTable = new OptionTable<>(this,
-                BasicService.getRoles(),
                 BasicService.getScenes(),
-                false,
-                List.of("Kommt nicht vor.", "Kleine Rolle", "Große Rolle"),
-                null, d.getSystemColor(SWT.COLOR_YELLOW), d.getSystemColor(SWT.COLOR_GREEN));
+                BasicService.getRehearsals(),
+                true,
+                List.of("Nicht geplant.", "Geplant"),
+                d.getSystemColor(SWT.COLOR_RED),
+                d.getSystemColor(SWT.COLOR_YELLOW),
+                d.getSystemColor(SWT.COLOR_GREEN));
     }
 
     public void updateData() {
         optionTable.updateData();
+        redraw();
+        update();
+    }
+
+    private void generate() {
+        Mutator mutator = new Mutator(System.currentTimeMillis());
+        mutator.mutate(Params.getDeadline());
+        BasicService.setPlan(mutator.getPlan());
+        updateData();
     }
 }

@@ -16,6 +16,7 @@
 
 package org.aarquelle.probenplan_pa.ui;
 
+import org.aarquelle.probenplan_pa.business.Analyzer;
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.entity.Actor;
 import org.aarquelle.probenplan_pa.entity.Entity;
@@ -62,83 +63,96 @@ public class API {
         throw new IllegalArgumentException("Undefined relation between " + a + " and " + b);
     }
 
+    public static double getSecondaryRelation(Entity a, Entity b) {
+        if (a instanceof Scene scene && b instanceof Rehearsal rehearsal) {
+            return Analyzer.completenessScore(rehearsal, scene);
+        } else if (a instanceof Rehearsal && b instanceof Scene) {
+            return getSecondaryRelation(b, a);
+        } else throw new IllegalArgumentException("Secondary relation is undefined between "
+                + a + " and " + b);
+    }
+
     public static void setRelation(Entity a, Entity b, int value) {
         if (a == null && b == null) {//TODO: Namen ändern
             return;
         }
 
-        if (a instanceof Actor actor) {
-            if (b instanceof Rehearsal rehearsal) {
-                switch (value) {
-                    case 0: {
-                        rehearsal.removeMaybeActor(actor);
-                        rehearsal.removeMissingActor(actor);
-                        break;
+        switch (a) {
+            case Actor actor -> {
+                if (b instanceof Rehearsal rehearsal) {
+                    switch (value) {
+                        case 0: {
+                            rehearsal.removeMaybeActor(actor);
+                            rehearsal.removeMissingActor(actor);
+                            break;
+                        }
+                        case 1: {
+                            rehearsal.removeMissingActor(actor);
+                            rehearsal.addMaybeActor(actor);
+                            break;
+                        }
+                        case 2: {
+                            rehearsal.removeMaybeActor(actor);
+                            rehearsal.addMissingActor(actor);
+                            break;
+                        }
+                        default: {
+                            throw new IllegalArgumentException("Undefined value " + value + " for relation between "
+                                    + a + " and " + b);
+                        }
                     }
-                    case 1: {
-                        rehearsal.removeMissingActor(actor);
-                        rehearsal.addMaybeActor(actor);
-                        break;
+                }
+            }
+            case Role role -> {
+                if (b instanceof Scene scene) {
+                    switch (value) {
+                        case 0: {
+                            role.removeBigScene(scene);
+                            role.removeSmallScene(scene);
+                            break;
+                        }
+                        case 1: {
+                            role.removeBigScene(scene);
+                            role.addSmallScene(scene);
+                            break;
+                        }
+                        case 2: {
+                            role.removeSmallScene(scene);
+                            role.addBigScene(scene);
+                            break;
+                        }
+                        default: {
+                            throw new IllegalArgumentException("Undefined value " + value + " for relation between "
+                                    + a + " and " + b);
+                        }
                     }
-                    case 2: {
-                        rehearsal.removeMaybeActor(actor);
-                        rehearsal.addMissingActor(actor);
-                        break;
+                }
+            }
+            case Scene scene -> {
+                if (b instanceof Role) {
+                    setRelation(b, a, value);
+                }
+                if (b instanceof Rehearsal rehearsal) {
+                    Plan plan = BasicService.getPlan();
+                    if (plan == null) {
+                        return;
                     }
-                    default: {
+                    if (value == 1) {
+                        plan.put(rehearsal, scene);
+                    } else if (value == 0) {
+                        plan.remove(rehearsal, scene);
+                    } else {
                         throw new IllegalArgumentException("Undefined value " + value + " for relation between "
                                 + a + " and " + b);
                     }
                 }
             }
-        } else if (a instanceof Role role) {
-            if (b instanceof Scene scene) {
-                switch (value) {
-                    case 0: {
-                        role.removeBigScene(scene);
-                        role.removeSmallScene(scene);
-                        break;
-                    }
-                    case 1: {
-                        role.removeBigScene(scene);
-                        role.addSmallScene(scene);
-                        break;
-                    }
-                    case 2: {
-                        role.removeSmallScene(scene);
-                        role.addBigScene(scene);
-                        break;
-                    }
-                    default: {
-                        throw new IllegalArgumentException("Undefined value " + value + " for relation between "
-                                + a + " and " + b);
-                    }
+            case Rehearsal ignored -> {
+                if (!(b instanceof Rehearsal)) {
+                    setRelation(b, a, value);
                 }
             }
-        } else if (a instanceof Scene scene) {
-            if (b instanceof Role) {
-                setRelation(b, a, value);
-            }
-            if (b instanceof Rehearsal rehearsal) {
-                Plan plan = BasicService.getPlan();
-                if (plan == null) {
-                    return;
-                }
-                if (value == 1) {
-                    plan.put(rehearsal, scene);
-                } else if (value == 0) {
-                    plan.remove(rehearsal, scene);
-                } else {
-                    throw new IllegalArgumentException("Undefined value " + value + " for relation between "
-                            + a + " and " + b);
-                }
-            }
-        } else if (a instanceof Rehearsal) {
-            if (!(b instanceof Rehearsal)) {
-                setRelation(b, a, value);
-            }
-        } else {
-            throw new IllegalArgumentException("Undefined relation between " + a + " and " + b);
+            case null, default -> throw new IllegalArgumentException("Undefined relation between " + a + " and " + b);
         }
     }
 }

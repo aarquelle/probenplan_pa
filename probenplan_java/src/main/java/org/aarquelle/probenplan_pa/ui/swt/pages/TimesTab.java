@@ -45,6 +45,7 @@ public class TimesTab extends Composite {
         optionTable = new OptionTable<>(this,
                 BasicService.getActors(),
                 BasicService.getRehearsals(),
+                false,
                 List.of("Hat Zeit", "Hat vielleicht Zeit", "Hat keine Zeit"),
                 d.getSystemColor(SWT.COLOR_GREEN),
                 d.getSystemColor(SWT.COLOR_YELLOW),

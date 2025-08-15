@@ -20,6 +20,7 @@ import org.aarquelle.probenplan_pa.Main;
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.entity.DataState;
 import org.aarquelle.probenplan_pa.persistence.Load;
+import org.aarquelle.probenplan_pa.ui.swt.pages.PlanTab;
 import org.aarquelle.probenplan_pa.ui.swt.pages.ScenesTab;
 import org.aarquelle.probenplan_pa.ui.swt.pages.TimesTab;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomGroups;
@@ -38,10 +39,12 @@ public class SwtGui {
     Shell shell;
     ScenesTab scenes;
     TimesTab times;
+    PlanTab plan;
 
     public SwtGui() {
         //new Load(Main.URL).load(DataState.getInstance());
         Display display = new Display();
+        ResourceHandler resourceHandler = new ResourceHandler(display);
         shell = new Shell(display);
         shell.setText("Probenplan");
         //shell.setSize(400, 300);
@@ -61,6 +64,8 @@ public class SwtGui {
         timesTabItem.setControl(times);
         scenes = new ScenesTab(tabFolder);
         scenesTabItem.setControl(scenes);
+        plan = new PlanTab(tabFolder);
+        planTabItem.setControl(plan);
 
         Composite persistenceRow = CustomGroups.createImportRow(shell, null,
                 List.of("Load", "Save"), List.of(false, false), List.of(
@@ -79,13 +84,17 @@ public class SwtGui {
                 display.sleep();
             }
         }
+        resourceHandler.dispose();
         display.dispose();
     }
 
     private void updateData() {
         scenes.updateData();
         times.updateData();
+        plan.updateData();
+
         shell.redraw();
+        shell.update();
         shell.pack();
 
     }

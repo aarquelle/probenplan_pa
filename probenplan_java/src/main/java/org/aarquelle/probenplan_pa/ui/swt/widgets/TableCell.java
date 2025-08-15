@@ -26,7 +26,16 @@ public class TableCell {
     private int state;
     private String[] tooltips;
     private final Entity a, b;
-    public TableCell(Entity a, Entity b, String[] tooltips, Color... colors) {
+
+    /**
+     * @param a One of the represented entities.
+     * @param b The other represented entity. Order does not matter.
+     * @param tooltips The tooltips according to state. Must be equals size to colors
+     * @param colors Usually the colors according to state. In a
+     * {@link org.aarquelle.probenplan_pa.ui.swt.pages.PlanTab}, however, TODO
+     */
+    public TableCell(Entity a, Entity b, String[] tooltips,
+                     Color... colors) {
         this.a = a;
         this.b = b;
         this.tooltips = tooltips;
