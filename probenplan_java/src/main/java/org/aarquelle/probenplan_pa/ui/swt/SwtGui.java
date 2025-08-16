@@ -25,6 +25,7 @@ import org.aarquelle.probenplan_pa.ui.swt.pages.ScenesTab;
 import org.aarquelle.probenplan_pa.ui.swt.pages.TimesTab;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomGroups;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -46,6 +47,8 @@ public class SwtGui {
         Display display = new Display();
         ResourceHandler resourceHandler = new ResourceHandler(display);
         shell = new Shell(display);
+        Image appIcon = new Image(display, "assets/tadu_icon.svg");
+        shell.setImage(appIcon);
         shell.setText("Probenplan");
         //shell.setSize(400, 300);
         shell.setLayout(new GridLayout());
@@ -84,6 +87,7 @@ public class SwtGui {
                 display.sleep();
             }
         }
+        appIcon.dispose();
         resourceHandler.dispose();
         display.dispose();
     }
