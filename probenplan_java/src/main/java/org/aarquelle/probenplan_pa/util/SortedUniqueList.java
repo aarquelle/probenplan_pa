@@ -90,4 +90,16 @@ public class SortedUniqueList<T extends Comparable<T>> implements Iterable<T> {
     public List<T> toList() {
         return List.copyOf(list);
     }
+
+    public boolean isEmpty() {
+        return list.isEmpty();
+    }
+
+    public T getFirst() {
+        return list.getFirst();
+    }
+
+    public T getLast() {
+        return list.getLast();
+    }
 }

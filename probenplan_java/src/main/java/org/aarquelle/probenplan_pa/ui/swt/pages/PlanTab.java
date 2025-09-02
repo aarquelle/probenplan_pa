@@ -21,10 +21,8 @@ import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.Mutator;
 import org.aarquelle.probenplan_pa.business.Params;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
-import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
-import org.aarquelle.probenplan_pa.ui.API;
-import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomGroups;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomElements;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.OptionTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -44,7 +42,7 @@ public class PlanTab extends Composite {
         setLayout(new GridLayout());
         Display d = Display.getCurrent();
 
-        Group importRow = CustomGroups.createImportRow(this, "",
+        Group importRow = CustomElements.createImportRow(this, "",
                 List.of("Run analysis", "Generate"),
                 List.of(false, false),
                 List.of(() -> {

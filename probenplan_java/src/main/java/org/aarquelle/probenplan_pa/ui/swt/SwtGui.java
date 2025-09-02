@@ -16,14 +16,11 @@
 
 package org.aarquelle.probenplan_pa.ui.swt;
 
-import org.aarquelle.probenplan_pa.Main;
 import org.aarquelle.probenplan_pa.business.BasicService;
-import org.aarquelle.probenplan_pa.entity.DataState;
-import org.aarquelle.probenplan_pa.persistence.Load;
 import org.aarquelle.probenplan_pa.ui.swt.pages.PlanTab;
 import org.aarquelle.probenplan_pa.ui.swt.pages.ScenesTab;
 import org.aarquelle.probenplan_pa.ui.swt.pages.TimesTab;
-import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomGroups;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomElements;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -78,7 +75,7 @@ public class SwtGui {
         plan = new PlanTab(tabFolder);
         planTabItem.setControl(plan);
 
-        Composite persistenceRow = CustomGroups.createImportRow(shell, null,
+        Composite persistenceRow = CustomElements.createImportRow(shell, null,
                 List.of("Load", "Save"), List.of(false, false), List.of(
                         () -> {
                             BasicService.loadFromFile();

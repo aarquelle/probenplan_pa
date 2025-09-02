@@ -16,19 +16,22 @@
 
 package org.aarquelle.probenplan_pa.ui.swt.widgets;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
+import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.Role;
+import org.aarquelle.probenplan_pa.entity.Scene;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CustomGroups {
+public class CustomElements {
     public static Group createImportRow(Composite parent, String title, List<String> buttonNames,
                                         List<Boolean> withText,
                                         List<Runnable> functions) {
@@ -69,5 +72,32 @@ public class CustomGroups {
             button.addListener(SWT.Selection, e -> r.run());
         }
         return g;
+    }
+
+    public static @NotNull AddEntityButton<Scene> createAddSceneButton(Composite parent, Runnable updateData) {
+        List<String> inputNames = List.of("Name:", "Length:", "Add after:");
+        List<InputType> inputTypes = List.of(InputType.STRING, InputType.DOUBLE, InputType.SCENE_SELECT);
+
+        return new AddEntityButton<>(parent, inputNames, inputTypes,
+                updateData, l -> {
+            Scene s = BasicService.createScene();
+            s.setName((String) (l.getFirst()));
+            s.setLength((Double) (l.get(1)));
+            s.setPosition(BasicService.getPosAfterScene((Scene) (l.get(2))));
+            BasicService.getScenes().sort();//TODO eleganter
+            return s;
+        });
+    }
+
+    public static @NotNull AddEntityButton<Role> createAddRoleButton(Composite parent, Runnable updateData) {
+        List<String> inputNames = List.of("Name", "Actor");
+        List<InputType> inputTypes = List.of(InputType.STRING, InputType.ACTOR_SELECT);
+        return new AddEntityButton<>(parent, inputNames, inputTypes, updateData, l -> {
+            Role r = BasicService.createRole();
+            r.setName((String)(l.getFirst()));
+            r.setActor((Actor) (l.get(1)));
+            BasicService.getRoles().sort();
+            return r;
+        });
     }
 }

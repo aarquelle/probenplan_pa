@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class DropdownMenu<I> {
+public class DropdownMenu<I> implements InputWidget{
     private List<I> items;
     private I selected;
     private String defaultValue;
@@ -76,14 +76,14 @@ public class DropdownMenu<I> {
         button.addListener(SWT.Selection, e -> menu.notifyListeners(SWT.Activate, null));*/
     }
 
-    public Optional<I> getSelected() {
-        //return Optional.ofNullable(selected);
+    @Override
+    public I getInput() {
         int index = combo.getSelectionIndex();
         assert index >= 0 && index <= items.size();
         if (index == 0) {
-            return Optional.empty();
+            return null;
         } else {
-            return Optional.of(items.get(index - 1));
+            return items.get(index - 1);
         }
     }
 }

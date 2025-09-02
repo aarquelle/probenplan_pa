@@ -118,4 +118,24 @@ public class BasicService {
         Save s = new Save(ds, Main.URL);
         s.saveFile();
     }
+
+    /**
+     * Returns a possible position that can be used to insert a scene directly after another scene.
+     * If the argument is {@code null}, the position is before the first position;
+     */
+    public static double getPosAfterScene(Scene s) {
+        if (getScenes().isEmpty()) {
+            return 1;
+        } else if (s != null) {
+            if (s.equals(getScenes().getLast())) {
+                return s.getPosition() + 1;
+            } else {
+                return (s.getPosition()
+                        + getScenes().get(getScenes().indexOf(s) + 1).getPosition())
+                        / 2;
+            }
+        } else {
+            return getScenes().getFirst().getPosition() - 1;
+        }
+    }
 }
