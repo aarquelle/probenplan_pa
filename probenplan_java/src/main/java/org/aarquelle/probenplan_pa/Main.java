@@ -38,7 +38,7 @@ public class Main {
         if (args.length > 0 && args[0].equals("--cli")) {
             new CommandLineUI().start();
         } else {
-            new SwtGui();
+            new SwtGui().start();
         }
     }
 

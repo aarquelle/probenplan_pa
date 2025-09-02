@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SortedUniqueList<T extends Comparable<T>> implements Iterable<T> {
-    private List<T> list = new ArrayList<>();
+    private final List<T> list = new ArrayList<>();
 
     public void clear() {
         list.clear();
@@ -85,5 +85,9 @@ public class SortedUniqueList<T extends Comparable<T>> implements Iterable<T> {
 
     public Set<T> toSet() {
         return new HashSet<>(list);
+    }
+
+    public List<T> toList() {
+        return List.copyOf(list);
     }
 }

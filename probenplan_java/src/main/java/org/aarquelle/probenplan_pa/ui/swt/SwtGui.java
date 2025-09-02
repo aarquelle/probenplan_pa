@@ -37,17 +37,25 @@ import org.eclipse.swt.widgets.TabItem;
 import java.util.List;
 
 public class SwtGui {
+    private final Display display;
     Shell shell;
     ScenesTab scenes;
     TimesTab times;
     PlanTab plan;
+    public static SwtGui INSTANCE;
+    Image appIcon;
+    ResourceHandler resourceHandler;
+
+
 
     public SwtGui() {
         //new Load(Main.URL).load(DataState.getInstance());
-        Display display = new Display();
-        ResourceHandler resourceHandler = new ResourceHandler(display);
+        display = new Display();
         shell = new Shell(display);
-        Image appIcon = new Image(display, "assets/tadu_icon.svg");
+
+        appIcon = new Image(display, "assets/tadu_icon.svg");
+        resourceHandler = new ResourceHandler(display);
+
         shell.setImage(appIcon);
         shell.setText("Probenplan");
         //shell.setSize(400, 300);
@@ -81,6 +89,10 @@ public class SwtGui {
                 ));
 
         shell.pack();
+        INSTANCE = this;
+    }
+
+    public void start() {
         shell.open();
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch()) {
@@ -101,5 +113,9 @@ public class SwtGui {
         shell.update();
         shell.pack();
 
+    }
+
+    public Shell getMainShell() {
+        return shell;
     }
 }
