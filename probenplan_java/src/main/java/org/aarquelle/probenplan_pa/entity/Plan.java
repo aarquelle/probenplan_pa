@@ -58,6 +58,13 @@ public class Plan {
         return length;
     }
 
+    public double lengthOfRehearsal(Rehearsal r) {
+        Set<Scene> scenes = get(r);
+        if (scenes != null) {
+            return scenes.stream().reduce(0.0, (a, b) -> a + b.length, Double::sum);
+        } else return 0;
+    }
+
     public Set<Rehearsal> getRehearsals() {
         return plan.keySet();
     }

@@ -1,0 +1,123 @@
+/*
+ * Copyright (c) 2025, Aaron Prott
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
+package org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables;
+
+import org.aarquelle.probenplan_pa.business.Analyzer;
+import org.aarquelle.probenplan_pa.business.BasicService;
+import org.aarquelle.probenplan_pa.entity.Plan;
+import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Scene;
+import org.aarquelle.probenplan_pa.ui.swt.ResourceHandler;
+import org.aarquelle.probenplan_pa.util.SortedUniqueList;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.widgets.Composite;
+
+import java.util.List;
+
+public class PlanTable extends OptionTable<Rehearsal, Scene> {
+
+    public PlanTable(Composite parent, SortedUniqueList<Scene> syncedColEntities, SortedUniqueList<Rehearsal> syncedRowEntities, List<String> tooltips, Color... colors) {
+        super(parent, syncedColEntities, syncedRowEntities, tooltips, 1, 2, colors);
+    }
+
+    @Override
+    protected void drawMargin(TableCell<Scene, Rehearsal> cell, GC gc) {
+        if (cell.row == 0) {
+            if (cell.col > 1) {
+                drawString(cell.colEntity.displayName(), cell, gc);
+            }
+        } else if (cell.col == 0) {
+            drawString(cell.rowEntity.displayName(), cell, gc);
+        } else if (cell.col == 1) {
+            drawString(String.valueOf(BasicService.getPlan().lengthOfRehearsal(cell.rowEntity)), cell, gc);
+        } else {
+            throw new IllegalArgumentException("This is not in the margins: col: " + cell.col + ", row: " + cell.row);
+        }
+    }
+
+    @Override
+    protected void drawContent(TableCell<Scene, Rehearsal> cell, GC gc) {
+        Color fillColor = ResourceHandler.getColor(colors[0], colors[1], colors[2],
+                2 * Analyzer.completenessScore(cell.rowEntity, cell.colEntity) - 1);
+        fillBackground(cell.col, cell.row, fillColor, gc);
+        if (cell.getState() == 1) {
+            markCell(cell.col, cell.row, gc);
+        }
+    }
+
+    @Override
+    protected String additionalCommonTooltip(Scene colEntity, Rehearsal rowEntity) {
+        return String.format("Value: %.2f\n", Analyzer.completenessScore(rowEntity, colEntity));
+    }
+
+    @Override
+    protected void setInitialState(TableCell<Scene, Rehearsal> cell) {
+        Plan plan = BasicService.getPlan();
+        if (plan == null) {
+            cell.setState(0);
+        } else {
+            cell.setState(plan.hasScene(cell.rowEntity, cell.colEntity) ? 1 : 0);
+        }
+    }
+
+    @Override
+    protected TableCell<Scene, Rehearsal> createContentCell(int col, int row) {
+        Scene s = getColEntity(col);
+        Rehearsal r = getRowEntity(row);
+        return new TableCell<>(s, r, col, row, 2, getTooltips(s, r),
+                (scene, rehearsal, state) -> {
+                    Plan plan = BasicService.getPlan();
+                    if (plan == null) {
+                        return;
+                    }
+                    if (state == 1) {
+                        plan.put(rehearsal, scene);
+                    } else if (state == 0) {
+                        plan.remove(rehearsal, scene);
+                    } else {
+                        throw new IllegalArgumentException("Undefined value " + state + " for relation between "
+                                + scene + " and " + rehearsal);
+                    }
+                },
+                colors);
+    }
+
+    @Override
+    protected TableCell<Scene, Rehearsal> createMarginCell(int col, int row) {
+        if (col == 0) {
+            if (row == 0) {
+                return new TableCell<>(col, row);
+            } else {
+                return new TableCell<>(null, getRowEntity(row), col, row, 1, null,
+                        (a, b, c) -> {
+                            System.out.println("Lock Rehearsal");
+                        });
+            }
+        } else if (col == 1) {
+            if (row == 0) {
+                return new TableCell<>(col, row);
+            } else {
+                return new TableCell<>(null, getRowEntity(row), col, row, 1, null);
+            }
+        } else if (row == 0) {
+            return new TableCell<>(getColEntity(col), null, col, row, 1, null);
+        } else {
+            throw new IllegalArgumentException("This is not in the margins: col: " + col + ", row: " + row);
+        }
+    }
+}

@@ -23,7 +23,8 @@ import org.aarquelle.probenplan_pa.business.Params;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomElements;
-import org.aarquelle.probenplan_pa.ui.swt.widgets.OptionTable;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.OptionTable;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.PlanTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -49,10 +50,9 @@ public class PlanTab extends Composite {
                     Analyzer.runAnalysis();
                     updateData();
                 }, this::generate));
-        optionTable = new OptionTable<>(this,
+        optionTable = new PlanTable(this,
                 BasicService.getScenes(),
                 BasicService.getRehearsals(),
-                true,
                 List.of("Nicht geplant.", "Geplant"),
                 d.getSystemColor(SWT.COLOR_RED),
                 d.getSystemColor(SWT.COLOR_YELLOW),

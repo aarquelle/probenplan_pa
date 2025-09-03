@@ -21,7 +21,9 @@ import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.AddEntityButton;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomElements;
-import org.aarquelle.probenplan_pa.ui.swt.widgets.OptionTable;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.InputTable;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.OptionTable;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.ScenesTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -29,7 +31,6 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -59,14 +60,7 @@ public class ScenesTab extends Composite {
         AddEntityButton<Role> addRoleButton = CustomElements.createAddRoleButton(modColumn, this::updateData);
         addRoleButton.setText("Add a new role");
 
-        //Button addRoleButton
-
-        optionTable = new OptionTable<>(this,
-                BasicService.getRoles(),
-                BasicService.getScenes(),
-                false,
-                List.of("Kommt nicht vor.", "Kleine Rolle", "Große Rolle"),
-                null, d.getSystemColor(SWT.COLOR_YELLOW), d.getSystemColor(SWT.COLOR_GREEN));
+        optionTable = new ScenesTable(this);
 
 
     }

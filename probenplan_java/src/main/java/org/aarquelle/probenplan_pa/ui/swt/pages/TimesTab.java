@@ -20,7 +20,9 @@ import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.entity.Actor;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomElements;
-import org.aarquelle.probenplan_pa.ui.swt.widgets.OptionTable;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.InputTable;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.OptionTable;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.TimesTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -41,14 +43,7 @@ public class TimesTab extends Composite {
                 List.of("From Clipboard", "From URL", "From File"),
                 List.of(false, true, false),
                 List.of(() -> System.out.println("Clippy"), () -> System.out.println("NOT IMPLEMENTED"), () -> System.out.println("NOT IMPLEMENTED")));
-        optionTable = new OptionTable<>(this,
-                BasicService.getActors(),
-                BasicService.getRehearsals(),
-                false,
-                List.of("Hat Zeit", "Hat vielleicht Zeit", "Hat keine Zeit"),
-                d.getSystemColor(SWT.COLOR_GREEN),
-                d.getSystemColor(SWT.COLOR_YELLOW),
-                d.getSystemColor(SWT.COLOR_RED));
+        optionTable = new TimesTable(this);
         addListener(SWT.Resize, e -> optionTable.pack());
     }
 
