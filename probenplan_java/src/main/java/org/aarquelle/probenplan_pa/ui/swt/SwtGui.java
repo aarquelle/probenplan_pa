@@ -17,6 +17,7 @@
 package org.aarquelle.probenplan_pa.ui.swt;
 
 import org.aarquelle.probenplan_pa.business.BasicService;
+import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.ui.swt.pages.PlanTab;
 import org.aarquelle.probenplan_pa.ui.swt.pages.ScenesTab;
 import org.aarquelle.probenplan_pa.ui.swt.pages.TimesTab;
@@ -27,6 +28,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -92,8 +94,14 @@ public class SwtGui {
     public void start() {
         shell.open();
         while (!shell.isDisposed()) {
-            if (!display.readAndDispatch()) {
-                display.sleep();
+            try {
+                if (!display.readAndDispatch()) {
+                    display.sleep();
+                }
+            } catch (BusinessException e) {
+                MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR);
+                errorBox.setMessage(e.getMessage());
+                errorBox.open();
             }
         }
         appIcon.dispose();

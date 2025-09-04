@@ -17,6 +17,7 @@
 package org.aarquelle.probenplan_pa.ui.swt.widgets;
 
 import org.aarquelle.probenplan_pa.business.BasicService;
+import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.entity.Actor;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Role;
@@ -125,9 +126,17 @@ public class AddEntityButton<E> {
                     InputType type = inputTypes.get(i);
                     Object input = inputWidgets.get(i).getInput();
                     if (type == InputType.INT) {
-                        input = Integer.parseInt((String)input);
+                        try {
+                            input = Integer.parseInt((String) input);
+                        } catch (NumberFormatException e) {
+                            throw new BusinessException(inputNames.get(i) + " needs to be a whole number!", e);
+                        }
                     } else if (type == InputType.DOUBLE) {
-                        input = Double.parseDouble((String) input);
+                        try {
+                            input = Double.parseDouble((String) input);
+                        } catch (NumberFormatException e) {
+                            throw new BusinessException(inputNames.get(i) + " needs to be a number!", e);
+                        }
                     }
                     inputs.add(input);
                 }
