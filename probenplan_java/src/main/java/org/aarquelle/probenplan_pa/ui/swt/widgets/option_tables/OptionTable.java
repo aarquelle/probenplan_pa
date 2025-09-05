@@ -16,6 +16,7 @@
 
 package org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.entity.Entity;
 import org.aarquelle.probenplan_pa.util.SortedUniqueList;
 import org.eclipse.swt.SWT;
@@ -39,6 +40,8 @@ import java.util.Optional;
 
 public abstract class OptionTable<ROW extends Entity & Comparable<ROW>, COL extends Entity & Comparable<COL>>
         extends ScrolledComposite {
+
+    private long staleness;
 
     int columnWidth = 100;
     int rowHeight = 30;
@@ -88,6 +91,8 @@ public abstract class OptionTable<ROW extends Entity & Comparable<ROW>, COL exte
         canvas = new Canvas(this, SWT.NONE);
 
         canvas.addPaintListener(e -> {
+            updateData();
+
             GC gc = e.gc;
 
             for (int i = 0; i < rowEntities.size() + numberOfMarginRows; i++) {
@@ -112,6 +117,7 @@ public abstract class OptionTable<ROW extends Entity & Comparable<ROW>, COL exte
         canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(MouseEvent e) {
+                updateData();
                 super.mouseDown(e);
                 getCell(e).ifPresent(f -> {
                     f.click();
@@ -120,7 +126,10 @@ public abstract class OptionTable<ROW extends Entity & Comparable<ROW>, COL exte
             }
         });
 
-        canvas.addMouseMoveListener(e -> getCell(e).ifPresent(f -> canvas.setToolTipText(f.getTooltip())));
+        canvas.addMouseMoveListener(e -> {
+            updateData();
+            getCell(e).ifPresent(f -> canvas.setToolTipText(f.getTooltip()));
+        });
 
         setContent(canvas);
         setMinSize(virtualSize);
@@ -250,28 +259,43 @@ public abstract class OptionTable<ROW extends Entity & Comparable<ROW>, COL exte
     }
 
     public void updateData() {
-        tableCells.clear();
+        if (BasicService.getFreshness() != staleness) {
+            tableCells.clear();
 
-        rowEntities = syncedRowEntities.stream().toList();
-        colEntities = syncedColEntities.stream().toList();
+            rowEntities = syncedRowEntities.stream().toList();
+            colEntities = syncedColEntities.stream().toList();
 
-        for (int i = 0; i < rowEntities.size() + numberOfMarginRows; i++) {
-            List<TableCell<COL, ROW>> row = new ArrayList<>(colEntities.size());
-            tableCells.add(row);
-            for (int j = 0; j < colEntities.size() + numberOfMarginCols; j++) {
-                if (j >= numberOfMarginCols && i >= numberOfMarginRows) {
-                    row.add(createContentCell(j, i));
-                    setInitialState(getCell(j, i));
-                } else {
-                    row.add(createMarginCell(j, i));
+            for (int i = 0; i < rowEntities.size() + numberOfMarginRows; i++) {
+                List<TableCell<COL, ROW>> row = new ArrayList<>(colEntities.size());
+                tableCells.add(row);
+                for (int j = 0; j < colEntities.size() + numberOfMarginCols; j++) {
+                    if (j >= numberOfMarginCols && i >= numberOfMarginRows) {
+                        row.add(createContentCell(j, i));
+                        setInitialState(getCell(j, i));
+                    } else {
+                        row.add(createMarginCell(j, i));
+                    }
                 }
             }
+            virtualSize = new Point(columnWidth * (syncedColEntities.size() + 1), rowHeight * (syncedRowEntities.size() + 1));
+            setMinSize(virtualSize);
+            /*if (canvas != null) {
+                canvas.redraw();
+                canvas.update();
+            }*/
+            staleness = BasicService.getFreshness();
         }
-        virtualSize = new Point(columnWidth * (syncedColEntities.size() + 1), rowHeight * (syncedRowEntities.size() + 1));
-        setMinSize(virtualSize);
-        if (canvas != null) {
-            canvas.redraw();
-            canvas.update();
-        }
+    }
+
+    @Override
+    public void redraw() {
+        super.redraw();
+        canvas.redraw();
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        canvas.update();
     }
 }

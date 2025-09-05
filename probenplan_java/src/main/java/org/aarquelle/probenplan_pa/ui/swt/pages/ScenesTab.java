@@ -42,7 +42,6 @@ public class ScenesTab extends Composite {
         super(parent, SWT.NONE);
 
         setLayout(new GridLayout(2, false));
-        Display d = Display.getCurrent();
 
         Group importRow = CustomElements.createImportRow(this, "Import scenes",
                 List.of("From Clipboard", "From File"),
@@ -54,10 +53,10 @@ public class ScenesTab extends Composite {
         modColumn.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, true));
         modColumn.setLayout(new RowLayout(SWT.VERTICAL));
 
-        AddEntityButton<Scene> addSceneButton = CustomElements.createAddSceneButton(modColumn, this::updateData);
+        AddEntityButton<Scene> addSceneButton = CustomElements.createAddSceneButton(modColumn);
         addSceneButton.setText("Add a new scene");
 
-        AddEntityButton<Role> addRoleButton = CustomElements.createAddRoleButton(modColumn, this::updateData);
+        AddEntityButton<Role> addRoleButton = CustomElements.createAddRoleButton(modColumn);
         addRoleButton.setText("Add a new role");
 
         optionTable = new ScenesTable(this);
@@ -65,7 +64,9 @@ public class ScenesTab extends Composite {
 
     }
 
-    public void updateData() {
-        optionTable.updateData();
+    @Override
+    public void redraw() {
+        super.redraw();
+        optionTable.redraw();
     }
 }

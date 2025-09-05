@@ -23,16 +23,26 @@ import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.ui.swt.ResourceHandler;
 import org.aarquelle.probenplan_pa.util.SortedUniqueList;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 import java.util.List;
 
 public class PlanTable extends OptionTable<Rehearsal, Scene> {
 
-    public PlanTable(Composite parent, SortedUniqueList<Scene> syncedColEntities, SortedUniqueList<Rehearsal> syncedRowEntities, List<String> tooltips, Color... colors) {
-        super(parent, syncedColEntities, syncedRowEntities, tooltips, 1, 2, colors);
+    public PlanTable(Composite parent) {
+        super(parent,
+                BasicService.getScenes(),
+                BasicService.getRehearsals(),
+                List.of("Nicht geplant.", "Geplant"),
+                1,
+                2,
+                Display.getCurrent().getSystemColor(SWT.COLOR_RED),
+                Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW),
+                Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
     }
 
     @Override
@@ -119,5 +129,11 @@ public class PlanTable extends OptionTable<Rehearsal, Scene> {
         } else {
             throw new IllegalArgumentException("This is not in the margins: col: " + col + ", row: " + row);
         }
+    }
+
+    @Override
+    public void updateData() {
+        Analyzer.runAnalysis();
+        super.updateData();
     }
 }

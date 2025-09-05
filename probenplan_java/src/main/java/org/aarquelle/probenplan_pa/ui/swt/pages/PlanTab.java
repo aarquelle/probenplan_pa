@@ -50,19 +50,11 @@ public class PlanTab extends Composite {
                     Analyzer.runAnalysis();
                     updateData();
                 }, this::generate));
-        optionTable = new PlanTable(this,
-                BasicService.getScenes(),
-                BasicService.getRehearsals(),
-                List.of("Nicht geplant.", "Geplant"),
-                d.getSystemColor(SWT.COLOR_RED),
-                d.getSystemColor(SWT.COLOR_YELLOW),
-                d.getSystemColor(SWT.COLOR_GREEN));
+        optionTable = new PlanTable(this);
     }
 
     public void updateData() {
         optionTable.updateData();
-        redraw();
-        update();
     }
 
     private void generate() {
@@ -70,5 +62,11 @@ public class PlanTab extends Composite {
         mutator.mutate(Params.getDeadline());
         BasicService.setPlan(mutator.getPlan());
         updateData();
+    }
+
+    @Override
+    public void redraw() {
+        super.redraw();
+        optionTable.redraw();
     }
 }

@@ -16,14 +16,13 @@
 
 package org.aarquelle.probenplan_pa.entity;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.util.SortedUniqueList;
-
-import java.util.Collections;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class DataState {
     private static final DataState INSTANCE = new DataState();
+
+    private long freshness = Long.MIN_VALUE;
 
     private final SortedUniqueList<Actor> actors = new SortedUniqueList<>();
     private final SortedUniqueList<Rehearsal> rehearsals = new SortedUniqueList<>();
@@ -52,28 +51,33 @@ public class DataState {
     public Actor createActor() {
         Actor actor = new Actor();
         actors.add(actor);
+        BasicService.stale();
         return actor;
     }
 
     public Rehearsal createRehearsal() {
         Rehearsal rehearsal = new Rehearsal();
         rehearsals.add(rehearsal);
+        BasicService.stale();
         return rehearsal;
     }
 
     public Role createRole() {
         Role role = new Role();
         roles.add(role);
+        BasicService.stale();
         return role;
     }
 
     public Scene createScene() {
         Scene scene = new Scene();
         scenes.add(scene);
+        BasicService.stale();
         return scene;
     }
 
     public void setPlan(Plan plan) {
+        BasicService.stale();
         this.plan = plan;
     }
 
@@ -98,6 +102,7 @@ public class DataState {
     }
 
     public void enforceScene(Scene s) {
+        BasicService.stale();
         enforcedScenes.add(s);
     }
 
@@ -110,6 +115,15 @@ public class DataState {
         roles.sort();
         rehearsals.sort();
         scenes.sort();
+        BasicService.stale();
+    }
+
+    public void stale() {
+        freshness++;
+    }
+
+    public long getFreshness() {
+        return freshness;
     }
 
 }

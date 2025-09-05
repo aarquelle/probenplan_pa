@@ -23,6 +23,7 @@ import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.ui.swt.SwtGui;
+import org.aarquelle.probenplan_pa.util.DateUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,21 +31,18 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 public class AddEntityButton<E> {
     Button mainButton;
 
-    public AddEntityButton(Composite parent, List<String> inputNames, List<InputType> inputTypes, Runnable update,
+    public AddEntityButton(Composite parent, List<String> inputNames, List<InputType> inputTypes,
                            Function<List<Object>, E> constructFunction) {
-        assert(inputTypes.size() == inputNames.size());
+        assert (inputTypes.size() == inputNames.size());
 
         mainButton = new Button(parent, SWT.PUSH);
         mainButton.addListener(SWT.Selection, ev -> {
@@ -61,15 +59,11 @@ public class AddEntityButton<E> {
 
                 InputWidget input;
                 switch (inputTypes.get(i)) {
-                    case INT, STRING, DOUBLE -> {
+                    case INT, STRING, DOUBLE, DATE -> {
                         input = new InputText(modal, SWT.SINGLE);
                     }
                     case BOOL -> {
                         //TODO checkbox oder so
-                        input = null;
-                    }
-                    case DATE -> {
-                        //TODO Date selector
                         input = null;
                     }
                     case SCENE_SELECT -> {
@@ -92,21 +86,6 @@ public class AddEntityButton<E> {
                 }
                 inputWidgets.add(input);
             }
-
-
-            /*Label nameLabel = new Label(modal, 0);
-            nameLabel.setText("Name:");
-            Text nameText = new Text(modal, SWT.SINGLE);
-            Label lengthLabel = new Label(modal, 0);
-            lengthLabel.setText("Scene length:");
-            Text lengthText = new Text(modal, SWT.SINGLE);
-
-            List<Scene> scenes = BasicService.getScenes().toList();
-
-            Label predLabel = new Label(modal, 0);
-            predLabel.setText("Predecessor scene:");
-            DropdownMenu<Scene> pred = new DropdownMenu<>(modal,
-                    scenes, "As first scene", Scene::displayName);*/
 
             Composite bottomRow = new Composite(modal, 0);
             bottomRow.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
@@ -137,49 +116,15 @@ public class AddEntityButton<E> {
                         } catch (NumberFormatException e) {
                             throw new BusinessException(inputNames.get(i) + " needs to be a number!", e);
                         }
+                    } else if (type == InputType.DATE) {
+                        input = DateUtils.getLocalDate((String) input);
                     }
                     inputs.add(input);
                 }
                 constructFunction.apply(inputs);
-                update.run();
                 modal.setVisible(false);
                 modal.dispose();
-
-
-                /*try {
-                    String name = nameText.getText();
-                    double length = Double.parseDouble(lengthText.getText());
-                    double position;
-                    Optional<Scene> predScene = pred.getSelected();
-                    if (scenes.isEmpty()) {
-                        position = 1;
-                    } else if (predScene.isPresent()) {
-                        if (predScene.get().equals(scenes.getLast())) {
-                            position = predScene.get().getPosition() + 1;
-                        } else {
-                            position = (predScene.get().getPosition()
-                                    + scenes.get(scenes.indexOf(predScene.get()) + 1).getPosition())
-                                    / 2;
-                        }
-                    } else {
-                        position = scenes.getFirst().getPosition() - 1;
-                    }
-
-                    Scene toCreate = BasicService.createScene();
-                    toCreate.setName(name);
-                    toCreate.setLength(length);
-                    toCreate.setPosition(position);
-                    BasicService.getScenes().sort(); //TODO Eleganter lösen
-
-
-                    update.run();
-                    modal.setVisible(false);
-                    modal.dispose();
-                } catch (NumberFormatException ex) {
-                    MessageBox errorBox = new MessageBox(modal, SWT.ICON_ERROR);
-                    errorBox.setMessage("Length has to be a number.");
-                    errorBox.open();
-                }*/
+                SwtGui.INSTANCE.repaintSelectedPage();
             });
             ok.setText("Confirm");
 
@@ -187,7 +132,6 @@ public class AddEntityButton<E> {
             modal.open();
 
         });
-        //mainButton.setText("New scene");
     }
 
     public void setText(String s) {

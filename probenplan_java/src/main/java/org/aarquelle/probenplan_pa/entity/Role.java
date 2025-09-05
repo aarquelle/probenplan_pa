@@ -16,6 +16,7 @@
 
 package org.aarquelle.probenplan_pa.entity;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -41,21 +42,25 @@ public class Role implements Comparable<Role>, Entity {
     }
 
     public void addBigScene(Scene scene) {
+        BasicService.stale();
         bigScenes.add(scene);
         scene.addBigRole(this);
     }
 
     public void removeBigScene(Scene scene) {
+        BasicService.stale();
         bigScenes.remove(scene);
         scene.removeBigRole(this);
     }
 
     public void addSmallScene(Scene scene) {
+        BasicService.stale();
         smallScenes.add(scene);
         scene.addSmallRole(this);
     }
 
     public void removeSmallScene(Scene scene) {
+        BasicService.stale();
         smallScenes.remove(scene);
         scene.removeSmallRole(this);
     }
@@ -65,6 +70,7 @@ public class Role implements Comparable<Role>, Entity {
     }
 
     public void setName(String name) {
+        BasicService.stale();
         this.name = name;
     }
 
@@ -73,6 +79,7 @@ public class Role implements Comparable<Role>, Entity {
     }
 
     public void setActor(Actor actor) {
+        BasicService.stale();
         actor.roles.add(this);
         this.actor = actor;
     }

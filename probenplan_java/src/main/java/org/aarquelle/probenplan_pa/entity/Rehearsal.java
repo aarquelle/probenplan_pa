@@ -16,6 +16,7 @@
 
 package org.aarquelle.probenplan_pa.entity;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.util.DateUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,31 +35,37 @@ public class Rehearsal implements Comparable<Rehearsal>, Entity {
     Rehearsal(){}
 
     public void addLockedScene(Scene scene) {
+        BasicService.stale();
         lockedScenes.add(scene);
         scene.lockedRehearsals.add(this);
     }
 
     public void removeLockedScene(Scene scene) {
+        BasicService.stale();
         lockedScenes.remove(scene);
         scene.lockedRehearsals.remove(this);
     }
 
     public void addMissingActor(Actor actor) {
+        BasicService.stale();
         missingActors.add(actor);
         actor.missingRehearsals.add(this);
     }
 
     public void removeMissingActor(Actor actor) {
+        BasicService.stale();
         missingActors.remove(actor);
         actor.missingRehearsals.remove(this);
     }
 
     public void addMaybeActor(Actor actor) {
+        BasicService.stale();
         maybeActors.add(actor);
         actor.maybeRehearsals.add(this);
     }
 
     public void removeMaybeActor(Actor actor) {
+        BasicService.stale();
         maybeActors.remove(actor);
         actor.maybeRehearsals.remove(this);
     }
@@ -67,10 +74,12 @@ public class Rehearsal implements Comparable<Rehearsal>, Entity {
         return fullLocked;
     }
     public void setFullLocked(boolean fullLocked) {
+        BasicService.stale();
         this.fullLocked = fullLocked;
     }
 
     public void setDate(LocalDate date) {
+        BasicService.stale();
         this.date = date;
     }
 

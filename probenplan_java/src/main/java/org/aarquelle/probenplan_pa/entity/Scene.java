@@ -16,6 +16,7 @@
 
 package org.aarquelle.probenplan_pa.entity;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -43,31 +44,37 @@ public class Scene implements Comparable<Scene>, Entity {
     }
 
     public void addBigRole(Role role) {
+        BasicService.stale();
         bigRoles.add(role);
         role.bigScenes.add(this);
     }
 
     public void removeBigRole(Role role) {
+        BasicService.stale();
         bigRoles.remove(role);
         role.bigScenes.remove(this);
     }
 
     public void addSmallRole(Role role) {
+        BasicService.stale();
         smallRoles.add(role);
         role.smallScenes.add(this);
     }
 
     public void removeSmallRole(Role role) {
+        BasicService.stale();
         smallRoles.remove(role);
         role.smallScenes.remove(this);
     }
 
     public void addLockedRehearsal(Rehearsal rehearsal) {
+        BasicService.stale();
         lockedRehearsals.add(rehearsal);
         rehearsal.lockedScenes.add(this);
     }
 
     public void removeLockedRehearsal(Rehearsal rehearsal) {
+        BasicService.stale();
         lockedRehearsals.remove(rehearsal);
         rehearsal.lockedScenes.remove(this);
     }
@@ -89,6 +96,7 @@ public class Scene implements Comparable<Scene>, Entity {
     }
 
     public void setName(String name) {
+        BasicService.stale();
         this.name = name;
     }
 
@@ -97,6 +105,7 @@ public class Scene implements Comparable<Scene>, Entity {
     }
 
     public void setLength(double length) {
+        BasicService.stale();
         this.length = length;
     }
 
@@ -105,6 +114,7 @@ public class Scene implements Comparable<Scene>, Entity {
     }
 
     public void setPosition(double position) {
+        BasicService.stale();
         this.position = position;
     }
 

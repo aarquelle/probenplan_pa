@@ -16,17 +16,17 @@
 
 package org.aarquelle.probenplan_pa.ui.swt.pages;
 
-import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.entity.Actor;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.AddEntityButton;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomElements;
-import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.InputTable;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.OptionTable;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.TimesTable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 
 import java.util.List;
@@ -37,17 +37,32 @@ public class TimesTab extends Composite {
 
     public TimesTab(Composite parent) {
         super(parent, SWT.NONE);
-        setLayout(new GridLayout());
-        Display d = Display.getCurrent();
+        setLayout(new GridLayout(2, false));
+
         Group timesImportGroup = CustomElements.createImportRow(this, "Import times",
                 List.of("From Clipboard", "From URL", "From File"),
                 List.of(false, true, false),
                 List.of(() -> System.out.println("Clippy"), () -> System.out.println("NOT IMPLEMENTED"), () -> System.out.println("NOT IMPLEMENTED")));
+        ((GridData)timesImportGroup.getLayoutData()).horizontalSpan = 2;
+
+        Group modColumn = new Group(this, 0);
+        modColumn.setText("Modify table");
+        modColumn.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, true));
+        modColumn.setLayout(new RowLayout(SWT.VERTICAL));
+
+        AddEntityButton<Rehearsal> addRehearsalButton = CustomElements.createAddRehearsalButton(modColumn);
+        addRehearsalButton.setText("Add rehearsal");
+
+        AddEntityButton<Actor> addActorButton = CustomElements.createAddActorButton(modColumn);
+        addActorButton.setText("Add actor");
+
         optionTable = new TimesTable(this);
         addListener(SWT.Resize, e -> optionTable.pack());
     }
 
-    public void updateData() {
-        optionTable.updateData();
+    @Override
+    public void redraw() {
+        super.redraw();
+        optionTable.redraw();
     }
 }

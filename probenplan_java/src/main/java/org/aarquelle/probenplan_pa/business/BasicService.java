@@ -30,6 +30,7 @@ import org.aarquelle.probenplan_pa.util.SortedUniqueList;
 import java.time.LocalDate;
 
 public class BasicService {
+
     static DataState ds = DataState.getInstance();
 
     public static SortedUniqueList<Rehearsal> getRehearsals() {
@@ -137,5 +138,13 @@ public class BasicService {
         } else {
             return getScenes().getFirst().getPosition() - 1;
         }
+    }
+
+    public static long getFreshness() {
+        return ds.getFreshness();
+    }
+
+    public static void stale() {
+        ds.stale();
     }
 }

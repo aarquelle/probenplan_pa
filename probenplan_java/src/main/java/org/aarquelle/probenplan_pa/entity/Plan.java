@@ -16,6 +16,7 @@
 
 package org.aarquelle.probenplan_pa.entity;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.TestResults;
 import org.aarquelle.probenplan_pa.util.Pair;
 
@@ -26,6 +27,7 @@ public class Plan {
     private TestResults testResults;
 
     public void put(Rehearsal r, Scene s) {
+        BasicService.stale();
         if (!plan.containsKey(r)) {
             plan.put(r, new HashSet<>(List.of(s)));
         } else {
@@ -34,6 +36,7 @@ public class Plan {
     }
 
     public void remove(Rehearsal r, Scene s) {
+        BasicService.stale();
         if (plan.containsKey(r)) {
             plan.get(r).remove(s);
             if (plan.get(r).isEmpty()) {

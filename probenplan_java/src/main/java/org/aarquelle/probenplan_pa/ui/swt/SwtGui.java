@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -44,7 +45,7 @@ public class SwtGui {
     public static SwtGui INSTANCE;
     Image appIcon;
     ResourceHandler resourceHandler;
-
+    TabFolder tabFolder;
 
 
     public SwtGui() {
@@ -60,7 +61,7 @@ public class SwtGui {
         //shell.setSize(400, 300);
         shell.setLayout(new GridLayout());
 
-        TabFolder tabFolder = new TabFolder(shell, SWT.TOP);
+        tabFolder = new TabFolder(shell, SWT.TOP);
         GridData tabFolderData = new GridData(SWT.FILL, SWT.FILL, true, true);
         tabFolder.setLayoutData(tabFolderData);
         TabItem timesTabItem = new TabItem(tabFolder, SWT.NONE);
@@ -81,7 +82,7 @@ public class SwtGui {
                 List.of("Load", "Save"), List.of(false, false), List.of(
                         () -> {
                             BasicService.loadFromFile();
-                            updateData();
+                            repaintSelectedPage();
                         },
 
                         BasicService::saveToFile
@@ -92,6 +93,7 @@ public class SwtGui {
     }
 
     public void start() {
+        shell.setMaximized(true);
         shell.open();
         while (!shell.isDisposed()) {
             try {
@@ -109,15 +111,14 @@ public class SwtGui {
         display.dispose();
     }
 
-    private void updateData() {
-        scenes.updateData();
-        times.updateData();
-        plan.updateData();
-
-        shell.redraw();
-        shell.update();
-        shell.pack();
-
+    public void repaintSelectedPage() {
+        int selectionIndex = tabFolder.getSelectionIndex();
+        if (selectionIndex >= 0) {
+            TabItem selectedItem = tabFolder.getItem(selectionIndex);
+            Control selectedControl = selectedItem.getControl();
+            selectedControl.redraw();
+            selectedControl.update();
+        }
     }
 
     public Shell getMainShell() {

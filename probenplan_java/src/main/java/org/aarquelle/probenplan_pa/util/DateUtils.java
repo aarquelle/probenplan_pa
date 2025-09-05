@@ -36,25 +36,6 @@ public class DateUtils {
         }
     }
 
-    public static Date getDate(String s) throws BusinessException {
-        if (s == null || s.isEmpty()) {
-            return null;
-        }
-        try {
-            return new Date(format.parse(s).getTime());
-        } catch (ParseException e) {
-            throw new BusinessException("Invalid date format: " + s + ". Expected format: dd.MM.yyyy."
-            + System.lineSeparator() + e.getMessage());
-        }
-    }
-
-    public static String getString(Date date) {
-        if (date == null) {
-            return "";
-        }
-        return format.format(date);
-    }
-
     public static String getString(LocalDate date) {
         if (date == null) {
             return "";

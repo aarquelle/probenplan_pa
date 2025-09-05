@@ -16,6 +16,7 @@
 
 package org.aarquelle.probenplan_pa.entity;
 
+import org.aarquelle.probenplan_pa.business.BasicService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -30,26 +31,31 @@ public class Actor implements Comparable<Actor>, Entity {
     Actor(){}
 
     public void addRole(Role role) {
+        BasicService.stale();
         roles.add(role);
         role.actor = this;
     }
 
     public void addMissingRehearsal(Rehearsal rehearsal) {
+        BasicService.stale();
         missingRehearsals.add(rehearsal);
         rehearsal.missingActors.add(this);
     }
 
     public void removeMissingRehearsal(Rehearsal rehearsal) {
+        BasicService.stale();
         missingRehearsals.remove(rehearsal);
         rehearsal.missingActors.remove(this);
     }
 
     public void addMaybeRehearsal(Rehearsal rehearsal) {
+        BasicService.stale();
         maybeRehearsals.add(rehearsal);
         rehearsal.maybeActors.add(this);
     }
 
     public void removeMaybeRehearsal(Rehearsal rehearsal) {
+        BasicService.stale();
         maybeRehearsals.remove(rehearsal);
         rehearsal.maybeActors.remove(this);
     }
@@ -59,6 +65,7 @@ public class Actor implements Comparable<Actor>, Entity {
     }
 
     public void setName(String name) {
+        BasicService.stale();
         this.name = name;
     }
 
