@@ -21,7 +21,8 @@ import org.aarquelle.probenplan_pa.entity.Actor;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
-import org.aarquelle.probenplan_pa.ui.swt.SwtGui;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.input.Input;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.input.InputModal;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -33,6 +34,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static org.aarquelle.probenplan_pa.ui.swt.widgets.input.InputType.*;
 
 public class CustomElements {
     public static Group createImportRow(Composite parent, String title, List<String> buttonNames,
@@ -77,51 +80,117 @@ public class CustomElements {
         return g;
     }
 
-    public static @NotNull AddEntityButton<Scene> createAddSceneButton(Composite parent) {
-        List<String> inputNames = List.of("Name:", "Length:", "Add after:");
-        List<InputType> inputTypes = List.of(InputType.STRING, InputType.DOUBLE, InputType.SCENE_SELECT);
+    public static @NotNull Button createAddSceneButton(Composite parent) {
+        List<Input<?>> inputs = List.of(new Input<>("Name", STRING), new Input<>("Length", DOUBLE),
+                new Input<>("Add after", SCENE_SELECT));
 
-        return new AddEntityButton<>(parent, inputNames, inputTypes, l -> {
-            Scene s = BasicService.createScene();
-            s.setName((String) (l.getFirst()));
-            s.setLength((Double) (l.get(1)));
-            s.setPosition(BasicService.getPosAfterScene((Scene) (l.get(2))));
-            BasicService.getScenes().sort();//TODO eleganter
-            return s;
-        });
+        Button b = new Button(parent, SWT.PUSH);
+        b.setText("Add a new scene");
+        b.addListener(SWT.Selection, e -> new InputModal("Add new scene",
+                inputs,
+                l -> {
+                    Scene s = BasicService.createScene();
+                    s.setName(l.getFirst().getString());
+                    s.setLength(l.get(2).getDouble());
+                    s.setPosition(BasicService.getPosAfterScene(l.get(3).getScene()));
+                    BasicService.getScenes().sort();//TODO eleganter
+                }).open());
+        return b;
     }
 
-    public static @NotNull AddEntityButton<Role> createAddRoleButton(Composite parent) {
-        List<String> inputNames = List.of("Name", "Actor");
-        List<InputType> inputTypes = List.of(InputType.STRING, InputType.ACTOR_SELECT);
-        return new AddEntityButton<>(parent, inputNames, inputTypes, l -> {
+    public static @NotNull Button createAddRoleButton(Composite parent) {
+        List<Input<?>> inputs = List.of(new Input<>("Name", STRING), new Input<>("Actor", ACTOR_SELECT));
+        Button b = new Button(parent, SWT.PUSH);
+        b.setText("Add a new role");
+        b.addListener(SWT.Selection, e -> new InputModal("Add new role",
+                inputs, l -> {
             Role r = BasicService.createRole();
-            r.setName((String)(l.getFirst()));
-            r.setActor((Actor) (l.get(1)));
+            r.setName(l.getFirst().getString());
+            r.setActor(l.get(1).getActor());
             BasicService.getRoles().sort();
-            return r;
-        });
+        }).open());
+        return b;
     }
 
-    public static @NotNull AddEntityButton<Actor> createAddActorButton(Composite parent) {
-        List<String> inputNames = List.of("Name");
-        List<InputType> inputTypes = List.of(InputType.STRING);
-        return new AddEntityButton<>(parent, inputNames, inputTypes, l -> {
+    public static @NotNull Button createAddActorButton(Composite parent) {
+        List<Input<?>> inputs = List.of(new Input<>("Name", STRING));
+        Button b = new Button(parent, SWT.PUSH);
+        b.setText("Add a new actor");
+        b.addListener(SWT.Selection, e -> new InputModal("Add new actor",
+                inputs, l -> {
             Actor a = BasicService.createActor();
-            a.setName((String)l.getFirst());
+            a.setName(l.getFirst().getString());
             BasicService.getActors().sort();
-            return a;
-        });
+        }).open());
+        return b;
     }
 
-    public static @NotNull AddEntityButton<Rehearsal> createAddRehearsalButton(Composite parent) {
-        List<String> inputNames = List.of("Date");
-        List<InputType> inputTypes = List.of(InputType.DATE);
-        return new AddEntityButton<>(parent, inputNames, inputTypes, l -> {
+    public static @NotNull Button createAddRehearsalButton(Composite parent) {
+        List<Input<?>> inputs = List.of(new Input<>("Date", DATE));
+        Button b = new Button(parent, SWT.PUSH);
+        b.setText("Add a new rehearsal");
+        b.addListener(SWT.Selection, e -> new InputModal("Add new rehearsal",
+                inputs, l -> {
             Rehearsal r = BasicService.createRehearsal();
-            r.setDate((LocalDate) l.getFirst());
+            r.setDate(l.getFirst().getDate());
             BasicService.getRehearsals().sort();
-            return r;
-        });
+        }).open());
+        return b;
+    }
+
+    public static @NotNull InputModal modActorModal(Actor a) {
+        List<Input<?>> inputs = List.of(new Input<>("Name", STRING, a.getName()));
+        return new InputModal("Modify " + a.displayName(),
+                inputs, l -> {
+            a.setName(l.getFirst().getString());
+            BasicService.getActors().sort();
+        }).addButton("Delete actor",
+                true, "Are you sure you want to delete actor "
+                        + a.displayName() + "?",
+                l -> BasicService.removeActor(a));
+    }
+
+    public static @NotNull InputModal modRehearsalModal(Rehearsal r) {
+        List<Input<?>> inputs = List.of(new Input<>("Date", DATE, r.getDate()));
+        return new InputModal("Modify " + r.displayName(),
+                inputs, l -> {
+            r.setDate(l.getFirst().getDate());
+            BasicService.getRehearsals().sort();
+        }).addButton("Delete rehearsal",
+                true, "Are you sure you want to delete rehearsal "
+                        + r.displayName() + "?",
+                l -> BasicService.removeRehearsal(r));
+    }
+
+    public static @NotNull InputModal modSceneModal(Scene s) {
+        List<Input<?>> inputs = List.of(new Input<>("Name", STRING, s.getName()),
+                new Input<>("Length", DOUBLE, s.getLength()),
+                new Input<>("Add after", SCENE_SELECT, BasicService.getPredecessor(s)));
+        return new InputModal("Modify " + s.displayName(), inputs,
+                l -> {
+                    s.setName(l.getFirst().getString());
+                    s.setLength(l.get(1).getDouble());
+                    s.setPosition(BasicService.getPosAfterScene(l.get(2).getScene()));
+                    BasicService.getScenes().sort();
+                })
+                .addButton("Delete Scene",
+                        true, "Are you sure you want to delete scene "
+                                + s.displayName() + "?",
+                        l -> BasicService.removeScene(s));
+    }
+
+    public static @NotNull InputModal modRoleModal(Role r) {
+        List<Input<?>> inputs = List.of(new Input<>("Name", STRING, r.getName()),
+                new Input<>("Actor", ACTOR_SELECT, r.getActor()));
+        return new InputModal("Modify " + r.displayName(), inputs,
+                l -> {
+                    r.setName(l.getFirst().getString());
+                    r.setActor(l.get(1).getActor());
+                    BasicService.getRoles().sort();
+                })
+                .addButton("Delete role",
+                        true, "Are you sure you want to delete role "
+                                + r.displayName() + "?",
+                        l -> BasicService.removeRole(r));
     }
 }

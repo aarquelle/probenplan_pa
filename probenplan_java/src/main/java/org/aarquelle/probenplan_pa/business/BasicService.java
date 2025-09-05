@@ -69,6 +69,22 @@ public class BasicService {
         return ds.createScene();
     }
 
+    public static void removeActor(Actor a) throws BusinessException {
+        ds.removeActor(a);
+    }
+
+    public static void removeScene(Scene a) throws BusinessException {
+        ds.removeScene(a);
+    }
+
+    public static void removeRehearsal(Rehearsal a) throws BusinessException {
+        ds.removeRehearsal(a);
+    }
+
+    public static void removeRole(Role a) throws BusinessException {
+        ds.removeRole(a);
+    }
+
     public static Role getRoleByName(String name) {
         return ds.getRoles().stream()
                 .filter(role -> role.getName().equals(name))
@@ -136,6 +152,19 @@ public class BasicService {
             }
         } else {
             return getScenes().getFirst().getPosition() - 1;
+        }
+    }
+
+    /**
+     * Returns the scene directly before the argument. If the argument is the first scene, or it doesn't exit
+     * in the list, returns null.
+     */
+    public static Scene getPredecessor(Scene s) {
+        int index = ds.getScenes().indexOf(s);
+        if (index > 0) {
+            return ds.getScenes().get(index - 1);
+        } else {
+            return null;
         }
     }
 

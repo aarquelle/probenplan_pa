@@ -29,12 +29,20 @@ public abstract class InputTable<ROW extends Entity & Comparable<ROW>, COL exten
         extends OptionTable<ROW, COL> {
 
     protected final int contentStates;
-    protected final TriConsumer<COL, ROW, Integer> clickConsumer;
+    protected final TriConsumer<COL, ROW, Integer> contentClickConsumer;
+    protected final TriConsumer<COL, ROW, Integer> topRowClickConsumer;
+    protected final TriConsumer<COL, ROW, Integer> leftColClickConsumer;
 
-    public InputTable(Composite parent, SortedUniqueList<COL> syncedColEntities, SortedUniqueList<ROW> syncedRowEntities, List<String> tooltips, int numberOfMarginRows, int numberOfMarginCols, int contentStates, TriConsumer<COL, ROW, Integer> clickConsumer, Color... colors) {
+    public InputTable(Composite parent, SortedUniqueList<COL> syncedColEntities,
+                      SortedUniqueList<ROW> syncedRowEntities, List<String> tooltips, int numberOfMarginRows,
+                      int numberOfMarginCols, int contentStates, TriConsumer<COL, ROW, Integer> contentClickConsumer,
+                      TriConsumer<COL, ROW, Integer> topRowClickConsumer,
+                      TriConsumer<COL, ROW, Integer> leftColClickConsumer, Color... colors) {
         super(parent, syncedColEntities, syncedRowEntities, tooltips, numberOfMarginRows, numberOfMarginCols, colors);
         this.contentStates = contentStates;
-        this.clickConsumer = clickConsumer;
+        this.contentClickConsumer = contentClickConsumer;
+        this.topRowClickConsumer = topRowClickConsumer;
+        this.leftColClickConsumer = leftColClickConsumer;
     }
 
     @Override
@@ -65,7 +73,7 @@ public abstract class InputTable<ROW extends Entity & Comparable<ROW>, COL exten
         COL colEntity = getColEntity(col);
         ROW rowEntity = getRowEntity(row);
         return new TableCell<>(colEntity, rowEntity, col, row, colors.length,
-                getTooltips(colEntity, rowEntity), clickConsumer, colors);
+                getTooltips(colEntity, rowEntity), contentClickConsumer, colors);
     }
 
     @Override
@@ -75,11 +83,11 @@ public abstract class InputTable<ROW extends Entity & Comparable<ROW>, COL exten
                 return new TableCell<>(col, row);
             } else {
                 return new TableCell<>(null, getRowEntity(row), col, row, 1, null,
-                        (a,b,c) -> System.out.println(b.displayName()));
+                        leftColClickConsumer);
             }
         } else if (row == 0) {
             return new TableCell<>(getColEntity(col), null, col, row, 1, null,
-                    (a,b,c) -> System.out.println(a.displayName()));
+                  topRowClickConsumer);
         } else {
             throw new IllegalArgumentException("This is not in the margins: col: " + col + ", row: " + row);
         }

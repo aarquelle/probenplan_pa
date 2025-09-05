@@ -14,7 +14,7 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.ui.swt.widgets;
+package org.aarquelle.probenplan_pa.ui.swt.widgets.input;
 
 public enum InputType {
     STRING, INT, DOUBLE, BOOL, DATE, SCENE_SELECT, ACTOR_SELECT, ROLE_SELECT, REHEARSAL_SELECT

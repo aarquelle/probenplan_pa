@@ -19,6 +19,7 @@ package org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables;
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomElements;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -57,6 +58,8 @@ public class ScenesTable extends InputTable<Scene, Role> {
                         }
                     }
                 },
+                (a,b,c) -> CustomElements.modRoleModal(a).open(),
+                (a,b,c) -> CustomElements.modSceneModal(b).open(),
                 null,
                 Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW),
                 Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));

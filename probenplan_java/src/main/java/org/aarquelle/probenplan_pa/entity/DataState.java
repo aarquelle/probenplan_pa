@@ -17,7 +17,10 @@
 package org.aarquelle.probenplan_pa.entity;
 
 import org.aarquelle.probenplan_pa.business.BasicService;
+import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.util.SortedUniqueList;
+
+import java.util.List;
 
 public class DataState {
     private static final DataState INSTANCE = new DataState();
@@ -55,11 +58,42 @@ public class DataState {
         return actor;
     }
 
+    /**
+     * Removes an actor from the DataState. This can only be successful if the actor has no attached roles,
+     * assign different actors to all roles beforehand.
+     * @throws BusinessException Thrown if the actor still has a role.
+     */
+    public void removeActor(Actor a) throws BusinessException {
+        if (a.getRoles().isEmpty()) {
+            for (Rehearsal r : List.copyOf(a.maybeRehearsals)) {
+                r.missingActors.remove(a);
+                r.maybeActors.remove(a);
+            }
+            actors.remove(a);
+            BasicService.stale();
+        } else throw new BusinessException("Actor " + a.displayName() + " still has role "
+                + a.getRoles().stream().toList().getFirst().displayName() + " attached."); //TODO JFC
+    }
+
     public Rehearsal createRehearsal() {
         Rehearsal rehearsal = new Rehearsal();
         rehearsals.add(rehearsal);
         BasicService.stale();
         return rehearsal;
+    }
+
+    public void removeRehearsal(Rehearsal r) {
+        for (Actor a : List.copyOf(r.maybeActors)) {
+            a.removeMaybeRehearsal(r);
+        }
+        for (Actor a : List.copyOf(r.missingActors)) {
+            a.removeMissingRehearsal(r);
+        }
+        for (Scene s : List.copyOf(r.lockedScenes)) {
+            s.removeLockedRehearsal(r);
+        }
+        rehearsals.remove(r);
+        BasicService.stale();
     }
 
     public Role createRole() {
@@ -69,11 +103,40 @@ public class DataState {
         return role;
     }
 
+    public void removeRole(Role r) {
+        if (r.actor != null) {
+            r.actor.roles.remove(r);
+        }
+        for (Scene s : List.copyOf(r.getBigScenes())) {
+            s.removeBigRole(r);
+        }
+        for (Scene s : List.copyOf(r.getSmallScenes())) {
+            s.removeSmallRole(r);
+        }
+
+        roles.remove(r);
+        BasicService.stale();
+    }
+
     public Scene createScene() {
         Scene scene = new Scene();
         scenes.add(scene);
         BasicService.stale();
         return scene;
+    }
+
+    public void removeScene(Scene s) {
+        for (Role r : List.copyOf(s.getBigRoles())) {
+            r.removeBigScene(s);
+        }
+        for (Role r : List.copyOf(s.getSmallRoles())) {
+            r.removeSmallScene(s);
+        }
+        for (Rehearsal r : List.copyOf(s.getLockedRehearsals())) {
+            r.removeLockedScene(s);
+        }
+        scenes.remove(s);
+        BasicService.stale();
     }
 
     public void setPlan(Plan plan) {

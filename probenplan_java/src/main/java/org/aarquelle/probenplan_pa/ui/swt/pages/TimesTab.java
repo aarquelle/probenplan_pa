@@ -18,7 +18,6 @@ package org.aarquelle.probenplan_pa.ui.swt.pages;
 
 import org.aarquelle.probenplan_pa.entity.Actor;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
-import org.aarquelle.probenplan_pa.ui.swt.widgets.AddEntityButton;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomElements;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.OptionTable;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.TimesTable;
@@ -26,6 +25,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
@@ -50,11 +50,9 @@ public class TimesTab extends Composite {
         modColumn.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, true));
         modColumn.setLayout(new RowLayout(SWT.VERTICAL));
 
-        AddEntityButton<Rehearsal> addRehearsalButton = CustomElements.createAddRehearsalButton(modColumn);
-        addRehearsalButton.setText("Add rehearsal");
+        Button addRehearsalButton = CustomElements.createAddRehearsalButton(modColumn);
 
-        AddEntityButton<Actor> addActorButton = CustomElements.createAddActorButton(modColumn);
-        addActorButton.setText("Add actor");
+        Button addActorButton = CustomElements.createAddActorButton(modColumn);
 
         optionTable = new TimesTable(this);
         addListener(SWT.Resize, e -> optionTable.pack());

@@ -16,20 +16,17 @@
 
 package org.aarquelle.probenplan_pa.ui.swt.pages;
 
-import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
-import org.aarquelle.probenplan_pa.ui.swt.widgets.AddEntityButton;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomElements;
-import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.InputTable;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.OptionTable;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.ScenesTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 
 import java.util.List;
@@ -53,11 +50,9 @@ public class ScenesTab extends Composite {
         modColumn.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, true));
         modColumn.setLayout(new RowLayout(SWT.VERTICAL));
 
-        AddEntityButton<Scene> addSceneButton = CustomElements.createAddSceneButton(modColumn);
-        addSceneButton.setText("Add a new scene");
+        Button addSceneButton = CustomElements.createAddSceneButton(modColumn);
 
-        AddEntityButton<Role> addRoleButton = CustomElements.createAddRoleButton(modColumn);
-        addRoleButton.setText("Add a new role");
+        Button addRoleButton = CustomElements.createAddRoleButton(modColumn);
 
         optionTable = new ScenesTable(this);
 

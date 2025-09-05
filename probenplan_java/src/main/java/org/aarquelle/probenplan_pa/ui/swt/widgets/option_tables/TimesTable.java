@@ -19,6 +19,8 @@ package org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables;
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.entity.Actor;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomElements;
+import org.aarquelle.probenplan_pa.ui.swt.widgets.input.InputModal;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -57,6 +59,8 @@ public class TimesTable extends InputTable<Rehearsal, Actor> {
                         }
                     }
                 },
+                (a,r,s) -> CustomElements.modActorModal(a).open(),
+                (a,r,s) -> CustomElements.modRehearsalModal(r).open(),
                 Display.getCurrent().getSystemColor(SWT.COLOR_GREEN),
                 Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW),
                 Display.getCurrent().getSystemColor(SWT.COLOR_RED));

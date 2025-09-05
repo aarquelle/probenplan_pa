@@ -80,7 +80,12 @@ public class Role implements Comparable<Role>, Entity {
 
     public void setActor(Actor actor) {
         BasicService.stale();
-        actor.roles.add(this);
+        if (this.actor != null) {
+            this.actor.roles.remove(this);
+        }
+        if (actor != null) {
+            actor.roles.add(this);
+        }
         this.actor = actor;
     }
 

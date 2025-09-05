@@ -14,31 +14,32 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.ui.swt.widgets;
+package org.aarquelle.probenplan_pa.ui.swt.widgets.input;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Widget;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
-public class DropdownMenu<I> implements InputWidget{
+public class DropdownMenu<I> extends Composite{
     private List<I> items;
     private I selected;
-    private String defaultValue;
     private final Combo combo;
 
     public DropdownMenu(Composite parent, List<I> items, String defaultValue,
                         Function<I, String> displayNameFunction) {
+        super(parent, 0);
+        setLayout(new GridLayout(1, true));
         this.items = List.copyOf(items);
-        this.defaultValue = defaultValue;
 
-        combo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
+        combo = new Combo(this, SWT.DROP_DOWN | SWT.READ_ONLY);
+        combo.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
         String[] names = new String[items.size() + 1];
         names[0] = defaultValue;
         for (int i = 0; i < items.size(); i++) {
@@ -47,37 +48,9 @@ public class DropdownMenu<I> implements InputWidget{
         combo.setItems(names);
         combo.select(0);
 
-
-
-        /*Button button = new Button(parent, SWT.PUSH);
-        button.setText(defaultValue);
-
-        Menu menu = new Menu(button);
-        if (defaultValue != null) {
-            MenuItem defaultItem = new MenuItem(menu, SWT.PUSH);
-            defaultItem.setText(defaultValue);
-            defaultItem.addListener(SWT.Selection, event -> {
-                selected = null;
-                button.setText(defaultValue);
-            });
-        }
-        for (I i : items) {
-            MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
-            String displayName = displayNameFunction.apply(i);
-            menuItem.setText(displayName);
-            menuItem.addListener(SWT.Selection, event -> {
-                selected = i;
-                button.setText(displayName);
-            });
-        }
-
-        //button.setMenu(menu);
-        menu.addListener(SWT.Activate, e -> menu.setVisible(true));
-        button.addListener(SWT.Selection, e -> menu.notifyListeners(SWT.Activate, null));*/
     }
 
-    @Override
-    public I getInput() {
+    public I getSelected() {
         int index = combo.getSelectionIndex();
         assert index >= 0 && index <= items.size();
         if (index == 0) {
@@ -85,5 +58,17 @@ public class DropdownMenu<I> implements InputWidget{
         } else {
             return items.get(index - 1);
         }
+    }
+
+    public void select(int index) {
+        combo.select(index);
+    }
+
+    public void selectLast() {
+        combo.select(items.size() - 1);
+    }
+
+    public void select(I item) {
+        combo.select(items.indexOf(item) + 1);
     }
 }

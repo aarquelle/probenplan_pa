@@ -66,7 +66,9 @@ public class Analyzer {
         if (BasicService.getActors() == null || BasicService.getActors().isEmpty()
         || BasicService.getRehearsals() == null || BasicService.getRehearsals().isEmpty()
         || BasicService.getRoles() == null || BasicService.getRoles().isEmpty()
-        || BasicService.getScenes() == null || BasicService.getScenes().isEmpty()) {
+        || BasicService.getScenes() == null || BasicService.getScenes().isEmpty()
+        || BasicService.getRoles().stream().anyMatch(r -> r.getActor() == null)){
+            System.out.println("No viable ");
             viable = false;
             return false;
         }

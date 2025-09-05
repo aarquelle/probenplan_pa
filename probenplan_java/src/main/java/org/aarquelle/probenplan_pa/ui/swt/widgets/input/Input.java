@@ -14,8 +14,14 @@
  *
  */
 
-package org.aarquelle.probenplan_pa.ui.swt.widgets;
+package org.aarquelle.probenplan_pa.ui.swt.widgets.input;
 
-public interface InputWidget {
-    Object getInput();
+public record Input<T> (
+        String name,
+        InputType type,
+        T initial
+){
+    public Input(String name, InputType type) {
+        this(name, type, null);
+    }
 }
