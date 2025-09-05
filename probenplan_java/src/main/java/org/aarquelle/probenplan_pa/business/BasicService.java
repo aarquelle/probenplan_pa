@@ -112,7 +112,6 @@ public class BasicService {
     public static void loadFromFile() {
         Load l = new Load(Main.URL);
         l.load(ds);
-        Analyzer.runAnalysis();
     }
 
     public static void saveToFile() {

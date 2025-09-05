@@ -44,12 +44,9 @@ public class PlanTab extends Composite {
         Display d = Display.getCurrent();
 
         Group importRow = CustomElements.createImportRow(this, "",
-                List.of("Run analysis", "Generate"),
-                List.of(false, false),
-                List.of(() -> {
-                    Analyzer.runAnalysis();
-                    updateData();
-                }, this::generate));
+                List.of("Generate"),
+                List.of(false),
+                List.of(this::generate));
         optionTable = new PlanTable(this);
     }
 
@@ -61,7 +58,7 @@ public class PlanTab extends Composite {
         Mutator mutator = new Mutator(System.currentTimeMillis());
         mutator.mutate(Params.getDeadline());
         BasicService.setPlan(mutator.getPlan());
-        updateData();
+        redraw();
     }
 
     @Override

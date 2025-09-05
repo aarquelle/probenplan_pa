@@ -27,6 +27,9 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class Analyzer {
+    private static long freshness;
+
+    static boolean viable = false;
 
     static RehearsalSceneTable<Integer> allMissing;
     static RehearsalSceneTable<Integer> majorMissing;
@@ -43,6 +46,7 @@ public class Analyzer {
      * Important for Unit Tests
      */
     public static void reset() {
+        viable = false;
         allMissing = null;
         majorMissing = null;
         allUncertain = null;
@@ -53,9 +57,22 @@ public class Analyzer {
         lengthOfPlay = 0;
     }
 
+    /**
+     * Calculate analysis results that can be used by an evaluator.
+     * @return True, if the data state is valid for analysis, false, if it is invalid (for example, because
+     * there are no scenes).
+     */
+    public static boolean runAnalysis() {
+        if (BasicService.getActors() == null || BasicService.getActors().isEmpty()
+        || BasicService.getRehearsals() == null || BasicService.getRehearsals().isEmpty()
+        || BasicService.getRoles() == null || BasicService.getRoles().isEmpty()
+        || BasicService.getScenes() == null || BasicService.getScenes().isEmpty()) {
+            viable = false;
+            return false;
+        }
+        viable = true;
 
-    public static void runAnalysis() {
-        allScenes = getAllScenes();
+        allScenes = BasicService.getScenes().toList();
         lengthOfPlay = calculateLengthOfPlay();
 
         allMissing = missingActors();
@@ -64,11 +81,13 @@ public class Analyzer {
         majorUncertain = majorUncertainActors();
         scoreTable = completenessScores();
         numberOfRoles = getTotalNumberOfRoles();
+        return true;
     }
 
     public static List<Scene> getAllScenes() {
-        if (allScenes == null) {
+        if (freshness != BasicService.getFreshness()) {
             allScenes = BasicService.getScenes().stream().sorted().toList();
+            freshness = BasicService.getFreshness();
         }
         return allScenes;
     }

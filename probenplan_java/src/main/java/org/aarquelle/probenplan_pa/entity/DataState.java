@@ -82,6 +82,9 @@ public class DataState {
     }
 
     public Plan getPlan() {
+        if (plan == null) {
+            plan = new Plan();
+        }
         return plan;
     }
 

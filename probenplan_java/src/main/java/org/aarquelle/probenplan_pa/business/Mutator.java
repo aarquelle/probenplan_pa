@@ -261,47 +261,48 @@ public class Mutator {
 
     public void mutate(int limit) {
         int deadline = 0;
-        Analyzer.runAnalysis();
-        findDlpCandidates();
-        plan = forceDLP();
-        buildLocks();
-        dlp = potentialDlp;
-        potentialDlp = null;
-        freeRehearsals.remove(dlp);
-        while (deadline < limit) {
-            deadline++;
-            int choice = rand.nextInt(7);
-            Plan mutant;
-            switch (choice) {
-                case 0 -> mutant = addScene();
-                case 1 -> mutant = removeScene();
-                case 2 -> mutant = moveScene();
-                case 3 -> mutant = exchangeScene();
-                case 4 -> mutant = swapScenes();
-                case 5 -> mutant = setDLP();
-                case 6 -> mutant = forceDLP();
-                default -> throw new IllegalStateException("Unexpected value: " + choice);
-            }
-            if (mutant == null) {
-                continue;
-            }
+        if (Analyzer.runAnalysis()) {
+            findDlpCandidates();
+            plan = forceDLP();
+            buildLocks();
+            dlp = potentialDlp;
+            potentialDlp = null;
+            freeRehearsals.remove(dlp);
+            while (deadline < limit) {
+                deadline++;
+                int choice = rand.nextInt(7);
+                Plan mutant;
+                switch (choice) {
+                    case 0 -> mutant = addScene();
+                    case 1 -> mutant = removeScene();
+                    case 2 -> mutant = moveScene();
+                    case 3 -> mutant = exchangeScene();
+                    case 4 -> mutant = swapScenes();
+                    case 5 -> mutant = setDLP();
+                    case 6 -> mutant = forceDLP();
+                    default -> throw new IllegalStateException("Unexpected value: " + choice);
+                }
+                if (mutant == null) {
+                    continue;
+                }
 
-            double newEvaluation = new Evaluator(mutant).evaluate();
-            if (newEvaluation > evaluation) {
-                plan = mutant;
-                evaluation = newEvaluation;
-                if (potentialDlp != null) {
-                    if (dlp != null) {
-                        freeRehearsals.add(dlp);
+                double newEvaluation = new Evaluator(mutant).evaluate();
+                if (newEvaluation > evaluation) {
+                    plan = mutant;
+                    evaluation = newEvaluation;
+                    if (potentialDlp != null) {
+                        if (dlp != null) {
+                            freeRehearsals.add(dlp);
+                        }
+                        dlp = potentialDlp;
+                        freeRehearsals.remove(potentialDlp);
+                        potentialDlp = null;
                     }
-                    dlp = potentialDlp;
-                    freeRehearsals.remove(potentialDlp);
+                    System.out.println("Evaluation: " + evaluation + ", deadline: " + deadline + ", choice: " + choice);
+                    deadline = 0;
+                } else {
                     potentialDlp = null;
                 }
-                System.out.println("Evaluation: " + evaluation + ", deadline: " + deadline + ", choice: " + choice);
-                deadline = 0;
-            } else {
-                potentialDlp = null;
             }
         }
     }
