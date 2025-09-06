@@ -18,11 +18,12 @@ package org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables;
 
 import org.aarquelle.probenplan_pa.business.Analyzer;
 import org.aarquelle.probenplan_pa.business.BasicService;
+import org.aarquelle.probenplan_pa.business.InfoService;
 import org.aarquelle.probenplan_pa.entity.Plan;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
+import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.ui.swt.ResourceHandler;
-import org.aarquelle.probenplan_pa.util.SortedUniqueList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -146,6 +147,26 @@ public class PlanTable extends OptionTable<Rehearsal, Scene> {
         } else {
             throw new IllegalArgumentException("This is not in the margins: col: " + col + ", row: " + row);
         }
+    }
+
+    @Override
+    protected String[] getTooltips(Scene scene, Rehearsal rehearsal) {
+        String[] result = super.getTooltips(scene, rehearsal);
+        for (int i = 0; i < result.length; i++) {
+            List<Role> missingRoles = InfoService.missingRoles(scene, rehearsal);
+            StringBuilder sb = new StringBuilder("\n");
+            if (missingRoles.isEmpty()) {
+                sb.append("All actors are available.");
+            } else {
+                sb.append("The actors for the following roles are maybe or definitely missing:");
+                for (Role role : missingRoles) {
+                    sb.append("\n").append(role.displayName());
+                }
+            }
+
+            result[i]+= sb.toString();
+        }
+        return result;
     }
 
     @Override
