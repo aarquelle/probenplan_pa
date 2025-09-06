@@ -36,15 +36,16 @@ import static org.aarquelle.probenplan_pa.ui.swt.widgets.input.InputType.*;
 
 public class InputWidget<T> extends Composite{
     private final Input<T> input;
+    private final Label label;
     private final Control widget;
 
     public InputWidget(Composite parent, Input<T> input) {
         super(parent, 0);
         this.input = input;
         this.setLayout(new GridLayout(2, true));
-        Label l = new Label(this, 0);
-        l.setText(input.name() + ":");
-        l.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+        label = new Label(this, 0);
+        label.setText(input.name() + ":");
+        label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
         widget = switch (input.type()) {
             case STRING, INT, DOUBLE, DATE -> new Text(this, SWT.SINGLE);
             case BOOL -> throw new IllegalArgumentException("NOT IMPLEMENTED"); //TODO Checkbox
@@ -72,6 +73,10 @@ public class InputWidget<T> extends Composite{
                 case REHEARSAL_SELECT -> ((DropdownMenu<Rehearsal>)widget).select((Rehearsal) initialValue);
             }
         }
+    }
+
+    public String getName() {
+        return input.name();
     }
 
     public String getString() {
@@ -128,6 +133,18 @@ public class InputWidget<T> extends Composite{
         } else throw new IllegalArgumentException("Wrong type!");
     }
 
+    public void setText(String text) {
+        if (input.type() == InputType.STRING) {
+            ((Text)widget).setText(text);
+        } else throw new IllegalArgumentException("Wrong type!");
+    }
+
+    @Override
+    public void setToolTipText(String text) {
+        super.setToolTipText(text);
+        label.setToolTipText(text);
+        widget.setToolTipText(text);
+    }
 
 
 }

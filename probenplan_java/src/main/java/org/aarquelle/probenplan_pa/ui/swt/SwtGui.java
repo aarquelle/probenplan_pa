@@ -18,6 +18,7 @@ package org.aarquelle.probenplan_pa.ui.swt;
 
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
+import org.aarquelle.probenplan_pa.ui.swt.pages.ParamTab;
 import org.aarquelle.probenplan_pa.ui.swt.pages.PlanTab;
 import org.aarquelle.probenplan_pa.ui.swt.pages.ScenesTab;
 import org.aarquelle.probenplan_pa.ui.swt.pages.TimesTab;
@@ -42,6 +43,7 @@ public class SwtGui {
     ScenesTab scenes;
     TimesTab times;
     PlanTab plan;
+    ParamTab params;
     public static SwtGui INSTANCE;
     Image appIcon;
     ResourceHandler resourceHandler;
@@ -70,6 +72,8 @@ public class SwtGui {
         scenesTabItem.setText("Szenen");
         TabItem planTabItem = new TabItem(tabFolder, SWT.NONE);
         planTabItem.setText("Plan");
+        TabItem paramTabItem = new TabItem(tabFolder, 0);
+        paramTabItem.setText("Parameters");
 
         times = new TimesTab(tabFolder);
         timesTabItem.setControl(times);
@@ -77,6 +81,8 @@ public class SwtGui {
         scenesTabItem.setControl(scenes);
         plan = new PlanTab(tabFolder);
         planTabItem.setControl(plan);
+        params = new ParamTab(tabFolder);
+        paramTabItem.setControl(params);
 
         Composite persistenceRow = CustomElements.createImportRow(shell, null,
                 List.of("Load", "Save"), List.of(false, false), List.of(
