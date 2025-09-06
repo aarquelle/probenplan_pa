@@ -70,7 +70,6 @@ public class TableCell<COL extends Entity, ROW extends Entity> {
     public void click() {
         setState(state + 1);
         clickConsumer.accept(colEntity, rowEntity, state);
-        //API.setRelation(colEntity, rowEntity, state);//TODO Mit Lambda lösen??
     }
 
     public Color getColor() {

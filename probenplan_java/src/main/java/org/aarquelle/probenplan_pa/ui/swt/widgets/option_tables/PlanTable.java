@@ -37,7 +37,7 @@ public class PlanTable extends OptionTable<Rehearsal, Scene> {
         super(parent,
                 BasicService.getScenes(),
                 BasicService.getRehearsals(),
-                List.of("Nicht geplant.", "Geplant"),
+                List.of("Not planned.", "Planned.", "Planned and locked"),
                 1,
                 2,
                 Display.getCurrent().getSystemColor(SWT.COLOR_RED),
@@ -67,6 +67,8 @@ public class PlanTable extends OptionTable<Rehearsal, Scene> {
         fillBackground(cell.col, cell.row, fillColor, gc);
         if (cell.getState() == 1) {
             markCell(cell.col, cell.row, gc);
+        } else if (cell.getState() == 2) {
+            heavyMarkCell(cell.col, cell.row, gc);
         }
     }
 
@@ -81,7 +83,13 @@ public class PlanTable extends OptionTable<Rehearsal, Scene> {
         if (plan == null) {
             cell.setState(0);
         } else {
-            cell.setState(plan.hasScene(cell.rowEntity, cell.colEntity) ? 1 : 0);
+            //cell.setState(plan.hasScene(cell.rowEntity, cell.colEntity) ? 1 : 0);
+            if (plan.hasScene(cell.rowEntity, cell.colEntity)) {
+                cell.setState(1);
+            }
+            if (cell.rowEntity.getLockedScenes().contains(cell.colEntity)) {
+                cell.setState(2);
+            }
         }
     }
 
@@ -89,19 +97,28 @@ public class PlanTable extends OptionTable<Rehearsal, Scene> {
     protected TableCell<Scene, Rehearsal> createContentCell(int col, int row) {
         Scene s = getColEntity(col);
         Rehearsal r = getRowEntity(row);
-        return new TableCell<>(s, r, col, row, 2, getTooltips(s, r),
+        return new TableCell<>(s, r, col, row, 3, getTooltips(s, r),
                 (scene, rehearsal, state) -> {
                     Plan plan = BasicService.getPlan();
                     if (plan == null) {
                         return;
                     }
-                    if (state == 1) {
-                        plan.put(rehearsal, scene);
-                    } else if (state == 0) {
-                        plan.remove(rehearsal, scene);
-                    } else {
-                        throw new IllegalArgumentException("Undefined value " + state + " for relation between "
-                                + scene + " and " + rehearsal);
+                    switch (state) {
+                        case 0 -> {
+                            rehearsal.removeLockedScene(scene);
+                            plan.remove(rehearsal, scene);
+                        }
+                        case 1 -> {
+                            rehearsal.removeLockedScene(scene);
+                            plan.put(rehearsal, scene);
+                        }
+                        case 2 -> {
+                            plan.put(rehearsal, scene);
+                            rehearsal.addLockedScene(scene);
+                        }
+                        default ->
+                                throw new IllegalArgumentException("Undefined value " + state + " for relation between "
+                                        + scene + " and " + rehearsal);
                     }
                 },
                 colors);

@@ -244,6 +244,15 @@ public abstract class OptionTable<ROW extends Entity & Comparable<ROW>, COL exte
                 col * columnWidth, (row + 1) * rowHeight);
     }
 
+    protected void heavyMarkCell(int col, int row, GC gc) {
+        markCell(col, row, gc);
+        gc.drawLine((int)((col + 0.5) * columnWidth), row * rowHeight,
+                (int)((col + 0.5) * columnWidth),
+                (row + 1) * rowHeight);
+        gc.drawLine(col * columnWidth, (int)((row + 0.5) * rowHeight),
+                (col + 1) * columnWidth, (int)((row + 0.5) * rowHeight));
+    }
+
     protected Optional<TableCell<COL, ROW>> getCell(MouseEvent e) {
         int x = e.x / columnWidth;
         int y = e.y / rowHeight;
