@@ -48,59 +48,6 @@ public class Save {
         this.filename = filename;
     }
 
-    /**
-     * Calculate the size in bytes.
-     */
-    /*private int getByteLength() {
-        int sizeVersion = 1;
-
-        int sceneIds = ds.getScenes().size();
-        int sceneNameLengths = ds.getScenes().size() * 2;
-        int sceneLengths = ds.getScenes().size() * 4;
-        int scenePositions = ds.getScenes().size() * 4;
-        int sceneNames = 0;
-        for (Scene s : ds.getScenes()) {
-            sceneNames += s.getName().getBytes().length;
-        }
-        int sizeScenes = sceneIds + sceneNameLengths + sceneLengths + scenePositions + sceneNames + 1;
-
-        int rehearsalIds = ds.getRehearsals().size();
-        int years = ds.getRehearsals().size() * 4;
-        int months = ds.getRehearsals().size();
-        int days = ds.getRehearsals().size();
-        int fullLocked = ds.getRehearsals().size();
-        int lockedIds = 1;
-        for (Rehearsal r : ds.getRehearsals()) {
-            lockedIds += r.getLockedScenes().size();
-        }
-        int sizeRehearsals = rehearsalIds + years + months + days + fullLocked + lockedIds + 1;
-
-        int actorIds = ds.getActors().size();
-        int actorNameLengths = ds.getActors().size() * 2;
-        int actorNames = 0;
-        int missingIds = 1;
-        int maybeIds = 1;
-        for (Actor a : ds.getActors()) {
-            actorNames += a.getName().getBytes().length;
-            missingIds += a.getMissingRehearsals().size();
-            maybeIds += a.getMaybeRehearsals().size();
-        }
-
-        int sizeActors = actorIds + actorNameLengths + actorNames + missingIds + maybeIds + 1;
-
-        int roleIds = ds.getRoles().size();
-        int roleNameLengths = ds.getRoles().size() * 2;
-        int roleActorIds = ds.getRoles().size() * 2;
-        int roleNames = 0;
-        int bigSceneIds = 1;
-        int smallSceneIds = 1;
-        for (Role r : ds.getRoles()) {
-            roleNames += r.getName().getBytes().length;
-            bigSceneIds += r.getBigScenes().size();
-            smallSceneIds += r.getSmallScenes().size();
-        }
-        int sizeRoles = roleIds + roleNameLengths + roleActorIds + roleNames + bigSceneIds + smallSceneIds + 1;
-    }*/
     public void saveFile() {
         assignIds(ds);
         wl = new ArrayList<>();

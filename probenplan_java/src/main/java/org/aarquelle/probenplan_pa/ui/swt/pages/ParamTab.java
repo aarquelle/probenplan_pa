@@ -41,13 +41,14 @@ public class ParamTab extends Composite {
         super(parent, 0);
         setLayout(new GridLayout(1, true));
         Group saveGroup = new Group(this, 0);
+        saveGroup.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
         saveGroup.setLayout(new RowLayout());
         Button saveButton = new Button(saveGroup, SWT.PUSH);
-        saveButton.setText("Update");
+        saveButton.setText("Save changes");
         Button cancelButton = new Button(saveGroup, SWT.PUSH);
-        cancelButton.setText("Cancel");
+        cancelButton.setText("Cancel changes");
         Button resetButton = new Button(saveGroup, 0);
-        resetButton.setText("Reset");
+        resetButton.setText("Reset to default values");
         contentComp = new Composite(this, 0);
         contentComp.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
         contentComp.setLayout(new GridLayout(4, true));
@@ -75,7 +76,7 @@ public class ParamTab extends Composite {
 
     }
 
-    private void resetInputs() {
+    public void resetInputs() {
         for (InputWidget<String> widget : inputs) {
             widget.setText(Params.getValueFromString(widget.getName()));
         }

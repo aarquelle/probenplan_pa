@@ -40,11 +40,11 @@ public class ScenesTab extends Composite {
 
         setLayout(new GridLayout(2, false));
 
-        Group importRow = CustomElements.createImportRow(this, "Import scenes",
+        /*Group importRow = CustomElements.createImportRow(this, "Import scenes",
                 List.of("From Clipboard", "From File"),
                 List.of(false, false),
                 List.of(() -> System.out.println("Clipboard"), () -> System.out.println("file")));
-        ((GridData) (importRow.getLayoutData())).horizontalSpan = 2;
+        ((GridData) (importRow.getLayoutData())).horizontalSpan = 2;*/
         Group modColumn = new Group(this, 0);
         modColumn.setText("Modify table");
         modColumn.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, true));

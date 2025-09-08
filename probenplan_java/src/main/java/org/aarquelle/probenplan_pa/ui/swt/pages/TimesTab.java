@@ -39,11 +39,11 @@ public class TimesTab extends Composite {
         super(parent, SWT.NONE);
         setLayout(new GridLayout(2, false));
 
-        Group timesImportGroup = CustomElements.createImportRow(this, "Import times",
+        /*Group timesImportGroup = CustomElements.createImportRow(this, "Import times",
                 List.of("From Clipboard", "From URL", "From File"),
                 List.of(false, true, false),
                 List.of(() -> System.out.println("Clippy"), () -> System.out.println("NOT IMPLEMENTED"), () -> System.out.println("NOT IMPLEMENTED")));
-        ((GridData)timesImportGroup.getLayoutData()).horizontalSpan = 2;
+        ((GridData)timesImportGroup.getLayoutData()).horizontalSpan = 2;*/
 
         Group modColumn = new Group(this, 0);
         modColumn.setText("Modify table");

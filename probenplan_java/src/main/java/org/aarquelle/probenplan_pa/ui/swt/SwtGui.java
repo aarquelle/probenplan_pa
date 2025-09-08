@@ -55,7 +55,7 @@ public class SwtGui {
         display = new Display();
         shell = new Shell(display);
 
-        appIcon = new Image(display, "assets/tadu_icon.svg");
+        appIcon = new Image(display, "assets/tadu_icon.png");
         resourceHandler = new ResourceHandler(display);
 
         shell.setImage(appIcon);
@@ -88,6 +88,7 @@ public class SwtGui {
                 List.of("Load", "Save"), List.of(false, false), List.of(
                         () -> {
                             BasicService.loadFromFile();
+                            params.resetInputs();
                             repaintSelectedPage();
                         },
 
