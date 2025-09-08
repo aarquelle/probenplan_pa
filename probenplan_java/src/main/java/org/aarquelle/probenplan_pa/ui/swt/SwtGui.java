@@ -86,8 +86,17 @@ public class SwtGui {
 
         Composite persistenceRow = CustomElements.createImportRow(shell, null,
                 List.of("Load", "Save"), List.of(false, false), List.of(
-                        this::load,
-                        BasicService::saveToFile
+                        () -> {
+                            if (SwtUtils.confirm("Are you sure you want to load from file? " +
+                                    "All changes since the last save will be lost.")) {
+                                load();
+                            }
+                        },
+                        () -> {
+                            if (SwtUtils.confirm("Are you sure you want to overwrite the existing file?")) {
+                                BasicService.saveToFile();
+                            }
+                        }
                 ));
 
         load();

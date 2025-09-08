@@ -182,4 +182,11 @@ public class BasicService {
             return System.currentTimeMillis();
         } else return p;
     }
+
+    /**
+     * Returns the last scene, sorted by position, or null of there are no scenes.
+     */
+    public static Scene getLastScene() {
+        return getScenes().isEmpty() ? null : getScenes().getLast();
+    }
 }

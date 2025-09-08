@@ -81,20 +81,22 @@ public class CustomElements {
     }
 
     public static @NotNull Button createAddSceneButton(Composite parent) {
-        List<Input<?>> inputs = List.of(new Input<>("Name", STRING), new Input<>("Length", DOUBLE),
-                new Input<>("Add after", SCENE_SELECT));
 
         Button b = new Button(parent, SWT.PUSH);
         b.setText("Add a new scene");
-        b.addListener(SWT.Selection, e -> new InputModal("Add new scene",
-                inputs,
-                l -> {
-                    Scene s = BasicService.createScene();
-                    s.setName(l.getFirst().getString());
-                    s.setLength(l.get(1).getDouble());
-                    s.setPosition(BasicService.getPosAfterScene(l.get(2).getScene()));
-                    BasicService.getScenes().sort();//TODO eleganter
-                }).open());
+        b.addListener(SWT.Selection, e -> {
+            List<Input<?>> inputs = List.of(new Input<>("Name", STRING), new Input<>("Length", DOUBLE),
+                    new Input<>("Add after", SCENE_SELECT, BasicService.getLastScene()));
+            new InputModal("Add new scene",
+                    inputs,
+                    l -> {
+                        Scene s = BasicService.createScene();
+                        s.setName(l.getFirst().getString());
+                        s.setLength(l.get(1).getDouble());
+                        s.setPosition(BasicService.getPosAfterScene(l.get(2).getScene()));
+                        BasicService.getScenes().sort();//TODO eleganter
+                    }).open();
+        });
         return b;
     }
 
