@@ -175,4 +175,11 @@ public class BasicService {
     public static void stale() {
         ds.stale();
     }
+
+    public static long getInitialSeed() {
+        long p = Params.getInitialSeed();
+        if (p == 0) {
+            return System.currentTimeMillis();
+        } else return p;
+    }
 }

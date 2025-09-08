@@ -55,7 +55,7 @@ public class PlanTab extends Composite {
     }
 
     private void generate() {
-        Mutator mutator = new Mutator(System.currentTimeMillis());
+        Mutator mutator = new Mutator(BasicService.getInitialSeed());
         mutator.mutate(Params.getDeadline());
         BasicService.setPlan(mutator.getPlan());
         redraw();
