@@ -21,17 +21,28 @@ import org.aarquelle.probenplan_pa.entity.Actor;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
+import org.aarquelle.probenplan_pa.persistence.FileUtils;
+import org.aarquelle.probenplan_pa.ui.swt.SwtGui;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.input.Input;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.input.InputModal;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -194,5 +205,37 @@ public class CustomElements {
                         true, "Are you sure you want to delete role "
                                 + r.displayName() + "?",
                         l -> BasicService.removeRole(r));
+    }
+
+    public static @NotNull Shell aboutModal() {
+        Shell modal = new Shell(SwtGui.INSTANCE.getMainShell(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM | SWT.RESIZE);
+        modal.setLayout(new GridLayout(2, true));
+        ScrolledComposite scroll = new ScrolledComposite(modal, SWT.V_SCROLL | SWT.H_SCROLL);
+        scroll.setExpandVertical(true);
+        scroll.setExpandHorizontal(true);
+        Composite panel = new Composite(scroll, 0);
+        scroll.setContent(panel);
+        panel.setLayout(new GridLayout(2, true));
+        scroll.setMinSize(300, 400);
+        Group copyrightGroup = new Group(panel, 0);
+        copyrightGroup.setLayout(new RowLayout());
+        copyrightGroup.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+        Link copyright = new Link(copyrightGroup, 0);
+        copyright.addListener(SWT.Selection, e -> {
+            Program.launch(e.text);
+        });
+        try {
+            String license = FileUtils.readFile(new File("license", "license_short.txt"));
+            copyright.setText(license);
+        } catch (IOException e) {
+            copyright.setText("Could not read license file.");
+        }
+        Group githubGroup = new Group(panel, 0);
+        githubGroup.setLayout(new RowLayout());
+        githubGroup.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+        Link github = new Link(githubGroup, 0);
+        github.setText("For updates, help and more information, visit the <a>github page</a>.");
+        github.addListener(SWT.Selection, e -> Program.launch("https://github.com/aarquelle/probenplan_pa"));
+        return modal;
     }
 }

@@ -85,7 +85,7 @@ public class SwtGui {
         paramTabItem.setControl(params);
 
         Composite persistenceRow = CustomElements.createImportRow(shell, null,
-                List.of("Load", "Save"), List.of(false, false), List.of(
+                List.of("Load", "Save", "About"), List.of(false, false, false), List.of(
                         () -> {
                             if (SwtUtils.confirm("Are you sure you want to load from file? " +
                                     "All changes since the last save will be lost.")) {
@@ -96,6 +96,10 @@ public class SwtGui {
                             if (SwtUtils.confirm("Are you sure you want to overwrite the existing file?")) {
                                 BasicService.saveToFile();
                             }
+                        },
+
+                        () -> {
+                            CustomElements.aboutModal().open();
                         }
                 ));
 

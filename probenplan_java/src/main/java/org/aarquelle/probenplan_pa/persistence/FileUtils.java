@@ -16,8 +16,17 @@
 
 package org.aarquelle.probenplan_pa.persistence;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 
 public class FileUtils {
+    public static String readFile(File path) throws IOException{
+        BufferedReader reader = new BufferedReader(new FileReader(path));
+        StringBuilder sb = new StringBuilder();
+        reader.lines().forEachOrdered(s -> sb.append(s).append(System.lineSeparator()));
+        return sb.toString();
+    }
 }
