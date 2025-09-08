@@ -105,11 +105,11 @@ public abstract class OptionTable<ROW extends Entity & Comparable<ROW>, COL exte
                 }
             }
             gc.setLineWidth(1);
-            for (int i = 1; i < colEntities.size() + 2; i++) {
+            for (int i = 1; i < colEntities.size() + numberOfMarginCols + 1; i++) {
                 gc.drawLine(i * columnWidth, 0, i * columnWidth, virtualSize.y);
             }
 
-            for (int i = 1; i < rowEntities.size() + 2; i++) {
+            for (int i = 1; i < rowEntities.size() + numberOfMarginRows + 1; i++) {
                 gc.drawLine(0, i * rowHeight, virtualSize.x, i * rowHeight);
             }
         });
@@ -256,7 +256,8 @@ public abstract class OptionTable<ROW extends Entity & Comparable<ROW>, COL exte
     protected Optional<TableCell<COL, ROW>> getCell(MouseEvent e) {
         int x = e.x / columnWidth;
         int y = e.y / rowHeight;
-        if (x >= 0 && y >= 0 && x <= syncedColEntities.size() && y <= syncedRowEntities.size()) {
+        if (x >= 0 && y >= 0 && x < syncedColEntities.size() + numberOfMarginCols
+                && y < syncedRowEntities.size() + numberOfMarginRows) {
             return Optional.of(getCell(x, y));
         } else {
             return Optional.empty();
@@ -286,7 +287,8 @@ public abstract class OptionTable<ROW extends Entity & Comparable<ROW>, COL exte
                     }
                 }
             }
-            virtualSize = new Point(columnWidth * (syncedColEntities.size() + 1), rowHeight * (syncedRowEntities.size() + 1));
+            virtualSize = new Point(columnWidth * (syncedColEntities.size() + numberOfMarginCols),
+                    rowHeight * (syncedRowEntities.size() + numberOfMarginRows));
             setMinSize(virtualSize);
             /*if (canvas != null) {
                 canvas.redraw();
