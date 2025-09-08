@@ -96,10 +96,15 @@ public class Params {
         addPara(deadline);
 
         Para<Integer> optimalNumberOfActors = new Para<>("optimalNumberOfActors", 4);
-        optimalNumberOfActors.description = "The program will try not have more actors in a rehearsal than this.";
+        optimalNumberOfActors.description = "The program will try not to have more actors in a rehearsal than this.";
         optimalNumberOfActors.minValue = 1;
         optimalNumberOfActors.maxValue = Integer.MAX_VALUE;
         addPara(optimalNumberOfActors);
+
+        Para<Integer> createDurchlaufprobe = Para.createBoolPara("createDurchlaufprobe", false);
+        createDurchlaufprobe.description = "The program will try to create at least one rehearsal where the entire" +
+                "play will be rehearsed.";
+        addPara(createDurchlaufprobe);
 
     }
 
@@ -141,6 +146,15 @@ public class Params {
         para.setValue(value);
     }
 
+    public static void setPara(String name, boolean value) {
+        Para<?> para = getPara(name);
+        if (!para.isBoolean()) {
+            throw new RuntimeException(para.name + " is not a boolean!");
+        } else {
+            para.setBoolean(value);
+        }
+    }
+
 
     public static double getEarliestDurchlaufprobe() {
         return getValue("earliestDurchlaufprobe").doubleValue();
@@ -163,11 +177,15 @@ public class Params {
     }
 
     public static double getDlpCompletenessWeight() {
-        return getValue("dlpCompletenessWeight").doubleValue();
+        if (getCreateDurchlaufprobe()) {
+            return getValue("dlpCompletenessWeight").doubleValue();
+        } else return 0;
     }
 
     public static double getCompletenessBeforeDLPWeight() {
-        return getValue("completenessBeforeDLPWeight").doubleValue();
+        if (getCreateDurchlaufprobe()) {
+            return getValue("completenessBeforeDLPWeight").doubleValue();
+        } else return 0;
     }
 
     public static double getLumpinessWeight() {
@@ -214,5 +232,9 @@ public class Params {
 
     public static int getOptimalNumberOfActors() {
         return getValue("optimalNumberOfActors").intValue();
+    }
+
+    public static boolean getCreateDurchlaufprobe() {
+        return getPara("createDurchlaufprobe").getBoolValue();
     }
 }

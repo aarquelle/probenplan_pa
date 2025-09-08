@@ -86,15 +86,11 @@ public class SwtGui {
 
         Composite persistenceRow = CustomElements.createImportRow(shell, null,
                 List.of("Load", "Save"), List.of(false, false), List.of(
-                        () -> {
-                            BasicService.loadFromFile();
-                            params.resetInputs();
-                            repaintSelectedPage();
-                        },
-
+                        this::load,
                         BasicService::saveToFile
                 ));
 
+        load();
         shell.pack();
         INSTANCE = this;
     }
@@ -126,6 +122,12 @@ public class SwtGui {
             selectedControl.redraw();
             selectedControl.update();
         }
+    }
+
+    private void load() {
+        BasicService.loadFromFile();
+        params.resetInputs();
+        repaintSelectedPage();
     }
 
     public Shell getMainShell() {

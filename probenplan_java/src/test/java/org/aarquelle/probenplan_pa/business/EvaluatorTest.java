@@ -65,14 +65,6 @@ class EvaluatorTest {
     }
 
     @Test
-    void testEvaluateAllScenesBeforeDLP() {
-        Evaluator evaluator = new Evaluator(plan1);
-        assertTrue(evaluator.allScenesBeforeDurchlaufprobe());
-
-        assertFalse(new Evaluator(plan2).allScenesBeforeDurchlaufprobe());
-    }
-
-    @Test
     void testTotalLength() {
         assertEquals(12, plan1.totalLength());
     }

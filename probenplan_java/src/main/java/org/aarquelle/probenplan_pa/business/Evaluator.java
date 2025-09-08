@@ -43,6 +43,8 @@ public class Evaluator {
 
     double totalLengthOfRehearsals;
 
+    boolean careAboutDLP = Params.getCreateDurchlaufprobe();
+
     public Evaluator(Plan plan) {
         this.plan = plan;
         this.rehearsals = BasicService.getRehearsals();
@@ -50,7 +52,9 @@ public class Evaluator {
         this.totalLengthOfRehearsals = plan.totalLength();
         this.expectedNumberOfRepeats = getExpectedNumberOfRepeats();
 
-        durchlaufprobe = findDurchlaufprobe();
+        if (careAboutDLP) {
+            durchlaufprobe = findDurchlaufprobe();
+        }
         this.numberOfRepeats = getNumberOfRepeats();
 
     }
@@ -86,16 +90,6 @@ public class Evaluator {
         return totalScore;
     }
 
-    boolean allScenesBeforeDurchlaufprobe() {
-        Set<Scene> allScenes = scenes.toSet();
-        for (Rehearsal rehearsal : rehearsals) {
-            if (rehearsal.getDate().isBefore(durchlaufprobe.getDate())) {
-                plan.get(rehearsal).forEach(allScenes::remove);
-            }
-        }
-        return allScenes.isEmpty();
-    }
-
     private Rehearsal findDurchlaufprobe() {
         for (Rehearsal rehearsal : rehearsals) {
             if (plan.get(rehearsal).size() == scenes.size()) {
@@ -106,38 +100,46 @@ public class Evaluator {
     }
 
     double completenessBeforeDLP() {
-        double result = 0;
-        List<Pair<Rehearsal, Set<Scene>>> rehearsalsBeforeDLP = new ArrayList<>();
-        for (Rehearsal r : rehearsals) {
-            if (r.getDate().isBefore(durchlaufprobe.getDate())) {
-                rehearsalsBeforeDLP.add(new Pair<>(r, plan.get(r)));
-            }
-        }
-
-        Map<Scene, Double> scenesBeforeDLP = new HashMap<>();
-        for (Pair<Rehearsal, Set<Scene>> pair : rehearsalsBeforeDLP) {
-            Set<Scene> scenes = pair.second();
-            Rehearsal rehearsal = pair.first();
-            for (Scene scene : scenes) {
-                double sceneResult = Analyzer.completenessScore(rehearsal, scene) * scene.getLength(); //TODO Schon ältere Analysen verwenden?
-                if (!scenesBeforeDLP.containsKey(scene)) {
-                    scenesBeforeDLP.put(scene, sceneResult);
-                    result += sceneResult;
-                } else if (scenesBeforeDLP.get(scene) < sceneResult) {
-                    scenesBeforeDLP.put(scene, sceneResult);
-                    result += sceneResult - scenesBeforeDLP.get(scene);
+        if (careAboutDLP) {
+            double result = 0;
+            List<Pair<Rehearsal, Set<Scene>>> rehearsalsBeforeDLP = new ArrayList<>();
+            for (Rehearsal r : rehearsals) {
+                if (r.getDate().isBefore(durchlaufprobe.getDate())) {
+                    rehearsalsBeforeDLP.add(new Pair<>(r, plan.get(r)));
                 }
             }
+
+            Map<Scene, Double> scenesBeforeDLP = new HashMap<>();
+            for (Pair<Rehearsal, Set<Scene>> pair : rehearsalsBeforeDLP) {
+                Set<Scene> scenes = pair.second();
+                Rehearsal rehearsal = pair.first();
+                for (Scene scene : scenes) {
+                    double sceneResult = Analyzer.completenessScore(rehearsal, scene) * scene.getLength(); //TODO Schon ältere Analysen verwenden?
+                    if (!scenesBeforeDLP.containsKey(scene)) {
+                        scenesBeforeDLP.put(scene, sceneResult);
+                        result += sceneResult;
+                    } else if (scenesBeforeDLP.get(scene) < sceneResult) {
+                        scenesBeforeDLP.put(scene, sceneResult);
+                        result += sceneResult - scenesBeforeDLP.get(scene);
+                    }
+                }
+            }
+            return result / Analyzer.lengthOfPlay;
+        } else {
+            return 0;
         }
-        return result / Analyzer.lengthOfPlay;
     }
 
     double dlpCompleteness() {
-        double result = 0;
-        for (Scene scene : plan.get(durchlaufprobe)) {
-            result += Analyzer.completenessScore(durchlaufprobe, scene) * scene.getLength() / Analyzer.lengthOfPlay;
+        if (careAboutDLP) {
+            double result = 0;
+            for (Scene scene : plan.get(durchlaufprobe)) {
+                result += Analyzer.completenessScore(durchlaufprobe, scene) * scene.getLength() / Analyzer.lengthOfPlay;
+            }
+            return result;
+        } else {
+            return 0;
         }
-        return result;
     }
 
     double totalCompleteness() {
@@ -253,7 +255,7 @@ public class Evaluator {
             result += Math.max(0, getNumberOfRolesInRehearsal(r) - Params.getOptimalNumberOfActors());
         }
         result /= rehearsals.size();
-        result /= Analyzer.numberOfRoles -  Params.getOptimalNumberOfActors();
+        result /= Math.max(Analyzer.numberOfRoles -  Params.getOptimalNumberOfActors(), 1);
         return 1 - result;
     }
 

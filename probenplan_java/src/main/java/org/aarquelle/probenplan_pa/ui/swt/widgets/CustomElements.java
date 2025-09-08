@@ -91,8 +91,8 @@ public class CustomElements {
                 l -> {
                     Scene s = BasicService.createScene();
                     s.setName(l.getFirst().getString());
-                    s.setLength(l.get(2).getDouble());
-                    s.setPosition(BasicService.getPosAfterScene(l.get(3).getScene()));
+                    s.setLength(l.get(1).getDouble());
+                    s.setPosition(BasicService.getPosAfterScene(l.get(2).getScene()));
                     BasicService.getScenes().sort();//TODO eleganter
                 }).open());
         return b;

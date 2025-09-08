@@ -35,6 +35,30 @@ public class Para<T extends Number> implements Comparable<Para<T>> {
         this.description = "";
     }
 
+    static Para<Integer> createBoolPara(String name, boolean defaultValue) {
+        Para<Integer> p = new Para<>(name, defaultValue ? 1 : 0);
+        p.minValue = 0;
+        p.maxValue = 1;
+        return p;
+    }
+
+    public boolean isBoolean() {
+        return minValue != null && minValue.equals(0) && maxValue != null && maxValue.equals(1);
+    }
+
+    public boolean getBoolValue() {
+        if (isBoolean()) {
+            return value.equals(1);
+        } else throw new RuntimeException("Param " + name + " is not a boolean!");
+    }
+
+    @SuppressWarnings("unchecked")
+    public void setBoolean(boolean b) {
+        if (defaultValue instanceof Integer) {
+            setValue((T) (b ? Integer.valueOf(1) : Integer.valueOf(0)));
+        }
+    }
+
     public String getName() {
         return name;
     }
@@ -85,6 +109,31 @@ public class Para<T extends Number> implements Comparable<Para<T>> {
 
         value = t;
     }
+
+    /**
+     * Compares two values. Returns -1 if x < y, 0 if they are equal, and 1 and x > y.
+     * For numbers, it compares the double values. For booleans, it returns 0 as long as both values are booleans.
+     * For objects implementing Comparable, it returns that result.
+     * @throws IllegalArgumentException Thrown if the values cannot be compared.
+     */
+    /*public int compareValue(T x, T y) throws IllegalArgumentException {
+        if (x instanceof Number a) {
+            if (y instanceof Number b) {
+                if (a.equals(b)) {
+                    return 0;
+                } else {
+                    return a.doubleValue() > b.doubleValue() ? 1 : -1;
+                }
+            }
+            throw new IllegalArgumentException("x is a number, y isn't");
+        } else if (x instanceof Boolean){
+            if (y instanceof Boolean) {
+                return 0;
+            } else {
+                throw new IllegalArgumentException("x is a boolean, y isn't");
+            }
+        } else throw new IllegalArgumentException("Undefined relationship between " + x + " and " + y);
+    }*/
 
     void reset() {
         this.value = defaultValue;

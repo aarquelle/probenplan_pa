@@ -35,6 +35,8 @@ public class Mutator {
 
     double evaluation = Double.NEGATIVE_INFINITY;
 
+    boolean careAboutDLP = Params.getCreateDurchlaufprobe();
+
     /**
      * All rehearsals that are not the DLP.
      */
@@ -262,15 +264,19 @@ public class Mutator {
     public void mutate(int limit) {
         int deadline = 0;
         if (Analyzer.runAnalysis()) {
-            findDlpCandidates();
-            plan = forceDLP();
+            if (careAboutDLP) {
+                findDlpCandidates();
+                plan = forceDLP();
+            }
             buildLocks();
-            dlp = potentialDlp;
-            potentialDlp = null;
+            if (careAboutDLP) {
+                dlp = potentialDlp;
+                potentialDlp = null;
+            }
             freeRehearsals.remove(dlp);
             while (deadline < limit) {
                 deadline++;
-                int choice = rand.nextInt(7);
+                int choice = rand.nextInt(careAboutDLP ? 7 : 5);
                 Plan mutant;
                 switch (choice) {
                     case 0 -> mutant = addScene();

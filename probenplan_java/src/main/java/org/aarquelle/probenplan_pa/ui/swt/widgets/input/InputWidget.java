@@ -25,6 +25,7 @@ import org.aarquelle.probenplan_pa.util.DateUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -48,7 +49,7 @@ public class InputWidget<T> extends Composite{
         label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
         widget = switch (input.type()) {
             case STRING, INT, DOUBLE, DATE -> new Text(this, SWT.SINGLE);
-            case BOOL -> throw new IllegalArgumentException("NOT IMPLEMENTED"); //TODO Checkbox
+            case BOOL -> new Button(this, SWT.CHECK);
             case SCENE_SELECT -> new DropdownMenu<>(this, BasicService.getScenes().toList(),
                     "Keine Szene", Scene::displayName);
             case ACTOR_SELECT -> new DropdownMenu<>(this, BasicService.getActors().toList(),
@@ -64,8 +65,7 @@ public class InputWidget<T> extends Composite{
             T initialValue = input.initial();
             switch (input.type()) {
                 case STRING, INT, DOUBLE -> ((Text)widget).setText(String.valueOf(initialValue));
-                case BOOL -> {//TODO
-                }
+                case BOOL -> ((Button)widget).setSelection((Boolean)initialValue);
                 case DATE -> ((Text)widget).setText(DateUtils.getString((LocalDate) initialValue));
                 case SCENE_SELECT -> ((DropdownMenu<Scene>)widget).select((Scene) initialValue);
                 case ACTOR_SELECT -> ((DropdownMenu<Actor>)widget).select((Actor) initialValue);
@@ -99,7 +99,7 @@ public class InputWidget<T> extends Composite{
 
     public boolean getBool() {
         if (input.type() == BOOL) {
-            throw new IllegalArgumentException("NOT IMPLEMENTED");//TODO
+            return ((Button)widget).getSelection();
         } else throw new IllegalArgumentException("Wrong type!");
     }
 
@@ -137,6 +137,16 @@ public class InputWidget<T> extends Composite{
         if (input.type() == InputType.STRING) {
             ((Text)widget).setText(text);
         } else throw new IllegalArgumentException("Wrong type!");
+    }
+
+    public void setBool(boolean b) {
+        if (input.type() == BOOL) {
+            ((Button)widget).setSelection(b);
+        } else throw new IllegalArgumentException("Wrong type!");
+    }
+
+    public InputType getType() {
+        return input.type();
     }
 
     @Override

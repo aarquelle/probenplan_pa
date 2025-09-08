@@ -18,6 +18,7 @@ package org.aarquelle.probenplan_pa.ui.swt.pages;
 
 import org.aarquelle.probenplan_pa.business.Para;
 import org.aarquelle.probenplan_pa.business.Params;
+import org.aarquelle.probenplan_pa.ui.cli.in.In;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.input.Input;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.input.InputType;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.input.InputWidget;
@@ -34,7 +35,7 @@ import java.util.List;
 
 public class ParamTab extends Composite {
 
-    private final List<InputWidget<String>> inputs;
+    private final List<InputWidget<?>> inputs;
     private final Composite contentComp;
 
     public ParamTab(Composite parent) {
@@ -56,16 +57,26 @@ public class ParamTab extends Composite {
         inputs = new ArrayList<>();
 
         for (Para<?> para : Params.getAllParams()) {
-            Input<String> i = new Input<>(para.getName(), InputType.STRING, String.valueOf(para.getValue()));
-            InputWidget<String> widget = new InputWidget<>(contentComp, i);
+            InputWidget<?> widget;
+            Input<?> i;
+            if (para.isBoolean()) {
+                i = new Input<>(para.getName(), InputType.BOOL, para.getBoolValue());
+            } else {
+                i = new Input<>(para.getName(), InputType.STRING, String.valueOf(para.getValue()));
+            }
+            widget = new InputWidget<>(contentComp, i);
             widget.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
             widget.setToolTipText(para.getDescription());
             inputs.add(widget);
         }
 
         saveButton.addListener(SWT.Selection, e -> {
-            for (InputWidget<String> widget : inputs) {
-                Params.setPara(widget.getName(), widget.getString());
+            for (InputWidget<?> widget : inputs) {
+                if (widget.getType() == InputType.BOOL) {
+                    Params.setPara(widget.getName(), widget.getBool());
+                } else if (widget.getType() == InputType.STRING) {
+                    Params.setPara(widget.getName(), widget.getString());
+                }
             }
         });
         cancelButton.addListener(SWT.Selection, e -> resetInputs());
@@ -77,8 +88,12 @@ public class ParamTab extends Composite {
     }
 
     public void resetInputs() {
-        for (InputWidget<String> widget : inputs) {
-            widget.setText(Params.getValueFromString(widget.getName()));
+        for (InputWidget<?> widget : inputs) {
+            if (widget.getType() == InputType.STRING) {
+                widget.setText(Params.getValueFromString(widget.getName()));
+            } else if (widget.getType() == InputType.BOOL) {
+                widget.setBool(Params.getPara(widget.getName()).getBoolValue());
+            }
         }
         contentComp.redraw();
     }
