@@ -17,12 +17,31 @@
 package org.aarquelle.probenplan_pa.ui.swt;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class SwtUtils {
     public static boolean confirm(String text) {
         MessageBox box = new MessageBox(SwtGui.INSTANCE.getMainShell(), SWT.YES | SWT.NO);
         box.setMessage(text);
         return box.open() == SWT.YES;
+    }
+
+    public static Image getImage(String path) {
+        try (InputStream in = SwtUtils.class.getResourceAsStream(path)) {
+            if (in == null) {
+                System.out.println("in is null");
+                throw new IOException();
+            }
+            return new Image(Display.getCurrent(), in);
+
+        } catch (IOException e) {
+            System.out.println("Couldn't find image " + path);
+            return new Image(Display.getCurrent(), 1,1);
+        }
     }
 }

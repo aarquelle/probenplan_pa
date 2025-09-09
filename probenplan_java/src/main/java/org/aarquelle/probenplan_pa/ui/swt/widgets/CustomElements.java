@@ -225,7 +225,7 @@ public class CustomElements {
             Program.launch(e.text);
         });
         try {
-            String license = FileUtils.readFile(new File("license", "license_short.txt"));
+            String license = FileUtils.readFile("/license/license_short.txt");
             copyright.setText(license);
         } catch (IOException e) {
             copyright.setText("Could not read license file.");

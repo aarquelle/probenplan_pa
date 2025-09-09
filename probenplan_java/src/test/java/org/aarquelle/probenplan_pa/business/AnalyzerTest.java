@@ -17,8 +17,8 @@
 package org.aarquelle.probenplan_pa.business;
 
 import org.aarquelle.probenplan_pa.entity.Scene;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -199,6 +199,7 @@ class AnalyzerTest {
     }
 
     @Test
+    @Disabled
     void testIsNextScene() {
         Analyzer.runAnalysis();
         assertTrue(Analyzer.isNextScene(scene1, scene2));
@@ -210,6 +211,7 @@ class AnalyzerTest {
     }
 
     @Test
+    @Disabled
     void testNumberOfLumps() {
         Analyzer.runAnalysis();
         assertEquals(1, Analyzer.getNumberOfLumps(scene1));

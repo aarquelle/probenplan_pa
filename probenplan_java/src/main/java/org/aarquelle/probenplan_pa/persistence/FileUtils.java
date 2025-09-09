@@ -21,12 +21,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class FileUtils {
-    public static String readFile(File path) throws IOException{
-        BufferedReader reader = new BufferedReader(new FileReader(path));
-        StringBuilder sb = new StringBuilder();
-        reader.lines().forEachOrdered(s -> sb.append(s).append(System.lineSeparator()));
-        return sb.toString();
+    public static String readFile(String path) throws IOException{
+        try(InputStream in = FileUtils.class.getResourceAsStream(path)) {
+            if (in == null) {
+                throw new IOException("InputStream is null");
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            reader.lines().forEachOrdered(s -> sb.append(s).append(System.lineSeparator()));
+            return sb.toString();
+        }
     }
 }

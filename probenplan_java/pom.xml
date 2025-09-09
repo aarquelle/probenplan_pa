@@ -101,13 +101,76 @@
             <version>2.0.16</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.eclipse.swt/org.eclipse.swt.gtk.linux.x86_64 -->
-        <dependency>
-            <groupId>org.eclipse.swt</groupId>
-            <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
-            <version>4.3</version>
-        </dependency>
 
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <family>linux</family>
+                </os>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <finalName>probenplan-linux</finalName>
+            </build>
+            <dependencies>
+                <!-- https://mvnrepository.com/artifact/org.eclipse.swt/org.eclipse.swt.gtk.linux.x86_64 -->
+                <dependency>
+                    <groupId>org.eclipse.swt</groupId>
+                    <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+                    <version>4.3</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>windows</id>
+            <dependencies>
+                <!-- https://mvnrepository.com/artifact/org.eclipse.swt/org.eclipse.swt.win32.win32.x86_64 -->
+                <dependency>
+                    <groupId>org.eclipse.swt</groupId>
+                    <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
+                    <version>4.3</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <finalName>probenplan-windows</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                        <artifactId>launch4j-maven-plugin</artifactId>
+                        <version>2.5.0</version>
+                        <executions>
+                            <execution>
+                                <id>l4j-clui</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>launch4j</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!-- Ausgabedatei -->
+                            <outfile>${project.build.directory}/probenplan_pa.exe</outfile>
+                            <!-- Hauptklasse -->
+                            <classPath>
+                                <mainClass>org.aarquelle.probenplan_pa.Main</mainClass>
+                            </classPath>
+                            <!-- JAR-Datei -->
+                            <jar>${project.build.directory}/${project.build.finalName}.jar</jar>
+                            <!-- Minimale JRE-Version -->
+                            <jre>
+                                <minVersion>21.0.0</minVersion>
+                            </jre>
+                            <!-- Optionales Icon -->
+                            <!--icon>assets/tadu_icon.png</icon-->
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

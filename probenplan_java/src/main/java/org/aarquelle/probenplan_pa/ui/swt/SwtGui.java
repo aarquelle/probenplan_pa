@@ -55,7 +55,7 @@ public class SwtGui {
         display = new Display();
         shell = new Shell(display);
 
-        appIcon = new Image(display, "assets/tadu_icon.png");
+        appIcon = SwtUtils.getImage("/assets/tadu_icon.png");
         resourceHandler = new ResourceHandler(display);
 
         shell.setImage(appIcon);
