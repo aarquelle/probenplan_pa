@@ -18,18 +18,22 @@ package org.aarquelle.probenplan_pa.ui.swt.pages;
 
 import org.aarquelle.probenplan_pa.business.Analyzer;
 import org.aarquelle.probenplan_pa.business.BasicService;
+import org.aarquelle.probenplan_pa.business.InfoService;
 import org.aarquelle.probenplan_pa.business.Mutator;
 import org.aarquelle.probenplan_pa.business.Params;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Scene;
+import org.aarquelle.probenplan_pa.ui.swt.SwtGui;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.CustomElements;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.OptionTable;
 import org.aarquelle.probenplan_pa.ui.swt.widgets.option_tables.PlanTable;
+import org.aarquelle.probenplan_pa.util.CsvUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.MessageBox;
 
 import java.util.List;
 
@@ -44,9 +48,9 @@ public class PlanTab extends Composite {
         Display d = Display.getCurrent();
 
         Group importRow = CustomElements.createImportRow(this, "",
-                List.of("Generate"),
-                List.of(false),
-                List.of(this::generate));
+                List.of("Generate", "Export"),
+                List.of(false, false),
+                List.of(this::generate, this::copyToClipboard));
         optionTable = new PlanTable(this);
     }
 
@@ -59,6 +63,14 @@ public class PlanTab extends Composite {
         mutator.mutate(Params.getDeadline());
         BasicService.setPlan(mutator.getPlan());
         redraw();
+    }
+
+    private void copyToClipboard() {
+        CsvUtils.copyToClipboard(InfoService.csvPlan(BasicService.getPlan()));
+        MessageBox box = new MessageBox(SwtGui.INSTANCE.getMainShell(), SWT.OK);
+        box.setMessage("The plan has been copied to your clipboard. You can paste it into a spreadsheet program" +
+                " like Google Sheets, LibreOffice Calc or Microsoft Excel.");
+        box.open();
     }
 
     @Override
