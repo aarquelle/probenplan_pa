@@ -36,8 +36,13 @@ jobs:
             --dest target
         shell: cmd
 
+      - name: Check directory
+        run: |
+          tree
+        shell: cmd
+
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
         with:
           name: Probenplan-Windows
-          path: target/probenplan_pa.exe
+          path: target\probenplan_pa.exe
