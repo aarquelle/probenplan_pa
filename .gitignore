@@ -23,6 +23,7 @@
 hs_err_pid*
 replay_pid*
 
+*.exe
 test.db
 *test.db
 *.~lock*

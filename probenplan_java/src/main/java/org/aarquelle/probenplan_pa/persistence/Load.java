@@ -57,6 +57,11 @@ public class Load {
         ds.clear();
 
         Path path = Paths.get(filename);
+
+        if (!Files.exists(path)) {
+            return;
+        }
+
         long size;
         try {
             size = Files.size(path);

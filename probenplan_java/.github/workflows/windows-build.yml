@@ -1,0 +1,42 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:   # manueller Start
+  push:
+    branches: [ main ]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build JAR with Maven
+        run: mvn -P windows -B clean package
+
+      - name: Package with jpackage
+        run: |
+          jpackage ^
+            --input target ^
+            --main-jar probenplan_windows.jar ^
+            --main-class org.aarquelle.probenplan_pa.Main ^
+            --type exe ^
+            --name probenplan_pa ^
+            --win-dir-chooser ^
+            --win-menu ^
+            --win-shortcut
+        shell: cmd
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: MyApp-Windows
+          path: probenplan_pa.exe
