@@ -38,7 +38,7 @@ jobs:
 
       - name: Check directory
         run: |
-          tree
+          tree /f
         shell: cmd
 
       - name: Upload EXE artifact
