@@ -1,44 +1,27 @@
 # Probenplan
-Ein kleines Tool, um den Probenplanerstellungs- und bearbeitungsprozess nicht ganz so ätzend zu machen. Mit wenigen grundlegenden Kommandos sollte ein Probenplan zu generieren sein.
+Ein kleines Tool, um den Probenplanerstellungs- und -bearbeitungsprozess nicht ganz so ätzend zu machen.
 
 ## Voraussetzungen:
-Ein Java Development Kit Version 21 oder höher ist erforderlich, um das Programm auszuführen. Falls das nicht eh schon installiert ist:
+Momentan werden nur Linux und Windows unterstützt, eine Version für MacOS kommt sehr bald, ich konnte es aber noch nicht testen.
+Ein Java Development Kit Version 21 oder höher wird benötigt, um das Programm auszuführen, auf Windows sollte es während des erstmaligen Ausführen installiert werden können, auf Linux installierst du es am Besten einfach über den Paketmanager deiner Distribution.
 
-### Linux:
-Am Besten installierst du java einfach über den Paketmanager deiner Distribution.
+## Installation und Start
 
-### MacOs:
-Lade den passenden Installer von <https://www.oracle.com/java/technologies/downloads/#jdk21-mac> herunter. 
-![Screenshot von vom obigen Link](readme_files/macOsJava.png)
-Achte auf die richtige Version, und das richtige Betriebssystem! Neuere Versionen sind in Ordnung, aber es sollte mindestens JDK 21 sein. **Wichtig**: Je nachdem, was für ein Chip in deinem Mac eingebaut ist, musst du unterschiedliche Dateien runterladen. Hast du einen Intel-Chip eingebaut, lade `x64 DMG Installer` herunter, hast du einen neuen Apple Chip eingebaut, lade `ARM64 DMG Installer` herunter. Ansonsten gibt es bei der Installation eine Fehlermeldung mit "Falsche Installationsprogrammarchitektur". Die heruntergeladene Datei dann einfach ausführen und durch die Installation klicken.
+Klicke rechts im Browser auf den neuesten release.
 
-### Windows:
-Lade den passenden Installer von https://www.oracle.com/java/technologies/downloads/#jdk21-windows herunter.
-![Screenshot von vom obigen Link](readme_files/winJava.png)
-Achte auf die richtige Version, und das richtige Betriebssystem! Neuere Versionen sind in Ordnung, aber es sollte mindestens JDK 21 sein. Lade den Installer herunter, führe ihn aus und klicke dich durch die Installation.
+<img width="344" height="569" alt="image" src="https://github.com/user-attachments/assets/9ed9a089-c296-4d07-b015-4a933e9fb912" />
 
-## Installation und Start:
-Zuerst muss das Zip-Archiv `probenplan.zip`, das alle nötigen Dateien enthält, heruntergeladen werden. Du findest es rechts im Browser unter "Releases". Wähle die neueste Version, falls es verschiedene Versionen gibt. Jetzt kannst du die Datei irgendwo entpacken, am Besten in ihren eigenen Ordner.
-
-### Linux 
-(Ausprobiert auf Linux Mint 22.1 mit Xfce 4.18)
-Führe einfach `run-on-unix.command` mit dem Terminal aus.
-
-### MacOS: 
-Beim ersten Mal ausführen kriegst du wahrscheinlich eine Warnung wie diese: ![Warnung MacOs](readme_files/macWarnung.jpeg) (Ich versprech's auch ganz fest, dass das kein Virus ist, aber so ein Account bei Apple kostet 99$ im Jahr, das ist es mir jetzt nicht ganz wert tbh.) Hier ist ein kurzes Tutorial, wie du es trotzdem öffnen kannst: <https://support.apple.com/de-de/guide/mac-help/mh40616/mac> Das passiert nur beim ersten Mal, danach solltest du es einfach so ausführen können. Alternativ kannst du das Programm auch direkt über das Terminal starten: Öffne das Terminal (ist immer vorinstalliert) und gebe den PDateipfad zu `run-on-unix.command` ein. Wenn du die `zip`-Datei also im Downloads-Ordner in einen Ordner namens "probenplan" entpackt hast, gebe `Downloads/probenplan/run-on-unix.command` ein und drücke Enter.
-
-### Windows:
-(Ausprobiert auf Windows 11)
-Doppelklicke `run-on-windows.bat`. Beim ersten Mal ausführen kommt wahrscheinlich eine Fehlermeldung wie "Der Computer wurde durch Windows geschützt." Einfach auf "Weitere Informationen", dann auf "Trotzdem ausführen" klicken.
+Wenn du Linux benutzt, lade "probenplan_linux.zip" herunter, entpacke das Archiv und führe `run_on_linux.command` aus.
+Wenn du Windows benutzt, lade "probenplan_pa.exe" herunter und führe die Datei aus. Beim ersten Mal ausführen kommt wahrscheinlich eine Fehlermeldung wie "Der Computer wurde durch Windows geschützt." Einfach auf "Weitere Informationen", dann auf "Trotzdem ausführen" klicken.
 
 ## Verwendung:
 
-### Das Terminal:
-Das Programm wird mit Kommandos in einem Terminal (je nach Betriebsystem vielleicht auch Konsole, Eingabeaufforderung oder PowerShell genannt) ausgeführt. Es gibt Autovervollständigung mit der `TAB`-Taste. Die Werte in Klammern sind die Argumente des Befehls. Ein Kommando wird ausgeführt, indem es eingetippt und dann `ENTER` gedrückt wird. Es kann nur ein Kommando auf einmal ausgeführt werden.
+Man kann zwischen verschiedenen Tabs wechseln. Im Tab "Termine" können neue Schauspielenden und neue Probentermine erzeugt werden. Klickt man auf die Zellen der Tabelle, die sich dadurch ergibt, lässt sich einstellen, wer an welchen Tagen Zeit hat. Die Tooltips erklären die Bedeutung der Farben. Im Tab "Szenen" können neue Szenen und neue Rollen hinzugefügt werden. In den Zellen kann festgelegt werden, welche Rollen in welchen Szenen vorkommen. Durch Klick auf die Zeilen/Spaltennamen lassen sich die Einträge auch wieder löschen oder bearbeiten. Im Tab "Plan" kann dann ein Probenplan generiert und dann exportiert werden. Die Farben der Zellen stellen hier dar, wie gut sich eine Szene an diesem Tag proben lässt: In den Tooltips kann man sehen, welche benötigten Schauspieler an diesem Termin fehlen würden. Im Tab "Parameters" lassen sich verschiedene Generierungsparameter einstellen. Änderungen treten allerdings erst in Kraft, wenn der Knopf "Save changes" gedrückt wurde.
 
 ### Zur "Länge" der Szenen:
-Jeder Szene kann eine Dezimalzahl als "Länge" zugewiesen werden. Standardmäßig versucht das Programm, den Probenplan so zu erstellen, dass die Summe aller in einer Probe geprobten Szenen ungefähr `1` ist.
+Jeder Szene kann eine Dezimalzahl als "Länge" zugewiesen werden. Standardmäßig versucht das Programm, den Probenplan so zu erstellen, dass die Summe aller in einer Probe geprobten Szenen ungefähr `1` ist. Dieser Zielwert kann mit dem Parameter `averageRehearsalLength` verändert werden. Eine gute Möglichkeit ist zum Beispiel, jeder Szene als "Länge" die Anzahl ihrer Seiten zu geben, und dann abzuschätzen, wie viele Seiten man wohl in einer Probe schafft.
 
+<!--
 ### Zum Einfügen von table-Daten:
 Die `import-` Befehle, um schnell größere Datenmengen zu importieren, verlangen "table-Daten" im Zwischenspeicher/Clipboard. Gemeint ist damit, dass Daten in einem Tabellenkalkulationsprogramm wie LibreOffice Calc, Excel oder Google Sheets markiert und kopiert werden. Diese Daten müssen dann **nicht** eingefügt werden, solange sie im Zwischenspeicher sind, könnt ihr den Befehl einfach eingeben und `ENTER` drücken. Also: Um zum Beispiel die Szenen zu importieren: Daten in einer Tabelle wie unten gezeigt auswählen, kopieren, ins Terminal wechseln und `import-scenes` eintippen und `ENTER` drücken.
 #### MacOS:
@@ -81,16 +64,16 @@ Beispiel: ![Bild einer Tabelle](beispielcsvs/locks.png)
 - `unlock <scene-name> <rehearsal-date>` --- Macht den obigen Befehl wieder rückgängig.
 - `unlock-all` --- Entfernt alle locks auf Szenen und Proben.
 -->
-
+<!--
 ### Finetuning der Generierung
 - `show-params` --- Zeigt die aktuellen Werte der Generierungsparameter.
-- `set-param <param-name> <value>` --- Legt einen Generierungsparameter auf einen bestimmten Wert fest. Die Standardwerte sollten gut funktionieren, aber du kannst auch mit anderen Werten experimentieren. Wenn du mit anderen Werten bessere Ergebnisse erzielst, teile es mir bitte mit! Die Werte werden nach jedem Neustart des Programms auf die Standardwerte zurückgesetzt.
+- `set-param <param-name> <value>` --- Legt einen Generierungsparameter auf einen bestimmten Wert fest. Die Standardwerte sollten gut funktionieren, aber du kannst auch mit anderen Werten experimentieren. Wenn du mit anderen Werten bessere Ergebnisse erzielst, teile es mir bitte mit! Die Werte werden nach jedem Neustart des Programms auf die Standardwerte zurückgesetzt.-->
 #### Parameter:
-- `earliestDurchlaufprobe` --- Legt den frühesten Termin fest, an dem eine Durchlaufprobe stattfinden darf. `0` ist dabei die erste Probe, `1` die letzte.
-- `latestDurchlaufprobe` --- Pendant zu oben, für den spätesten möglichen Termin.
+Indem man die Parameter verändert, lassen sich eventuell Ergebnisse finden, die besser zur eigenen Situation passen. Spielt hier gerne mit rum, und schreibt mir, wenn ihr bessere Ergebnisse bekommt als mit den Standardwerten!
+
 - `averageRehearsalLength` --- Legt fest, wie lang eine Probe sein soll - gemessen als Summe der Längen der einzelnen Szenen.
 - `deadline` --- Legt fest, nach wie vielen erfolglosen Verbesserungsversuchen das Programm den generierten Plan akzeptiert.
-- `initialSeed` --- Legt den ersten Zufallsseed fest, wenn bei `generate` kein entsprechendes Argument mitgeliefert wird. Bei gleichem Seed kommen immer die gleichen Ergebnisse raus.
+- `initialSeed` --- Legt den ersten Zufallsseed fest, wenn bei `generate` kein entsprechendes Argument mitgeliefert wird. Bei gleichem Seed kommen immer die gleichen Ergebnisse raus. Ist der seed 0 (default), wird ein zufälliger seed gewählt.
 - `completenessWeight` --- Wie viel Wert darauf gelegt wird, dass die einzelnen Szenen möglichst vollständig sind, also dass möglichst wenige Schauspielende fehlen und eingesprochen werden müssen.
 - `dlpCompletenessWeight` --- Wie viel Wert darauf gelegt wird, dass die Durchlaufprobe möglichst vollständig gespielt werden kann.
 - `completenessBeforeDLPWeight` --- Wie viel Wert darauf gelegt wird, dass vor der Durchlaufprobe möglichst jede Szene schon vollständig gespielt werden konnte.
@@ -102,9 +85,7 @@ Beispiel: ![Bild einer Tabelle](beispielcsvs/locks.png)
 - `numberOfRolesWeight` --- Wie viel Wert darauf gelegt wird, dass nicht so viele Rollen pro Probe dran sind. **Hinweis**: Momentan zählt das Programm nur die Rollen, nicht die Schauspielenden. Wenn eine Schauspielerin also mehrere Rollen hat, kann das an dieser Stelle gerade nicht berücksichtigt werden. Das wird sich in Zukunft verbessern. **Anderer Hinweis**: Momentan werden Proben mit 4 oder weniger Rollen als "ideal" angesehen, unterhalb davon wird nicht unterschieden.
 
 ## Fehler:
-Das Programm ist noch in einem ziemlich unfertigen Stadium. Man kann es zwar benutzen, aber es gibt bestimmt noch viele Situationen, in denen eine leicht unerwartete Bedienung zum Absturz führt. Bitte schreibt mir solche Fehler (inklusive Fehlermeldungen, und was ihr gemacht habt), damit ich sie fixen kann! `clear-data` ist aber nützlich, um alte, möglicherweise fehlerhafte Daten wieder zu entfernen.
-
-Momentan führt die mehrfache Eingabe von Daten häufig zu Abstürzen und unerwartetem Verhalten, es ist gerade am Besten, die Daten mit `clear-data` zu löschen und dann komplett neu anzulegen, wenn man Änderungen vornehmen möchte.
+Das Programm ist noch in einem ziemlich unfertigen Stadium. Man kann es zwar benutzen, aber es gibt bestimmt noch viele Situationen, in denen eine leicht unerwartete Bedienung zum Absturz führt. Bitte schreibt mir solche Fehler (inklusive Fehlermeldungen, und was ihr gemacht habt), damit ich sie fixen kann!
 
 ## Weiteres:
 Wenn Probleme hast oder Ideen, wie man das Programm noch verbessern kann: Teil es mir gerne mit! Per Mail an prott@fim.uni-passau.de, oder am Besten direkt hier auf Github (indem du ein Issue erstellst). Genauso, wenn du selber gerne mitarbeiten möchtest, der Quellcode ist ja hier auf Github. 
