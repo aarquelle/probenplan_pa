@@ -148,7 +148,7 @@
             <build>
                 <finalName>probenplan-windows</finalName>
                 <plugins>
-                    <!--plugin>
+                    <plugin>
                         <groupId>com.akathist.maven.plugins.launch4j</groupId>
                         <artifactId>launch4j-maven-plugin</artifactId>
                         <version>2.5.0</version>
@@ -166,13 +166,13 @@
                             <classPath>
                                 <mainClass>org.aarquelle.probenplan_pa.Main</mainClass>
                             </classPath>
-                            <jar>${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar</jar>
+                            <jar>${project.build.directory}/${project.build.finalName}.jar</jar>
                             <jre>
                                 <minVersion>21.0.0</minVersion>
                             </jre>
-                            <icon>assets/tadu_icon.png</icon>
+                            <icon>assets/tadu_icon.ico</icon>
                         </configuration>
-                    </plugin-->
+                    </plugin>
                 </plugins>
             </build>
         </profile>

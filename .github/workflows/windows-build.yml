@@ -2,8 +2,8 @@ name: Build Windows EXE
 
 on:
   workflow_dispatch:   # manueller Start
-  push:
-    branches: [ main ]
+  #push:
+   # branches: [ main ]
 
 jobs:
   build-windows:

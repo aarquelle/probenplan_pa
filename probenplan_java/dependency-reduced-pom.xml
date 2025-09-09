@@ -57,17 +57,29 @@
                 <goals>
                   <goal>launch4j</goal>
                 </goals>
+                <configuration>
+                  <outfile>/home/aaron/probenplan_pa/probenplan_java/target/probenplan_pa.exe</outfile>
+                  <classPath>
+                    <mainClass>org.aarquelle.probenplan_pa.Main</mainClass>
+                  </classPath>
+                  <jar>/home/aaron/probenplan_pa/probenplan_java/target/probenplan-windows.jar</jar>
+                  <jre>
+                    <minVersion>21.0.0</minVersion>
+                  </jre>
+                  <icon>assets/tadu_icon.ico</icon>
+                </configuration>
               </execution>
             </executions>
             <configuration>
-              <outfile>${project.build.directory}/probenplan_pa.exe</outfile>
+              <outfile>/home/aaron/probenplan_pa/probenplan_java/target/probenplan_pa.exe</outfile>
               <classPath>
                 <mainClass>org.aarquelle.probenplan_pa.Main</mainClass>
               </classPath>
-              <jar>${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar</jar>
+              <jar>/home/aaron/probenplan_pa/probenplan_java/target/probenplan-windows.jar</jar>
               <jre>
                 <minVersion>21.0.0</minVersion>
               </jre>
+              <icon>assets/tadu_icon.ico</icon>
             </configuration>
           </plugin>
         </plugins>
@@ -77,6 +89,7 @@
           <groupId>org.eclipse.swt</groupId>
           <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
           <version>4.3</version>
+          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
