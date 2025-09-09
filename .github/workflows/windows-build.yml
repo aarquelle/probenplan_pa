@@ -33,13 +33,11 @@ jobs:
             --main-class org.aarquelle.probenplan_pa.Main ^
             --type exe ^
             --name probenplan_pa ^
-            --win-dir-chooser ^
-            --win-menu ^
-            --win-shortcut
+            --dest target
         shell: cmd
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
         with:
-          name: MyApp-Windows
-          path: probenplan_pa.exe
+          name: Probenplan-Windows
+          path: target/probenplan_pa.exe
