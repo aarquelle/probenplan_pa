@@ -8,6 +8,9 @@ on:
 jobs:
   build-windows:
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ./probenplan_java
 
     steps:
       - name: Checkout repository
