@@ -3,7 +3,17 @@ Ein kleines Tool, um den Probenplanerstellungs- und -bearbeitungsprozess nicht g
 
 ## Voraussetzungen:
 Momentan werden nur Linux und Windows unterstützt, eine Version für MacOS kommt sehr bald, ich konnte es aber noch nicht testen.
-Ein Java Development Kit Version 21 oder höher wird benötigt, um das Programm auszuführen, auf Windows sollte es während des erstmaligen Ausführen installiert werden können, auf Linux installierst du es am Besten einfach über den Paketmanager deiner Distribution.
+Ein Java Development Kit Version 21 oder höher wird benötigt, um das Programm auszuführen. 
+
+### Linux
+Auf Linux installierst du es am Besten einfach über den Paketmanager deiner Distribution.
+
+### Windows 
+Lade den passenden Installer von https://www.oracle.com/java/technologies/downloads/#jdk21-windows herunter.
+
+![Screenshot von vom obigen Link](readme_files/winJava.png)
+
+Achte auf die richtige Version, und das richtige Betriebssystem! Neuere Versionen sind in Ordnung, aber es sollte mindestens JDK 21 sein. Lade den Installer herunter, führe ihn aus und klicke dich durch die Installation.
 
 ## Installation und Start
 
