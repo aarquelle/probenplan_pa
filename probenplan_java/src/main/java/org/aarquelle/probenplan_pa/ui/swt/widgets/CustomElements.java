@@ -96,7 +96,7 @@ public class CustomElements {
         Button b = new Button(parent, SWT.PUSH);
         b.setText("Add a new scene");
         b.addListener(SWT.Selection, e -> {
-            List<Input<?>> inputs = List.of(new Input<>("Name", STRING), new Input<>("Length", DOUBLE),
+            List<Input<?>> inputs = List.of(new Input<>("Name", STRING), new Input<>("Length", DOUBLE, 1),
                     new Input<>("Add after", SCENE_SELECT, BasicService.getLastScene()));
             new InputModal("Add new scene",
                     inputs,

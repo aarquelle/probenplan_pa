@@ -135,6 +135,9 @@ public class DataState {
         for (Rehearsal r : List.copyOf(s.getLockedRehearsals())) {
             r.removeLockedScene(s);
         }
+        for (Rehearsal r : List.copyOf(plan.getRehearsals())) {
+            plan.remove(r, s);
+        }
         scenes.remove(s);
         BasicService.stale();
     }

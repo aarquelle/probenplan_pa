@@ -125,13 +125,13 @@ public class BasicService {
         return ds.getPlan();
     }
 
-    public static void loadFromFile() {
-        Load l = new Load(Main.URL);
+    public static void loadFromFile(String url) {
+        Load l = new Load(url);
         l.load(ds);
     }
 
-    public static void saveToFile() {
-        Save s = new Save(ds, Main.URL);
+    public static void saveToFile(String url) {
+        Save s = new Save(ds, url);
         s.saveFile();
     }
 

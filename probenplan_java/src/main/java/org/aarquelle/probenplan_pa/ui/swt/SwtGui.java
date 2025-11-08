@@ -16,6 +16,7 @@
 
 package org.aarquelle.probenplan_pa.ui.swt;
 
+import org.aarquelle.probenplan_pa.Main;
 import org.aarquelle.probenplan_pa.business.BasicService;
 import org.aarquelle.probenplan_pa.business.BusinessException;
 import org.aarquelle.probenplan_pa.ui.swt.pages.ParamTab;
@@ -30,11 +31,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import java.io.File;
 import java.util.List;
 
 public class SwtGui {
@@ -89,12 +92,17 @@ public class SwtGui {
                         () -> {
                             if (SwtUtils.confirm("Are you sure you want to load from file? " +
                                     "All changes since the last save will be lost.")) {
-                                load();
+                                String target = new FileDialog(shell, SWT.OPEN).open();
+                                if (target != null) {
+                                    load(target);
+                                }
                             }
                         },
                         () -> {
-                            if (SwtUtils.confirm("Are you sure you want to overwrite the existing file?")) {
-                                BasicService.saveToFile();
+                            String target = new FileDialog(shell, SWT.SAVE).open();
+                            if (target != null && (!new File(target).exists()
+                                    || SwtUtils.confirm("Are you sure you want to overwrite the existing file?"))) {
+                                BasicService.saveToFile(target);
                             }
                         },
 
@@ -103,7 +111,7 @@ public class SwtGui {
                         }
                 ));
 
-        load();
+        load(Main.URL);
         shell.pack();
         INSTANCE = this;
     }
@@ -137,8 +145,8 @@ public class SwtGui {
         }
     }
 
-    private void load() {
-        BasicService.loadFromFile();
+    private void load(String target) {
+        BasicService.loadFromFile(target);
         params.resetInputs();
         repaintSelectedPage();
     }

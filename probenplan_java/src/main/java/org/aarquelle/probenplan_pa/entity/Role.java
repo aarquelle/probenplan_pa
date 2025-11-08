@@ -100,7 +100,11 @@ public class Role implements Comparable<Role>, Entity {
     @Override
     public int compareTo(@NotNull Role other) {
         if (name != null) {
-            return this.name.compareTo(other.name);
+            if (other.name != null) {
+                return this.name.compareTo(other.name);
+            } else {
+                return 1;
+            }
         } else {
             return other.name == null ? 0 : -1;
         }

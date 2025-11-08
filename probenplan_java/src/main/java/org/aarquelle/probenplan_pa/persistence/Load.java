@@ -73,7 +73,7 @@ public class Load {
         }
         input = new byte[(int) size];
         pointer = 0;
-
+        System.out.println("Filename: " + filename);
         try (FileInputStream x = new FileInputStream(filename)) {
             if (x.read(input) == -1) {
                 throw new RuntimeException("Unexpected end of file.");
