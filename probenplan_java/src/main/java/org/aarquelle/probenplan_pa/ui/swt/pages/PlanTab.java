@@ -18,6 +18,7 @@ package org.aarquelle.probenplan_pa.ui.swt.pages;
 
 import org.aarquelle.probenplan_pa.business.Analyzer;
 import org.aarquelle.probenplan_pa.business.BasicService;
+import org.aarquelle.probenplan_pa.business.Evaluator;
 import org.aarquelle.probenplan_pa.business.InfoService;
 import org.aarquelle.probenplan_pa.business.Mutator;
 import org.aarquelle.probenplan_pa.business.Params;
@@ -48,9 +49,9 @@ public class PlanTab extends Composite {
         Display d = Display.getCurrent();
 
         Group importRow = CustomElements.createImportRow(this, "",
-                List.of("Generate", "Export"),
-                List.of(false, false),
-                List.of(this::generate, this::copyToClipboard));
+                List.of("Generate", "Export", "See evaluation results"),
+                List.of(false, false, false),
+                List.of(this::generate, this::copyToClipboard, this::evaluationResults));
         optionTable = new PlanTable(this);
     }
 
@@ -63,6 +64,20 @@ public class PlanTab extends Composite {
         mutator.mutate(Params.getDeadline());
         BasicService.setPlan(mutator.getPlan());
         redraw();
+    }
+
+    private void evaluationResults() {
+        String msg;
+        try {
+            Analyzer.runAnalysis();
+            new Evaluator(BasicService.getPlan()).evaluate();
+            msg = BasicService.getPlan().getTestResults().toString();
+        } catch (Exception e) {
+            msg = "Could not run analysis: " + e;
+        }
+        MessageBox box = new MessageBox(SwtGui.INSTANCE.getMainShell(), SWT.OK);
+        box.setMessage(msg);
+        box.open();
     }
 
     private void copyToClipboard() {

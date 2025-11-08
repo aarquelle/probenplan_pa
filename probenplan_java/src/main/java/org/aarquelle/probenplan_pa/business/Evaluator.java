@@ -70,6 +70,7 @@ public class Evaluator {
         double overSize = overSize();
         double roleNumberScore = getRoleNumberScore();
         double enforcedScenesScore = getEnforcedScenesScore();
+        double requiredScenesScore = getRequiredScenesScore();
 
         double totalScore = (totalCompleteness * Params.getCompletenessWeight()
                 + dlpCompleteness * Params.getDlpCompletenessWeight()
@@ -81,12 +82,13 @@ public class Evaluator {
                 + overSize * Params.getOverSizeWeight()
                 + roleNumberScore * Params.getNumberOfRolesWeight())
                 + enforcedScenesScore
-                / Params.getTotalWeight();
+                + requiredScenesScore * 10 //TODO PARAM
+                / (Params.getTotalWeight() + 10);
 
         plan.setTestResults(
                 new TestResults(totalScore, totalCompleteness, dlpCompleteness, completenessBeforeDLP,
                         lumpiness, minimumRepeats, medianRepeats, averageRepeats,
-                        overSize, expectedNumberOfRepeats, roleNumberScore, enforcedScenesScore));
+                        overSize, expectedNumberOfRepeats, roleNumberScore, enforcedScenesScore, requiredScenesScore));
         return totalScore;
     }
 
@@ -255,7 +257,7 @@ public class Evaluator {
             result += Math.max(0, getNumberOfRolesInRehearsal(r) - Params.getOptimalNumberOfActors());
         }
         result /= rehearsals.size();
-        result /= Math.max(Analyzer.numberOfRoles -  Params.getOptimalNumberOfActors(), 1);
+        result /= Math.max(Analyzer.numberOfRoles - Params.getOptimalNumberOfActors(), 1);
         return 1 - result;
     }
 
@@ -267,5 +269,30 @@ public class Evaluator {
             }
         }
         return result;
+    }
+
+    double getRequiredScenesScore() {
+        int totalRequiredScenes = 0;
+        int missedRequiredScenes = 0;
+        Set<Scene> visitedScenes = new HashSet<>();
+
+        for (Rehearsal r : plan.getRehearsals().stream().sorted().toList()) {
+            for (Scene s : plan.get(r).stream().sorted().toList()) {
+                if (!visitedScenes.contains(s)) {
+                    visitedScenes.add(s);
+                    if (s.getRequiredScene() != null) {
+                        totalRequiredScenes++;
+                        if (!visitedScenes.contains(s.getRequiredScene())) {
+                            missedRequiredScenes++;
+                        }
+                    }
+                }
+            }
+        }
+        if (totalRequiredScenes == 0) {
+            return 1;
+        } else {
+            return 1 - (double) missedRequiredScenes / totalRequiredScenes;
+        }
     }
 }

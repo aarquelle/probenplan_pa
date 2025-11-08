@@ -26,6 +26,7 @@ public class Scene implements Comparable<Scene>, Entity {
     String name;
     double length;
     double position;
+    Scene requiredScene;
 
     final Set<Role> bigRoles = new HashSet<>();
     final Set<Role> smallRoles = new HashSet<>();
@@ -116,6 +117,15 @@ public class Scene implements Comparable<Scene>, Entity {
     public void setPosition(double position) {
         BasicService.stale();
         this.position = position;
+    }
+
+    public Scene getRequiredScene() {
+        return requiredScene;
+    }
+
+    public void setRequiredScene(Scene requiredScene) {
+        BasicService.stale();
+        this.requiredScene = requiredScene;
     }
 
     @Override

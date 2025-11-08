@@ -178,12 +178,15 @@ public class CustomElements {
     public static @NotNull InputModal modSceneModal(Scene s) {
         List<Input<?>> inputs = List.of(new Input<>("Name", STRING, s.getName()),
                 new Input<>("Length", DOUBLE, s.getLength()),
-                new Input<>("Add after", SCENE_SELECT, BasicService.getPredecessor(s)));
+                new Input<>("Add after", SCENE_SELECT, BasicService.getPredecessor(s)),
+                new Input<>("Required scene", SCENE_SELECT, s.getRequiredScene())
+                );
         return new InputModal("Modify " + s.displayName(), inputs,
                 l -> {
                     s.setName(l.getFirst().getString());
                     s.setLength(l.get(1).getDouble());
                     s.setPosition(BasicService.getPosAfterScene(l.get(2).getScene()));
+                    s.setRequiredScene(l.get(3).getScene());
                     BasicService.getScenes().sort();
                 })
                 .addButton("Delete Scene",
