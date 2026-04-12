@@ -32,6 +32,8 @@ public class Rehearsal implements Comparable<Rehearsal>, Entity {
 
     final Set<Actor> maybeActors = new HashSet<>();
 
+    boolean special = false;
+
     Rehearsal(){}
 
     public void addLockedScene(Scene scene) {
@@ -85,6 +87,14 @@ public class Rehearsal implements Comparable<Rehearsal>, Entity {
 
     public LocalDate getDate() {
         return date;
+    }
+
+    public boolean isSpecial() {
+        return special;
+    }
+
+    public void setSpecial(boolean special) {
+        this.special = special;
     }
 
     @Override

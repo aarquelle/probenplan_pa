@@ -69,8 +69,9 @@ public class Evaluator {
         double averageRepeats = getAverageRepeats();
         double overSize = overSize();
         double roleNumberScore = getRoleNumberScore();
-        double enforcedScenesScore = getEnforcedScenesScore();
         double requiredScenesScore = getRequiredScenesScore();
+        double enforcedScenesScore = getEnforcedScenesScore();
+        double enforcedSpecialScore = getEnforcedSpecialScore();
 
         double totalScore = (totalCompleteness * Params.getCompletenessWeight()
                 + dlpCompleteness * Params.getDlpCompletenessWeight()
@@ -81,8 +82,9 @@ public class Evaluator {
                 + averageRepeats * Params.getAverageRepeatsWeight()
                 + overSize * Params.getOverSizeWeight()
                 + roleNumberScore * Params.getNumberOfRolesWeight())
-                + enforcedScenesScore
                 + requiredScenesScore * 10 //TODO PARAM
+                + enforcedScenesScore
+                + enforcedSpecialScore
                 / (Params.getTotalWeight() + 10);
 
         plan.setTestResults(
@@ -218,6 +220,7 @@ public class Evaluator {
     double getAverageRepeats() {
         return Math.min(1, numberOfRepeats.values().stream()
                 .mapToDouble(Double::doubleValue)
+                .map(d -> Math.log(d + 1))
                 .average()
                 .orElse(0) / expectedNumberOfRepeats);
     }
@@ -294,5 +297,19 @@ public class Evaluator {
         } else {
             return 1 - (double) missedRequiredScenes / totalRequiredScenes;
         }
+    }
+
+    double getEnforcedSpecialScore() {
+        double result = 0;
+        for (Rehearsal r : plan.getRehearsals()) {
+            if (!r.isSpecial()) {
+                for (Scene s : plan.get(r)) {
+                    if (s.isSpecial()) {
+                        result -= 100000;
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

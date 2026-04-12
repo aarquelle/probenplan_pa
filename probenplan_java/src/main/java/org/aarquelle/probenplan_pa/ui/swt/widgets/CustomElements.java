@@ -164,10 +164,14 @@ public class CustomElements {
     }
 
     public static @NotNull InputModal modRehearsalModal(Rehearsal r) {
-        List<Input<?>> inputs = List.of(new Input<>("Date", DATE, r.getDate()));
+        List<Input<?>> inputs = List.of(
+                new Input<>("Date", DATE, r.getDate()),
+                new Input<>("Special", BOOL, r.isSpecial())
+                );
         return new InputModal("Modify " + r.displayName(),
                 inputs, l -> {
             r.setDate(l.getFirst().getDate());
+            r.setSpecial(l.get(1).getBool());
             BasicService.getRehearsals().sort();
         }).addButton("Delete rehearsal",
                 true, "Are you sure you want to delete rehearsal "
@@ -179,7 +183,8 @@ public class CustomElements {
         List<Input<?>> inputs = List.of(new Input<>("Name", STRING, s.getName()),
                 new Input<>("Length", DOUBLE, s.getLength()),
                 new Input<>("Add after", SCENE_SELECT, BasicService.getPredecessor(s)),
-                new Input<>("Required scene", SCENE_SELECT, s.getRequiredScene())
+                new Input<>("Required scene", SCENE_SELECT, s.getRequiredScene()),
+                new Input<>("Special", BOOL, s.isSpecial())
                 );
         return new InputModal("Modify " + s.displayName(), inputs,
                 l -> {
@@ -187,6 +192,7 @@ public class CustomElements {
                     s.setLength(l.get(1).getDouble());
                     s.setPosition(BasicService.getPosAfterScene(l.get(2).getScene()));
                     s.setRequiredScene(l.get(3).getScene());
+                    s.setSpecial(l.get(4).getBool());
                     BasicService.getScenes().sort();
                 })
                 .addButton("Delete Scene",

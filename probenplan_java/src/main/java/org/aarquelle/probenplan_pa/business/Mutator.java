@@ -263,6 +263,14 @@ public class Mutator {
 
     public void mutate(int limit) {
         int deadline = 0;
+
+        //Make plan full
+        for (Rehearsal r : BasicService.getRehearsals()) {
+            for (Scene s : BasicService.getScenes()) {
+                plan.put(r, s);
+            }
+        }
+
         if (Analyzer.runAnalysis()) {
             if (careAboutDLP) {
                 findDlpCandidates();
