@@ -178,7 +178,7 @@ public class Save {
         for (Role r : ds.getRoles()) {
             b(getIdForEntity(r));
             str(r.getName());
-            b(getIdForEntity(r.getActor()));
+            b(r.getActor() != null ? getIdForEntity(r.getActor()) : 0);
             coll(r.getBigScenes());
             coll(r.getSmallScenes());
         }

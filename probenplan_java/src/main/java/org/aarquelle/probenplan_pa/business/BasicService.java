@@ -28,6 +28,7 @@ import org.aarquelle.probenplan_pa.persistence.Save;
 import org.aarquelle.probenplan_pa.util.SortedUniqueList;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class BasicService {
 
@@ -188,5 +189,9 @@ public class BasicService {
      */
     public static Scene getLastScene() {
         return getScenes().isEmpty() ? null : getScenes().getLast();
+    }
+
+    public static List<Role> getUnassignedRoles() {
+        return ds.getRoles().stream().filter(r -> r.getActor() == null).toList();
     }
 }

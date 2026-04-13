@@ -185,12 +185,8 @@ public class Load {
             roles.put(id, role);
             role.setName(str());
             int actorId = uByte();
-            Actor actor = actors.get(actorId);
-            if (actor != null) {
-                role.setActor(actor);
-            } else {
-                throw new RuntimeException("No actor with id " + actorId + " for role " + role.getName());
-            }
+            Actor actor = actors.get(actorId); //null is allowed here
+            role.setActor(actor);
 
             while (true) {
                 int bigId = uByte();
