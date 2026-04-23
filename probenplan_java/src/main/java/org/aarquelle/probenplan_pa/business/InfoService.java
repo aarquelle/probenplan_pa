@@ -17,9 +17,11 @@
 package org.aarquelle.probenplan_pa.business;
 
 import org.aarquelle.probenplan_pa.entity.Actor;
+import org.aarquelle.probenplan_pa.entity.HasTime;
 import org.aarquelle.probenplan_pa.entity.Plan;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Role;
+import org.aarquelle.probenplan_pa.entity.RoleSize;
 import org.aarquelle.probenplan_pa.entity.Scene;
 import org.aarquelle.probenplan_pa.util.DateUtils;
 
@@ -38,6 +40,25 @@ public class InfoService {
         l.addAll(s.getBigRoles());
         return l.stream().filter(role -> rehearsal.getMissingActors().contains(role.getActor()) ||
                 rehearsal.getMaybeActors().contains(role.getActor())).toList();
+    }
+
+    public static HasTime getHasTime(Rehearsal s, Actor a) {
+        if (s.getMissingActors().contains(a)) {
+            return HasTime.NO;
+        } else if (s.getMaybeActors().contains(a)) {
+            return HasTime.MAYBE;
+        } else return HasTime.YES;
+    }
+
+    public static RoleSize getRoleSize(Scene s, Role r) {
+        if (s.getEssentialRoles().contains(r)) {
+            return RoleSize.ESSENTIAL;
+        } else if (s.getBigRoles().contains(r)) {
+            return RoleSize.BIG;
+        } else if (s.getSmallRoles().contains(r)) {
+            return RoleSize.SMALL;
+        }
+        else return RoleSize.NONE;
     }
 
     /**

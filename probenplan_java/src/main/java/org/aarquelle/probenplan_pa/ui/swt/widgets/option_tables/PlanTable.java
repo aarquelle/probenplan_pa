@@ -166,11 +166,15 @@ public class PlanTable extends OptionTable<Rehearsal, Scene> {
             } else {
                 sb.append("The actors for the following roles are maybe or definitely missing:");
                 for (Role role : missingRoles) {
-                    sb.append("\n").append(role.displayName());
+                    sb.append(String.format("\n%s: Role size: %s, has time: %s",
+                            role.displayName(),
+                            InfoService.getRoleSize(scene, role),
+                            InfoService.getHasTime(rehearsal, role.getActor())
+                    ));
                 }
             }
 
-            result[i]+= sb.toString();
+            result[i] += sb.toString();
         }
         return result;
     }
