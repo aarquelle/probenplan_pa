@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class Save {
-    static final byte VERSION = 2;
+    static final byte VERSION = 3;
     private final DataState ds;
     private final String filename;
 
@@ -179,6 +179,7 @@ public class Save {
             b(getIdForEntity(r));
             str(r.getName());
             b(r.getActor() != null ? getIdForEntity(r.getActor()) : 0);
+            coll(r.getEssentialScenes());
             coll(r.getBigScenes());
             coll(r.getSmallScenes());
         }

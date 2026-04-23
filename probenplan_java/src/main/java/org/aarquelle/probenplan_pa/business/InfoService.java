@@ -21,6 +21,7 @@ import org.aarquelle.probenplan_pa.entity.Plan;
 import org.aarquelle.probenplan_pa.entity.Rehearsal;
 import org.aarquelle.probenplan_pa.entity.Role;
 import org.aarquelle.probenplan_pa.entity.Scene;
+import org.aarquelle.probenplan_pa.util.DateUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -47,11 +48,11 @@ public class InfoService {
         String[][] table;
         List<Rehearsal> rehearsals = BasicService.getRehearsals().toList();
 
-        table = new String[rehearsals.size() + 1][4];
+        table = new String[rehearsals.size() + 1][3];
         table[0] = new String[]{"Datum", "Szenen", "Schauspielende"};
         for (int i = 0; i < rehearsals.size(); i++) {
             Rehearsal rehearsal = rehearsals.get(i);
-            table[i + 1][0] = rehearsal.getDate().toString();
+            table[i + 1][0] = DateUtils.prettyPrint(rehearsal.getDate());//rehearsal.getDate().toString();
 
             List<Scene> scenes = plan.get(rehearsal).stream().sorted().toList();
             StringBuilder scenesString = new StringBuilder();
@@ -99,7 +100,7 @@ public class InfoService {
             for (Scene s : scenes) {
                 rehearsalLength += s.getLength();
             }
-            table[i + 1][3] = String.valueOf(rehearsalLength);
+            //table[i + 1][3] = String.valueOf(rehearsalLength);
         }
         return table;
     }

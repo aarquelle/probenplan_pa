@@ -26,19 +26,31 @@ public class Role implements Comparable<Role>, Entity {
     String name;
     Actor actor;
 
+    final Set<Scene> essentialScenes = new HashSet<>();
     final Set<Scene> bigScenes = new HashSet<>();
     final Set<Scene> smallScenes = new HashSet<>();
 
-    Role() {}
+    Role() {
+    }
 
     public RoleSize sizeOfScene(Scene scene) {
-        if (bigScenes.contains(scene)) {
+        if (essentialScenes.contains(scene)) {
+            return RoleSize.ESSENTIAL;
+        } else if (bigScenes.contains(scene)) {
             return RoleSize.BIG;
         } else if (smallScenes.contains(scene)) {
             return RoleSize.SMALL;
-        } else {
+        } else{
             return RoleSize.NONE;
         }
+    }
+
+    public void addEssentialScene(Scene scene) {
+        BasicService.stale();
+        essentialScenes.add(scene);
+        bigScenes.add(scene);//TODO this is horrible and *will* bite me in the ass
+        scene.addBigRole(this);
+        scene.addEssentialRole(this);
     }
 
     public void addBigScene(Scene scene) {
@@ -65,6 +77,14 @@ public class Role implements Comparable<Role>, Entity {
         scene.removeSmallRole(this);
     }
 
+    public void removeEssentialScene(Scene scene) {
+        BasicService.stale();
+        essentialScenes.remove(scene);
+        bigScenes.remove(scene);
+        scene.removeEssentialRole(this);
+        scene.removeBigRole(this);
+    }
+
     public String getName() {
         return name;
     }
@@ -87,6 +107,10 @@ public class Role implements Comparable<Role>, Entity {
             actor.roles.add(this);
         }
         this.actor = actor;
+    }
+
+    public Set<Scene> getEssentialScenes() {
+        return essentialScenes;
     }
 
     public Set<Scene> getBigScenes() {

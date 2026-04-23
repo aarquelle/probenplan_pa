@@ -31,18 +31,33 @@ public class Scene implements Comparable<Scene>, Entity {
 
     final Set<Role> bigRoles = new HashSet<>();
     final Set<Role> smallRoles = new HashSet<>();
+    final Set<Role> essentialRoles = new HashSet<>();
     final Set<Rehearsal> lockedRehearsals = new HashSet<>();
 
     Scene(){}
 
     public RoleSize sizeOfRole(Role role) {
-        if (bigRoles.contains(role)) {
+        if (essentialRoles.contains(role)) {
+            return RoleSize.ESSENTIAL;
+        } else if (bigRoles.contains(role)) {
             return RoleSize.BIG;
         } else if (smallRoles.contains(role)) {
             return RoleSize.SMALL;
         } else {
             return RoleSize.NONE;
         }
+    }
+
+    public void addEssentialRole(Role role) {
+        BasicService.stale();
+        essentialRoles.add(role);
+        role.essentialScenes.add(this);
+    }
+
+    public void removeEssentialRole(Role role) {
+        BasicService.stale();
+        essentialRoles.remove(role);
+        role.essentialScenes.remove(this);
     }
 
     public void addBigRole(Role role) {
@@ -79,6 +94,10 @@ public class Scene implements Comparable<Scene>, Entity {
         BasicService.stale();
         lockedRehearsals.remove(rehearsal);
         rehearsal.lockedScenes.remove(this);
+    }
+
+    public Set<Role> getEssentialRoles() {
+        return essentialRoles;
     }
 
     public Set<Role> getBigRoles() {

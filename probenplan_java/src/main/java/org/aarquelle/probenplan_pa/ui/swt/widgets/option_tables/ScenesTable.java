@@ -31,7 +31,7 @@ public class ScenesTable extends InputTable<Scene, Role> {
         super(parent,
                 BasicService.getRoles(),
                 BasicService.getScenes(),
-                List.of("Kommt nicht vor.", "Kleine Rolle", "Große Rolle"),
+                List.of("Kommt nicht vor.", "Kleine Rolle", "Große Rolle", "Essentielle Rolle"),
                 1,
                 1,
                 3,
@@ -40,16 +40,25 @@ public class ScenesTable extends InputTable<Scene, Role> {
                         case 0: {
                             role.removeBigScene(scene);
                             role.removeSmallScene(scene);
+                            role.removeEssentialScene(scene);
                             break;
                         }
                         case 1: {
                             role.removeBigScene(scene);
+                            role.removeEssentialScene(scene);
                             role.addSmallScene(scene);
                             break;
                         }
                         case 2: {
                             role.removeSmallScene(scene);
+                            role.removeEssentialScene(scene);
                             role.addBigScene(scene);
+                            break;
+                        }
+                        case 3: {
+                            role.removeBigScene(scene);
+                            role.removeSmallScene(scene);
+                            role.addEssentialScene(scene);
                             break;
                         }
                         default: {
@@ -62,7 +71,8 @@ public class ScenesTable extends InputTable<Scene, Role> {
                 (a,b,c) -> CustomElements.modSceneModal(b).open(),
                 null,
                 Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW),
-                Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
+                Display.getCurrent().getSystemColor(SWT.COLOR_GREEN),
+                Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
     }
 
     @Override

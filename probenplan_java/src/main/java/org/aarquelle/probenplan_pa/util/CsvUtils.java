@@ -50,17 +50,17 @@ public class CsvUtils {
     }
     
     public static void copyToClipboard(String[][] table) {
-        String csv = tableToCsv(table);
+        String csv = tableToCsv(table, ",");
         copyTextToClipboard(csv);
     }
 
-    private static String tableToCsv(String[][] table) {
+    private static String tableToCsv(String[][] table, String sep) {
         StringBuilder csvBuilder = new StringBuilder();
         for (String[] row : table) {
             for (int i = 0; i < row.length; i++) {
-                csvBuilder.append(row[i]);
+                csvBuilder.append('"').append(row[i]).append('"');
                 if (i < row.length - 1) {
-                    csvBuilder.append("\t");
+                    csvBuilder.append(sep);
                 }
             }
             csvBuilder.append(System.lineSeparator());

@@ -22,9 +22,11 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Locale;
 
 public class DateUtils {
     private static final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+    private static final SimpleDateFormat prettyFormat = new SimpleDateFormat("EEEE, dd. MMMM", Locale.GERMANY);
 
 
     public static LocalDate getLocalDate(String s) throws BusinessException{
@@ -41,5 +43,12 @@ public class DateUtils {
             return "";
         }
         return format.format(Date.valueOf(date));
+    }
+
+    public static String prettyPrint(LocalDate date) {
+        if (date == null) {
+            return "";
+        }
+        return prettyFormat.format(Date.valueOf(date));
     }
 }

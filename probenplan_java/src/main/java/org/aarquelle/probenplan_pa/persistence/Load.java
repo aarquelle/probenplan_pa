@@ -188,6 +188,22 @@ public class Load {
             Actor actor = actors.get(actorId); //null is allowed here
             role.setActor(actor);
 
+            if (fileVersionNumber >= 3) {
+                while (true) {
+                    int essentialId = uByte();
+                    if (essentialId == 0) {
+                        break;
+                    }
+                    Scene essential = scenes.get(essentialId);
+                    if (essential != null) {
+                        role.addEssentialScene(essential);
+                    } else {
+                        throw new RuntimeException("No essential scene with id " + essentialId
+                                + " for role " + role.getName());
+                    }
+                }
+            }
+
             while (true) {
                 int bigId = uByte();
                 if (bigId == 0) {

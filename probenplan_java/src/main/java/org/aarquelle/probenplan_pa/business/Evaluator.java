@@ -72,6 +72,7 @@ public class Evaluator {
         double requiredScenesScore = getRequiredScenesScore();
         double enforcedScenesScore = getEnforcedScenesScore();
         double enforcedSpecialScore = getEnforcedSpecialScore();
+        double essentialScore = getEssentialScore();
 
         double totalScore = (totalCompleteness * Params.getCompletenessWeight()
                 + dlpCompleteness * Params.getDlpCompletenessWeight()
@@ -85,6 +86,7 @@ public class Evaluator {
                 + requiredScenesScore * 10 //TODO PARAM
                 + enforcedScenesScore
                 + enforcedSpecialScore
+                + essentialScore
                 / (Params.getTotalWeight() + 10);
 
         plan.setTestResults(
@@ -297,6 +299,18 @@ public class Evaluator {
         } else {
             return 1 - (double) missedRequiredScenes / totalRequiredScenes;
         }
+    }
+
+    double getEssentialScore() {
+        double result = 0;
+        for (Pair<Rehearsal, Scene> pair : plan.getAllPairs()) {
+            for (Role role : pair.second().getEssentialRoles()) {
+                if (role.getActor().getMissingRehearsals().contains(pair.first())) {
+                    result -= 10000;
+                }
+            }
+        }
+        return result;
     }
 
     double getEnforcedSpecialScore() {

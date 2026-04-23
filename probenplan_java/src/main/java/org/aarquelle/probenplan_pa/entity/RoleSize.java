@@ -17,5 +17,5 @@
 package org.aarquelle.probenplan_pa.entity;
 
 public enum RoleSize {
-    NONE, SMALL, BIG;
+    NONE, SMALL, BIG, ESSENTIAL;
 }
